@@ -15,42 +15,26 @@ class JenisLayananSeeder extends Seeder
     public function run(): void
     {
         $cabang = Cabang::where('id', 1)->first();
-        $cabang2 = Cabang::where('id', 2)->onlyTrashed()->first();
 
         //? Cabang 1
         JenisLayanan::create([
-            'nama' => 'Cuci',
-            'for_gamis' => false,
+            'nama' => 'Cuci Setrika',
             'cabang_id' => $cabang->id,
-        ]);
-        JenisLayanan::create([
-            'nama' => 'Setrika',
-            'for_gamis' => true,
-            'cabang_id' => $cabang->id,
-        ]);
-        JenisLayanan::create([
-            'nama' => 'Parfum',
-            'for_gamis' => true,
-            'cabang_id' => $cabang->id,
-            'deleted_at' => Carbon::now(),
         ]);
 
-        //? Cabang 2
-        JenisLayanan::create([
-            'nama' => 'Cuci',
-            'for_gamis' => false,
-            'cabang_id' => $cabang2->id,
-        ]);
         JenisLayanan::create([
             'nama' => 'Setrika',
-            'for_gamis' => true,
-            'cabang_id' => $cabang2->id,
+            'cabang_id' => $cabang->id,
         ]);
+
         JenisLayanan::create([
-            'nama' => 'Parfum',
-            'for_gamis' => true,
-            'cabang_id' => $cabang2->id,
-            'deleted_at' => Carbon::now(),
+            'nama' => 'Cuci Lipat',
+            'cabang_id' => $cabang->id,
+        ]);
+
+        JenisLayanan::create([
+            'nama' => 'Cuci Sepatu',
+            'cabang_id' => $cabang->id,
         ]);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetailGamis;
 use App\Models\ManajerLaundry;
 use App\Models\PegawaiLaundry;
 use App\Models\PIC;

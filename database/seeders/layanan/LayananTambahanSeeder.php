@@ -28,29 +28,5 @@ class LayananTambahanSeeder extends Seeder
             'harga' => 10000,
             'cabang_id' => $cabang->id,
         ]);
-        LayananTambahan::create([
-            'nama' => 'Keamanan Ganda',
-            'harga' => 5000,
-            'cabang_id' => $cabang->id,
-            'deleted_at' => Carbon::now(),
-        ]);
-
-        //? Cabang 2
-        LayananTambahan::create([
-            'nama' => 'Antar',
-            'harga' => 10000,
-            'cabang_id' => $cabang2->id,
-        ]);
-        LayananTambahan::create([
-            'nama' => 'Jemput',
-            'harga' => 10000,
-            'cabang_id' => $cabang2->id,
-        ]);
-        LayananTambahan::create([
-            'nama' => 'Keamanan Ganda',
-            'harga' => 5000,
-            'cabang_id' => $cabang2->id,
-            'deleted_at' => Carbon::now(),
-        ]);
     }
 }

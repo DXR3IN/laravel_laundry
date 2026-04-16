@@ -3,8 +3,6 @@
 namespace App\Imports;
 
 use App\Models\Cabang;
-use App\Models\DetailGamis;
-use App\Models\Gamis;
 use App\Models\ManajerLaundry;
 use App\Models\PegawaiLaundry;
 use App\Models\User;
@@ -51,13 +49,6 @@ class UserImport implements ToCollection, WithHeadingRow
                         break;
                     case 'pegawai_laundry':
                         PegawaiLaundry::create($validatedProfile);
-                        break;
-                    case 'gamis':
-                        $gamis = Gamis::where('kartu_keluarga', $row['kartu_keluarga'])->first();
-                        $validatedProfile['gamis_id'] = $gamis->id;
-                        $validatedProfile['nama_pemasukkan'] = $row['nama_pemasukkan'];
-                        $validatedProfile['pemasukkan'] = $row['pemasukkan'];
-                        DetailGamis::create($validatedProfile);
                         break;
                 }
             }

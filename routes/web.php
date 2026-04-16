@@ -40,21 +40,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LandingPageController::class, 'index'])->name('landing-page');
 Route::get('/nota', [LandingPageController::class, 'cekTransaksi'])->name('landing-page.nota');
 
-Route::group(['middleware' => 'guest'], function() {
+Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'loginAttempt'])->name('login.attempt');
 });
 
 Route::group([
     'middleware' => ['auth'],
-], function() {
+], function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/laundry/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::group([
         'prefix' => 'profile',
-    ], function() {
+    ], function () {
         Route::get('/{user:slug}', [ProfileController::class, 'index'])->name('profile');
         Route::get('/ubah/{user:slug}', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::post('/ubah/{user:slug}', [ProfileController::class, 'update'])->name('profile.update');
@@ -65,7 +65,7 @@ Route::group([
     Route::group([
         'prefix' => 'cabang',
         'middleware' => ['role:lurah|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [CabangController::class, 'index'])->name('cabang');
         Route::post('/tambah', [CabangController::class, 'store'])->name('cabang.store');
@@ -81,7 +81,7 @@ Route::group([
     Route::group([
         'prefix' => 'umr',
         'middleware' => ['role:lurah|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [UMRController::class, 'index'])->name('umr');
         Route::post('/tambah', [UMRController::class, 'store'])->name('umr.store');
@@ -94,7 +94,7 @@ Route::group([
     Route::group([
         'prefix' => 'user/rw',
         'middleware' => ['role:lurah'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [RWController::class, 'index'])->name('rw');
         Route::get('/tambah', [RWController::class, 'create'])->name('rw.create');
@@ -115,7 +115,7 @@ Route::group([
     Route::group([
         'prefix' => 'user',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [UserController::class, 'index'])->name('user');
         Route::get('/cabang/{cabang:slug}', [UserController::class, 'indexCabang'])->name('user.cabang');
@@ -138,7 +138,7 @@ Route::group([
     Route::group([
         'prefix' => 'layanan-cabang',
         'middleware' => ['role:lurah|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [LayananCabangController::class, 'index'])->name('layanan-cabang');
         Route::get('/{cabang:slug}', [LayananCabangController::class, 'indexCabang'])->name('layanan-cabang.cabang');
@@ -148,7 +148,7 @@ Route::group([
     Route::group([
         'prefix' => 'jenis-layanan',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [JenisLayananController::class, 'index'])->name('jenis-layanan');
         Route::post('/tambah', [JenisLayananController::class, 'store'])->name('jenis-layanan.store');
@@ -166,25 +166,25 @@ Route::group([
     Route::group([
         'prefix' => 'jenis-cucian',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
-        Route::get('/', [JenisCucianController::class, 'index'])->name('jenis-pakaian');
-        Route::post('/tambah', [JenisCucianController::class, 'store'])->name('jenis-pakaian.store');
-        Route::get('/lihat', [JenisCucianController::class, 'show'])->name('jenis-pakaian.show');
-        Route::get('/ubah', [JenisCucianController::class, 'edit'])->name('jenis-pakaian.edit');
-        Route::post('/ubah', [JenisCucianController::class, 'update'])->name('jenis-pakaian.update');
-        Route::post('/hapus', [JenisCucianController::class, 'delete'])->name('jenis-pakaian.delete');
-        Route::get('/trash', [JenisCucianController::class, 'trash'])->name('jenis-pakaian.trash');
-        Route::post('/pulihkan', [JenisCucianController::class, 'restore'])->name('jenis-pakaian.restore');
-        Route::post('/hapus-permanen', [JenisCucianController::class, 'destroy'])->name('jenis-pakaian.destroy');
-        Route::post('/impor', [JenisCucianController::class, 'import'])->name('jenis-pakaian.import');
-        Route::get('/ekspor', [JenisCucianController::class, 'export'])->name('jenis-pakaian.export');
+        Route::get('/', [JenisCucianController::class, 'index'])->name('jenis-cucian');
+        Route::post('/tambah', [JenisCucianController::class, 'store'])->name('jenis-cucian.store');
+        Route::get('/lihat', [JenisCucianController::class, 'show'])->name('jenis-cucian.show');
+        Route::get('/ubah', [JenisCucianController::class, 'edit'])->name('jenis-cucian.edit');
+        Route::post('/ubah', [JenisCucianController::class, 'update'])->name('jenis-cucian.update');
+        Route::post('/hapus', [JenisCucianController::class, 'delete'])->name('jenis-cucian.delete');
+        Route::get('/trash', [JenisCucianController::class, 'trash'])->name('jenis-cucian.trash');
+        Route::post('/pulihkan', [JenisCucianController::class, 'restore'])->name('jenis-cucian.restore');
+        Route::post('/hapus-permanen', [JenisCucianController::class, 'destroy'])->name('jenis-cucian.destroy');
+        Route::post('/impor', [JenisCucianController::class, 'import'])->name('jenis-cucian.import');
+        Route::get('/ekspor', [JenisCucianController::class, 'export'])->name('jenis-cucian.export');
     });
 
     Route::group([
         'prefix' => 'harga-jenis-layanan',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [HargaJenisLayananController::class, 'index'])->name('harga-jenis-layanan');
         Route::post('/tambah', [HargaJenisLayananController::class, 'store'])->name('harga-jenis-layanan.store');
@@ -202,7 +202,7 @@ Route::group([
     Route::group([
         'prefix' => 'layanan-prioritas',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [LayananPrioritasController::class, 'index'])->name('layanan-prioritas');
         Route::post('/tambah', [LayananPrioritasController::class, 'store'])->name('layanan-prioritas.store');
@@ -220,7 +220,7 @@ Route::group([
     Route::group([
         'prefix' => 'layanan-tambahan',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [LayananTambahanController::class, 'index'])->name('layanan-tambahan');
         Route::post('/tambah', [LayananTambahanController::class, 'store'])->name('layanan-tambahan.store');
@@ -238,7 +238,7 @@ Route::group([
     Route::group([
         'prefix' => 'pelanggan',
         'middleware' => ['role:lurah|manajer_laundry|pegawai_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [PelangganController::class, 'index'])->name('pelanggan');
         Route::post('/tambah', [PelangganController::class, 'store'])->name('pelanggan.store');
@@ -251,30 +251,14 @@ Route::group([
     });
 
     Route::group([
-        'prefix' => 'gamis',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
-
-        Route::get('/', [GamisController::class, 'index'])->name('gamis');
-        Route::post('/tambah', [GamisController::class, 'store'])->name('gamis.store');
-        Route::get('/lihat', [GamisController::class, 'show'])->name('gamis.show');
-        Route::get('/ubah', [GamisController::class, 'edit'])->name('gamis.edit');
-        Route::post('/ubah', [GamisController::class, 'update'])->name('gamis.update');
-        Route::post('/hapus', [GamisController::class, 'delete'])->name('gamis.delete');
-        Route::get('/anggota/{detail_gamis:kartu_keluarga}', [GamisController::class, 'anggota'])->name('gamis.anggota');
-        Route::get('/detail-anggota', [GamisController::class, 'detailAnggota'])->name('gamis.anggota.show');
-        Route::post('/impor', [GamisController::class, 'import'])->name('gamis.import');
-    });
-
-    Route::group([
         'prefix' => 'transaksi',
         'middleware' => ['role:lurah|manajer_laundry|pegawai_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::group([
             'prefix' => 'lurah',
             'middleware' => ['role:lurah|pic'],
-        ], function() {
+        ], function () {
 
             Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.lurah');
             Route::get('/{cabang:slug}', [TransaksiController::class, 'indexCabang'])->name('transaksi.lurah.cabang');
@@ -316,32 +300,9 @@ Route::group([
     });
 
     Route::group([
-        'prefix' => 'monitoring-program-gamis',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
-
-        Route::get('/', [MonitoringGamisController::class, 'index'])->name('monitoring');
-        Route::post('/perbarui-data-monitoring', [MonitoringGamisController::class, 'perbaruiDataMonitoring'])->name('monitoring.update.data');
-        Route::post('/reset-data-monitoring', [MonitoringGamisController::class, 'resetDataMonitoring'])->name('monitoring.reset.data');
-
-        Route::get('/ubah-pemasukkan', [MonitoringGamisController::class, 'editPemasukkan'])->name('monitoring.edit.pemasukkan');
-        Route::post('/ubah-pemasukkan', [MonitoringGamisController::class, 'updatePemasukkan'])->name('monitoring.update.pemasukkan');
-        Route::get('/riwayat-pendapatan/{gamis:id}', [MonitoringGamisController::class, 'riwayatPendapatan'])->name('monitoring.gamis.riwayat');
-    });
-
-    Route::group([
-        'prefix' => 'monitoring-gamis',
-        'middleware' => ['role:rw'],
-    ], function() {
-
-        Route::get('/', [MonitoringGamisController::class, 'indexRw'])->name('monitoring.rw');
-        Route::post('/pdf', [MonitoringGamisController::class, 'pdfMonitoringGamisRw'])->name('monitoring.rw.pdf');
-    });
-
-    Route::group([
         'prefix' => 'transaksi-gamis',
         'middleware' => ['role:gamis'],
-    ], function() {
+    ], function () {
 
         Route::get('/', [TransaksiController::class, 'transaksiGamisHarian'])->name('transaksi-gamis');
         Route::get('/semua', [TransaksiController::class, 'transaksiGamisSemua'])->name('transaksi-gamis.semua');
@@ -352,7 +313,7 @@ Route::group([
     Route::group([
         'prefix' => 'laporan',
         'middleware' => ['role:lurah|manajer_laundry|pic'],
-    ], function() {
+    ], function () {
 
         Route::get('/pendapatan-laundry', [LaporanController::class, 'laporanPendapatanLaundry'])->name('laporan.pendapatan.laundry');
         Route::post('/pendapatan-laundry/pdf', [LaporanController::class, 'pdfLaporanPendapatanLaundry'])->name('laporan.pendapatan.laundry.pdf');
@@ -368,4 +329,4 @@ Route::group([
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

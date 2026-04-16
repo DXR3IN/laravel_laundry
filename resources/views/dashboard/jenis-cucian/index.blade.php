@@ -64,7 +64,7 @@
 
             $.ajax({
                 type: "get",
-                url: "{{ route('jenis-pakaian.show') }}",
+                url: "{{ route('jenis-cucian.show') }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "id": id
@@ -95,7 +95,7 @@
 
             $.ajax({
                 type: "get",
-                url: "{{ route('jenis-pakaian.edit') }}",
+                url: "{{ route('jenis-cucian.edit') }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "id": id
@@ -135,7 +135,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('jenis-pakaian.delete') }}",
+                        url: "{{ route('jenis-cucian.delete') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "id": id,
@@ -180,7 +180,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('jenis-pakaian.restore') }}",
+                        url: "{{ route('jenis-cucian.restore') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "id": id
@@ -224,7 +224,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('jenis-pakaian.destroy') }}",
+                        url: "{{ route('jenis-cucian.destroy') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "id": id
@@ -268,7 +268,7 @@
                         </label>
                     </div>
                     <div>
-                        <form action="{{ route('jenis-pakaian.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('jenis-cucian.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <label class="form-control w-full">
                                 <div class="label">
@@ -342,7 +342,7 @@
                         </label>
                     </div>
                     <div>
-                        <form action="{{ route('jenis-pakaian.update') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('jenis-cucian.update') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="text" name="id" hidden>
                             <label class="form-control w-full">
@@ -389,7 +389,7 @@
                             </label>
                         </div>
                         <div>
-                            <form action="{{ route('jenis-pakaian.import') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('jenis-cucian.import') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <label class="form-control w-full">
                                     <input type="file" name="impor" placeholder="Impor Data" class="file-input file-input-bordered w-full text-blue-700" required />
@@ -401,7 +401,7 @@
                 </div>
                 {{-- Akhir Modal Impor --}}
 
-            {{-- Awal Tabel Jenis Pakaian --}}
+            {{-- Awal Tabel Jenis cucian --}}
             <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
                 <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
                     <h6 class="font-bold dark:text-white">{{ $title }}</h6>
@@ -415,7 +415,7 @@
                                 <i class="ri-upload-2-line"></i>
                                 Impor
                             </label>
-                            <form action="{{ route('jenis-pakaian.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
+                            <form action="{{ route('jenis-cucian.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
                                 @csrf
                                 <label class="form-control w-full">
                                     <input type="text" name="cabang" value="{{ auth()->user()->cabang->slug }}" hidden readonly />
@@ -445,7 +445,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($jenisPakaian as $item)
+                                @foreach ($jenisCucian as $item)
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
@@ -506,7 +506,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($jenisPakaianTrash as $item)
+                                @foreach ($jenisCucianTrash as $item)
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Carbon\Carbon;
 use App\Models\Transaksi;
 use App\Models\DetailTransaksi;
 use Illuminate\Database\Seeder;
@@ -11,9 +10,6 @@ use App\Models\LayananTambahanTransaksi;
 
 class TransaksiSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $jmlPelanggan = 10;
@@ -21,79 +17,62 @@ class TransaksiSeeder extends Seeder
         $tanggalAwal = '2024-01-01';
         $tanggalAkhir = 'now';
 
+        // 1. Transaksi Reguler
         for ($i = 1; $i <= $jmlTransaksi; $i++) {
+            $date = fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta');
             $this->createTransaksiReguler(
                 fake()->numberBetween(1, $jmlPelanggan),
-                fake()->randomElement([1,2]),
                 fake()->randomElement(['Baru', 'Proses']),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('His'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
-            );
-        }
-        for ($i = 1; $i <= $jmlTransaksi; $i++) {
-            $this->createTransaksiKilat(
-                fake()->numberBetween(1, $jmlPelanggan),
-                fake()->randomElement([1,2]),
-                fake()->randomElement(['Baru', 'Proses']),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('His'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
-            );
-        }
-        for ($i = 1; $i <= $jmlTransaksi; $i++) {
-            $this->createTransaksiCahaya(
-                fake()->numberBetween(1, $jmlPelanggan),
-                fake()->randomElement([1,2]),
-                fake()->randomElement(['Baru', 'Proses']),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('His'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
-            );
-        }
-        for ($i = 1; $i <= $jmlTransaksi; $i++) {
-            $this->createTransaksiRegulerTambahan(
-                fake()->numberBetween(1, $jmlPelanggan),
-                fake()->randomElement([1,2]),
-                fake()->randomElement(['Baru', 'Proses']),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('His'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
+                $date->format('His'),
+                $date->format('dmY'),
+                $date // Mengirim objek DateTime asli
             );
         }
 
-        // Transaksi Selesai
+        // 2. Transaksi Ekspress
         for ($i = 1; $i <= $jmlTransaksi; $i++) {
-            $this->createTransaksiReguler(
+            $date = fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta');
+            $this->createTransaksiEkspress(
                 fake()->numberBetween(1, $jmlPelanggan),
-                fake()->randomElement([1,2]),
-                'Selesai',
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('His'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta'),
-                1
+                fake()->randomElement(['Baru', 'Proses']),
+                $date->format('His'),
+                $date->format('dmY'),
+                $date
             );
         }
+
+        // 3. Transaksi Kilat
         for ($i = 1; $i <= $jmlTransaksi; $i++) {
-            $this->createTransaksiRegulerTambahan(
+            $date = fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta');
+            $this->createTransaksiKilat(
                 fake()->numberBetween(1, $jmlPelanggan),
-                fake()->randomElement([1,2]),
+                fake()->randomElement(['Baru', 'Proses']),
+                $date->format('His'),
+                $date->format('dmY'),
+                $date
+            );
+        }
+
+        // 4. Transaksi Selesai
+        for ($i = 1; $i <= $jmlTransaksi; $i++) {
+            $date = fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta');
+            $this->createTransaksiReguler(
+                fake()->numberBetween(1, $jmlPelanggan),
                 'Selesai',
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('His'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
-                fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta'),
-                1
+                $date->format('His'),
+                $date->format('dmY'),
+                $date
             );
         }
     }
 
-    public function createTransaksiReguler($pelanggan, $gamis, $status, $jamNota, $tanggalNota, $tanggal, $konfirmasi = 0)
+    public function createTransaksiReguler($pelanggan, $status, $jamNota, $tanggalNota, $tanggal)
     {
         $nota1 = $jamNota . '-' . $tanggalNota . '-' . 1 . $pelanggan;
         $transaksi = Transaksi::create([
             'nota_layanan' => 'layanan-' . $nota1,
             'nota_pelanggan' => 'pelanggan-' . $nota1,
-            'waktu' => $tanggal,
+            'waktu' => $tanggal->format('Y-m-d H:i:s'), // Format ke standar database
             'total_biaya_layanan' => 138000,
             'total_biaya_prioritas' => 0,
             'total_bayar_akhir' => 138000,
@@ -102,54 +81,22 @@ class TransaksiSeeder extends Seeder
             'bayar' => 150000,
             'kembalian' => 12000,
             'status' => $status,
-            'konfirmasi_upah_gamis' => $konfirmasi,
             'layanan_prioritas_id' => 1,
             'pelanggan_id' => $pelanggan,
-            'pegawai_id' => 9,
-            'gamis_id' => $gamis,
+            'pegawai_id' => 1,
             'cabang_id' => 1,
         ]);
 
-        $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
-            'harga_layanan_akhir' => 3500,
-            'total_biaya_layanan' => 84000,
-            'total_biaya_prioritas' => 0,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 3,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 4,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-
-        $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
-            'harga_layanan_akhir' => 4500,
-            'total_biaya_layanan' => 54000,
-            'total_biaya_prioritas' => 0,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 5,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 6,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
+        $this->createDetails($transaksi->id, 0, 0);
     }
 
-    public function createTransaksiKilat($pelanggan, $gamis, $status, $jamNota, $tanggalNota, $tanggal, $konfirmasi = 0)
+    public function createTransaksiEkspress($pelanggan, $status, $jamNota, $tanggalNota, $tanggal)
     {
         $nota1 = $jamNota . '-' . $tanggalNota . '-' . 1 . $pelanggan;
         $transaksi = Transaksi::create([
             'nota_layanan' => 'layanan-' . $nota1,
             'nota_pelanggan' => 'pelanggan-' . $nota1,
-            'waktu' => $tanggal,
+            'waktu' => $tanggal->format('Y-m-d H:i:s'),
             'total_biaya_layanan' => 138000,
             'total_biaya_prioritas' => 54000,
             'total_bayar_akhir' => 192000,
@@ -158,54 +105,22 @@ class TransaksiSeeder extends Seeder
             'bayar' => 200000,
             'kembalian' => 8000,
             'status' => $status,
-            'konfirmasi_upah_gamis' => $konfirmasi,
             'layanan_prioritas_id' => 2,
             'pelanggan_id' => $pelanggan,
-            'pegawai_id' => 8,
-            'gamis_id' => $gamis,
+            'pegawai_id' => 1,
             'cabang_id' => 1,
         ]);
 
-        $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
-            'harga_layanan_akhir' => 3500,
-            'total_biaya_layanan' => 84000,
-            'total_biaya_prioritas' => 36000,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 3,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 4,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-
-        $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
-            'harga_layanan_akhir' => 4500,
-            'total_biaya_layanan' => 54000,
-            'total_biaya_prioritas' => 18000,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 5,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 6,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
+        $this->createDetails($transaksi->id, 36000, 18000);
     }
 
-    public function createTransaksiCahaya($pelanggan, $gamis, $status, $jamNota, $tanggalNota, $tanggal, $konfirmasi = 0)
+    public function createTransaksiKilat($pelanggan, $status, $jamNota, $tanggalNota, $tanggal)
     {
         $nota1 = $jamNota . '-' . $tanggalNota . '-' . 1 . $pelanggan;
         $transaksi = Transaksi::create([
             'nota_layanan' => 'layanan-' . $nota1,
             'nota_pelanggan' => 'pelanggan-' . $nota1,
-            'waktu' => $tanggal,
+            'waktu' => $tanggal->format('Y-m-d H:i:s'),
             'total_biaya_layanan' => 138000,
             'total_biaya_prioritas' => 72000,
             'total_bayar_akhir' => 210000,
@@ -214,109 +129,36 @@ class TransaksiSeeder extends Seeder
             'bayar' => 220000,
             'kembalian' => 10000,
             'status' => $status,
-            'konfirmasi_upah_gamis' => $konfirmasi,
             'layanan_prioritas_id' => 3,
             'pelanggan_id' => $pelanggan,
-            'pegawai_id' => 8,
-            'gamis_id' => $gamis,
+            'pegawai_id' => 1,
             'cabang_id' => 1,
         ]);
 
-        $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
-            'harga_layanan_akhir' => 3500,
-            'total_biaya_layanan' => 84000,
-            'total_biaya_prioritas' => 48000,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 3,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 4,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-
-        $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
-            'harga_layanan_akhir' => 4500,
-            'total_biaya_layanan' => 54000,
-            'total_biaya_prioritas' => 24000,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 5,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 6,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
+        $this->createDetails($transaksi->id, 48000, 24000);
     }
 
-    public function createTransaksiRegulerTambahan($pelanggan, $gamis, $status, $jamNota, $tanggalNota, $tanggal, $konfirmasi = 0)
+    // Helper untuk membuat detail agar kode tidak duplikat banyak
+    private function createDetails($transaksiId, $prioritas1, $prioritas2)
     {
-        $nota1 = $jamNota . '-' . $tanggalNota . '-' . 1 . $pelanggan;
-        $transaksi = Transaksi::create([
-            'nota_layanan' => 'layanan-' . $nota1,
-            'nota_pelanggan' => 'pelanggan-' . $nota1,
-            'waktu' => $tanggal,
-            'total_biaya_layanan' => 138000,
-            'total_biaya_prioritas' => 0,
-            'total_bayar_akhir' => 158000,
-            'total_biaya_layanan_tambahan' => 20000,
-            'jenis_pembayaran' => 'Tunai',
-            'bayar' => 200000,
-            'kembalian' => 42000,
-            'status' => $status,
-            'konfirmasi_upah_gamis' => $konfirmasi,
-            'layanan_prioritas_id' => 1,
-            'pelanggan_id' => $pelanggan,
-            'pegawai_id' => 8,
-            'gamis_id' => $gamis,
-            'cabang_id' => 1,
-        ]);
-
         $detail1 = DetailTransaksi::create([
             'total_pakaian' => 24,
             'harga_layanan_akhir' => 3500,
             'total_biaya_layanan' => 84000,
-            'total_biaya_prioritas' => 0,
-            'transaksi_id' => $transaksi->id,
+            'total_biaya_prioritas' => $prioritas1,
+            'transaksi_id' => $transaksiId,
         ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 3,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 4,
-            'detail_transaksi_id' => $detail1->id,
-        ]);
+        DetailLayananTransaksi::create(['harga_jenis_layanan_id' => 3, 'detail_transaksi_id' => $detail1->id]);
+        DetailLayananTransaksi::create(['harga_jenis_layanan_id' => 4, 'detail_transaksi_id' => $detail1->id]);
 
         $detail2 = DetailTransaksi::create([
             'total_pakaian' => 12,
             'harga_layanan_akhir' => 4500,
             'total_biaya_layanan' => 54000,
-            'total_biaya_prioritas' => 0,
-            'transaksi_id' => $transaksi->id,
+            'total_biaya_prioritas' => $prioritas2,
+            'transaksi_id' => $transaksiId,
         ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 5,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
-        DetailLayananTransaksi::create([
-            'harga_jenis_layanan_id' => 6,
-            'detail_transaksi_id' => $detail2->id,
-        ]);
-
-        LayananTambahanTransaksi::create([
-            'layanan_tambahan_id' => 1,
-            'transaksi_id' => $transaksi->id,
-        ]);
-        LayananTambahanTransaksi::create([
-            'layanan_tambahan_id' => 2,
-            'transaksi_id' => $transaksi->id,
-        ]);
+        DetailLayananTransaksi::create(['harga_jenis_layanan_id' => 5, 'detail_transaksi_id' => $detail2->id]);
+        DetailLayananTransaksi::create(['harga_jenis_layanan_id' => 6, 'detail_transaksi_id' => $detail2->id]);
     }
 }

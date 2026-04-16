@@ -24,7 +24,6 @@ return new class extends Migration
             $table->double('bayar');
             $table->double('kembalian');
             $table->string('status');
-            $table->boolean('konfirmasi_upah_gamis')->default(0);
             $table->foreignId('layanan_prioritas_id')->constrained('layanan_prioritas', 'id');
             $table->foreignId('pelanggan_id')->constrained('pelanggan', 'id');
             $table->foreignId('pegawai_id')->constrained('users', 'id');

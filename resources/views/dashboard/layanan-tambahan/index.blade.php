@@ -296,32 +296,6 @@
                                     </div>
                                 @enderror
                             </label>
-                            <div class="mt-3 w-full max-w-md">
-                                <div class="label">
-                                    <span class="label-text font-semibold">
-                                        <x-label-input-required :value="'Untuk Gamis'" />
-                                    </span>
-                                </div>
-                                <div class="rounded-lg border border-slate-300 px-3 py-2">
-                                    <div class="form-control">
-                                        <label class="label cursor-pointer">
-                                            <span class="label-text text-blue-700">Iya</span>
-                                            <input type="radio" value="1" name="for_gamis" class="radio-primary radio" required />
-                                        </label>
-                                    </div>
-                                    <div class="form-control">
-                                        <label class="label cursor-pointer">
-                                            <span class="label-text text-blue-700">Tidak</span>
-                                            <input type="radio" value="0" name="for_gamis" class="radio-primary radio" required />
-                                        </label>
-                                    </div>
-                                </div>
-                                @error("for_gamis")
-                                    <div class="label">
-                                        <span class="label-text-alt text-sm text-error">{{ $message }}</span>
-                                    </div>
-                                @enderror
-                            </div>
                             <button type="submit" class="btn btn-success mt-3 w-full text-white">Tambah</button>
                         </form>
                     </div>

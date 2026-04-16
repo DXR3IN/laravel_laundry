@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
+            $table->string('cabang_id');
+            $table->text('alamat');
+            $table->text('lokasi');
             $table->softDeletes();
             $table->timestamps();
         });

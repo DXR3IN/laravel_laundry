@@ -15,7 +15,7 @@
             });
         });
 
-        @role(['lurah', 'manajer_laundry', 'pegawai_laundry', 'gamis', 'pic'])
+        @role(['lurah', 'manajer_laundry', 'pegawai_laundry', 'pic'])
             // Pendapatan Per Bulan
             if (document.querySelector("#chart-pendapatan-bulanan")) {
                 let bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -204,7 +204,7 @@
             </div>
         </div>
 
-        @role(['lurah', 'manajer_laundry', 'pegawai_laundry', 'pic'])
+        @role(['manajer_laundry', 'pegawai_laundry'])
             <!-- row 1 -->
             <div class="-mx-3 mb-3 flex flex-wrap">
                 <!-- Jumlah Cabang -->
@@ -274,30 +274,6 @@
                     </div>
                 </div>
 
-                <!-- Jumlah Gamis -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/4">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">
-                                            Jumlah Gamis
-                                        </p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $jmlGamis }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-parent-fill relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- row 2 -->
@@ -479,9 +455,6 @@
                                         Pegawai
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Gamis
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Status
                                     </th>
                                     @role('lurah')
@@ -529,11 +502,6 @@
                                                 @elseif ($userRole == 'lurah' || 'pic')
                                                     {{ $item->pegawai->lurah->first()->nama }}
                                                 @endif
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->gamis_id ? $item->gamis->nama : "-" }}
                                             </p>
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -594,337 +562,6 @@
                         <div class="flex-auto p-4">
                             <div>
                                 <canvas id="chart-pendapatan-tahunan" height="300"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endrole
-
-        @role(['gamis'])
-            <!-- row 1 -->
-            <div class="-mx-3 mb-3 flex flex-wrap">
-                <!-- Cabang -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">
-                                            Cabang
-                                        </p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $cabang ? $cabang->nama : 'Cabang Non Aktif' }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-home-smile-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- UMR -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">UMR <span class="capitalize">{{ $umr->regional }}</span> ({{ $umr->tahun }})</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">Rp{{ number_format($umr->upah, 2, ',', '.') }}</h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-file-paper-2-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jumlah Gamis -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">
-                                            Jumlah Gamis
-                                        </p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $jmlGamis }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-parent-fill relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- row 2 -->
-            <div class="-mx-3 mb-3 flex flex-wrap">
-                <!-- Transaksi: Status Baru -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">Transaksi:</p>
-                                        <p class="font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60 text-info">Baru</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $transaksiBaru }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-lime-500 to-teal-500 text-center">
-                                        <i class="ri-shopping-bag-4-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transaksi: Status Proses -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">Transaksi:</p>
-                                        <p class="font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60 text-warning">Proses</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $transaksiProses }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-lime-500 to-teal-500 text-center">
-                                        <i class="ri-shopping-bag-4-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transaksi: Status Siap Diambil -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">Transaksi:</p>
-                                        <p class="font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60 text-primary">Siap Ambil</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $transaksiSiapDiambil }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-lime-500 to-teal-500 text-center">
-                                        <i class="ri-shopping-bag-4-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- row 3 -->
-            <div class="-mx-3 mb-3 flex flex-wrap">
-                <!-- Transaksi: Status Penjemputan -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">Transaksi:</p>
-                                        <p class="font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60 text-secondary">Jemput</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $transaksiPenjemputan }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-lime-500 to-teal-500 text-center">
-                                        <i class="ri-shopping-bag-4-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transaksi: Status Pengantaran -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">Transaksi:</p>
-                                        <p class="font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60 text-secondary">Antar</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $transaksiPengantaran }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-lime-500 to-teal-500 text-center">
-                                        <i class="ri-shopping-bag-4-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transaksi: Status Selesai -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">Transaksi:</p>
-                                        <p class="font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60 text-success">Selesai</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $transaksiSelesai }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-lime-500 to-teal-500 text-center">
-                                        <i class="ri-shopping-bag-4-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- row 4 -->
-            <div class="-mx-3 mt-6 flex flex-wrap">
-                <div class="mt-0 w-full max-w-full px-3 lg:w-1/2 lg:flex-none">
-                    <div class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border shadow-xl">
-                        <div class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pb-0 pt-4">
-                            <h6 class="capitalize dark:text-white">Pendapatan Bulanan: <span class="font-bold text-blue-700 dark:text-white">{{ \Carbon\Carbon::now()->format('Y') }}</span></h6>
-                        </div>
-                        <div class="flex-auto p-4">
-                            <div>
-                                <canvas id="chart-pendapatan-bulanan" height="300"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-0 w-full max-w-full px-3 lg:w-1/2 lg:flex-none">
-                    <div class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border shadow-xl">
-                        <div class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pb-0 pt-4">
-                            <h6 class="capitalize dark:text-white">Pendapatan Tahunan</h6>
-                        </div>
-                        <div class="flex-auto p-4">
-                            <div>
-                                <canvas id="chart-pendapatan-tahunan" height="300"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endrole
-
-        @role('rw')
-            <!-- row 1 -->
-            <div class="-mx-3 mb-3 flex flex-wrap">
-                <!-- RW -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">
-                                            RW
-                                        </p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $rw->nomor_rw }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-home-smile-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- UMR -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">UMR <span class="capitalize">{{ $umr->regional }}</span> ({{ $umr->tahun }})</p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">Rp{{ number_format($umr->upah, 2, ',', '.') }}</h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-file-paper-2-line relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jumlah Gamis -->
-                <div class="mb-6 w-full max-w-full px-3 sm:w-1/2 sm:flex-none xl:mb-0 xl:w-1/3">
-                    <div class="dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl bg-white bg-clip-border shadow-xl">
-                        <div class="flex-auto p-4">
-                            <div class="-mx-3 flex flex-row">
-                                <div class="w-2/3 max-w-full flex-none px-3">
-                                    <div>
-                                        <p class="mb-0 font-sans text-sm font-semibold uppercase leading-normal dark:text-white dark:opacity-60">
-                                            Jumlah Gamis
-                                        </p>
-                                        <h5 class="mb-2 font-bold text-blue-700 dark:text-white">
-                                            {{ $jmlGamis }}
-                                        </h5>
-                                    </div>
-                                </div>
-                                <div class="basis-1/3 px-3 text-right">
-                                    <div class="rounded-circle inline-block h-12 w-12 bg-gradient-to-tl from-blue-500 to-violet-500 text-center">
-                                        <i class="ri-parent-fill relative top-3 text-2xl leading-none text-white"></i>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

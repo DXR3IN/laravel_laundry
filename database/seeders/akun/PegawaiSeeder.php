@@ -51,39 +51,5 @@ class PegawaiSeeder extends Seeder
             'alamat' => 'Kelurahan Simokerto, Surabaya',
             'user_id' => $pegawai_laundry4->id,
         ]);
-
-        //? Cabang 2
-        $pegawai_laundry2 = User::factory()->create([
-            'username' => 'Pegawai Laundry 2',
-            'email' => 'pegawai2@gmail.com',
-            'cabang_id' => $cabang2->id,
-        ]);
-        $pegawai_laundry2->assignRole($rolePegawai);
-        PegawaiLaundry::create([
-            'nama' => 'Pegawai Laundry 2',
-            'jenis_kelamin' => 'P',
-            'tempat_lahir' => 'Surabaya',
-            'tanggal_lahir' => '1998-01-01',
-            'telepon' => '082234567892',
-            'alamat' => 'Kelurahan Simokerto, Surabaya',
-            'user_id' => $pegawai_laundry2->id,
-        ]);
-
-        $pegawai_laundry3 = User::factory()->create([
-            'username' => 'Pegawai Laundry 3',
-            'email' => 'pegawai3@gmail.com',
-            'cabang_id' => $cabang2->id,
-            'deleted_at' => Carbon::now(),
-        ]);
-        $pegawai_laundry3->assignRole($rolePegawai);
-        PegawaiLaundry::create([
-            'nama' => 'Pegawai Laundry 3',
-            'jenis_kelamin' => 'P',
-            'tempat_lahir' => 'Surabaya',
-            'tanggal_lahir' => '1998-01-01',
-            'telepon' => '082234567892',
-            'alamat' => 'Kelurahan Simokerto, Surabaya',
-            'user_id' => $pegawai_laundry3->id,
-        ]);
     }
 }

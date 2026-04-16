@@ -51,7 +51,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function getSlugOptions() : SlugOptions
+    public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('username')
@@ -86,10 +86,5 @@ class User extends Authenticatable
     public function rw()
     {
         return $this->hasMany(RW::class);
-    }
-
-    public function gamis()
-    {
-        return $this->hasMany(DetailGamis::class);
     }
 }

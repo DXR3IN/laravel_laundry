@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\layanan;
 
 use App\Models\Cabang;
 use App\Models\JenisCucian;
@@ -39,6 +39,14 @@ class JenisCucianSeeder extends Seeder
         $this->createSeeder(
             'Sepatu Berwarna',
             'sepatu berwarna-warna',
+            $cabang->id,
+            $cabang->lokasi,
+            $cabang->alamat
+        );
+
+        $this->createSeeder(
+            'Pakaian Sehari-hari',
+            'ya itu',
             $cabang->id,
             $cabang->lokasi,
             $cabang->alamat

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->double('harga');
             $table->string('jenis_satuan');
+            $table->foreignId('prioritas_id')->constrained('layanan_prioritas', 'id');
             $table->foreignId('jenis_layanan_id')->constrained('jenis_layanan', 'id');
             $table->foreignId('jenis_cucian_id')->constrained('jenis_cucian', 'id');
             $table->foreignId('cabang_id')->constrained('cabang', 'id');

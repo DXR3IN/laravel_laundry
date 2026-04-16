@@ -17,6 +17,7 @@ class HargaJenisLayanan extends Model
     protected $fillable = [
         'harga',
         'jenis_satuan',
+        'prioritas_id',
         'jenis_layanan_id',
         'jenis_cucian_id',
         'cabang_id',

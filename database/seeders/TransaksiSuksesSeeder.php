@@ -17,42 +17,42 @@ class TransaksiSuksesSeeder extends Seeder
     public function run(): void
     {
         $jumlah = 10;
-        $jmlTransaksiSukses = [10,15,20,33,20,10,10,25,30,15,20,12];
+        $jmlTransaksiSukses = [10, 15, 20, 33, 20, 10, 10, 25, 30, 15, 20, 12];
 
         for ($j = 1; $j <= 12; $j++) {
-            $tanggalAwal = '2024-'.$j.'-02';
-            $tanggalAkhir = '2024-'.$j.'-30';
-            for ($i = 1; $i <= $jmlTransaksiSukses[$j-1]; $i++) {
+            $tanggalAwal = '2024-' . $j . '-02';
+            $tanggalAkhir = '2024-' . $j . '-30';
+            for ($i = 1; $i <= $jmlTransaksiSukses[$j - 1]; $i++) {
                 $this->createTransaksiReguler(
                     fake()->numberBetween(1, $jumlah),
-                    fake()->randomElement([1,2]),
+                    fake()->randomElement([1, 2]),
                     fake()->randomElement(['Selesai']),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
                 );
             }
-            for ($i = 1; $i <= $jmlTransaksiSukses[$j-1]; $i++) {
+            for ($i = 1; $i <= $jmlTransaksiSukses[$j - 1]; $i++) {
                 $this->createTransaksiKilat(
                     fake()->numberBetween(1, $jumlah),
-                    fake()->randomElement([1,2]),
+                    fake()->randomElement([1, 2]),
                     fake()->randomElement(['Selesai']),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
                 );
             }
-            for ($i = 1; $i <= $jmlTransaksiSukses[$j-1]; $i++) {
+            for ($i = 1; $i <= $jmlTransaksiSukses[$j - 1]; $i++) {
                 $this->createTransaksiCahaya(
                     fake()->numberBetween(1, $jumlah),
-                    fake()->randomElement([1,2]),
+                    fake()->randomElement([1, 2]),
                     fake()->randomElement(['Selesai']),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
                 );
             }
-            for ($i = 1; $i <= $jmlTransaksiSukses[$j-1]; $i++) {
+            for ($i = 1; $i <= $jmlTransaksiSukses[$j - 1]; $i++) {
                 $this->createTransaksiRegulerTambahan(
                     fake()->numberBetween(1, $jumlah),
-                    fake()->randomElement([1,2]),
+                    fake()->randomElement([1, 2]),
                     fake()->randomElement(['Selesai']),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')->format('dmY'),
                     fake()->dateTimeBetween($tanggalAwal, $tanggalAkhir, 'Asia/Jakarta')
@@ -61,7 +61,7 @@ class TransaksiSuksesSeeder extends Seeder
         }
     }
 
-    public function createTransaksiReguler($pelanggan, $gamis, $status, $tanggalNota, $tanggal)
+    public function createTransaksiReguler($pelanggan, $status, $tanggalNota, $tanggal)
     {
         $nota1 = Carbon::now()->format('His') . '-' . $tanggalNota . '-' . str()->uuid();
         $transaksi = Transaksi::create([
@@ -79,7 +79,6 @@ class TransaksiSuksesSeeder extends Seeder
             'layanan_prioritas_id' => 1,
             'pelanggan_id' => $pelanggan,
             'pegawai_id' => 7,
-            'gamis_id' => $gamis,
             'cabang_id' => 1,
         ]);
 
@@ -116,7 +115,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
     }
 
-    public function createTransaksiKilat($pelanggan, $gamis, $status, $tanggalNota, $tanggal)
+    public function createTransaksiKilat($pelanggan, $status, $tanggalNota, $tanggal)
     {
         $nota1 = Carbon::now()->format('His') . '-' . $tanggalNota . '-' . str()->uuid();
         $transaksi = Transaksi::create([
@@ -134,7 +133,6 @@ class TransaksiSuksesSeeder extends Seeder
             'layanan_prioritas_id' => 2,
             'pelanggan_id' => $pelanggan,
             'pegawai_id' => 7,
-            'gamis_id' => $gamis,
             'cabang_id' => 1,
         ]);
 
@@ -171,7 +169,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
     }
 
-    public function createTransaksiCahaya($pelanggan, $gamis, $status, $tanggalNota, $tanggal)
+    public function createTransaksiCahaya($pelanggan, $status, $tanggalNota, $tanggal)
     {
         $nota1 = Carbon::now()->format('His') . '-' . $tanggalNota . '-' . str()->uuid();
         $transaksi = Transaksi::create([
@@ -189,7 +187,6 @@ class TransaksiSuksesSeeder extends Seeder
             'layanan_prioritas_id' => 3,
             'pelanggan_id' => $pelanggan,
             'pegawai_id' => 7,
-            'gamis_id' => $gamis,
             'cabang_id' => 1,
         ]);
 
@@ -226,7 +223,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
     }
 
-    public function createTransaksiRegulerTambahan($pelanggan, $gamis, $status, $tanggalNota, $tanggal)
+    public function createTransaksiRegulerTambahan($pelanggan, $status, $tanggalNota, $tanggal)
     {
         $nota1 = Carbon::now()->format('His') . '-' . $tanggalNota . '-' . str()->uuid();
         $transaksi = Transaksi::create([
@@ -244,7 +241,6 @@ class TransaksiSuksesSeeder extends Seeder
             'layanan_prioritas_id' => 1,
             'pelanggan_id' => $pelanggan,
             'pegawai_id' => 7,
-            'gamis_id' => $gamis,
             'cabang_id' => 1,
         ]);
 

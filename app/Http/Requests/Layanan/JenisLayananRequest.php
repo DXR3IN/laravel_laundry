@@ -24,7 +24,6 @@ class JenisLayananRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable',
-            'for_gamis' => 'required|boolean',
         ];
     }
 

@@ -15,48 +15,24 @@ class LayananPrioritasSeeder extends Seeder
     public function run(): void
     {
         $cabang = Cabang::where('id', 1)->first();
-        $cabang2 = Cabang::where('id', 2)->onlyTrashed()->first();
 
         //? Cabang 1
         LayananPrioritas::create([
             'nama' => 'Reguler',
-            'harga' => 0,
             'prioritas' => 1,
             'cabang_id' => $cabang->id,
         ]);
+
         LayananPrioritas::create([
-            'nama' => 'Kilat',
-            'harga' => 1500,
+            'nama' => 'Express',
             'prioritas' => 2,
             'cabang_id' => $cabang->id,
         ]);
+
         LayananPrioritas::create([
-            'nama' => 'Cahaya',
-            'harga' => 2000,
+            'nama' => 'Kilat',
             'prioritas' => 3,
             'cabang_id' => $cabang->id,
-        ]);
-        LayananPrioritas::create([
-            'nama' => 'Raja Ratu',
-            'harga' => 10000,
-            'prioritas' => 99,
-            'cabang_id' => $cabang->id,
-            'deleted_at' => Carbon::now(),
-        ]);
-
-        //? Cabang 2
-        LayananPrioritas::create([
-            'nama' => 'Reguler',
-            'harga' => 0,
-            'prioritas' => 1,
-            'cabang_id' => $cabang2->id,
-        ]);
-        LayananPrioritas::create([
-            'nama' => 'Raja Ratu',
-            'harga' => 10000,
-            'prioritas' => 99,
-            'cabang_id' => $cabang2->id,
-            'deleted_at' => Carbon::now(),
         ]);
     }
 }

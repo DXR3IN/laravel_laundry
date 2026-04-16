@@ -755,31 +755,6 @@
                                 </div>
                                 <textarea name="deskripsi" class="textarea textarea-bordered w-full text-base text-blue-500" readonly></textarea>
                             </label>
-                            <div class="mt-3 w-full max-w-md">
-                                <div class="label">
-                                    <span class="label-text font-semibold">Untuk Gamis</span>
-                                    <span class="label-text-alt" id="loading_edit3"></span>
-                                </div>
-                                <div class="rounded-lg border border-slate-300 px-3 py-2">
-                                    <div class="form-control">
-                                        <label class="label cursor-pointer">
-                                            <span class="label-text text-blue-700">Iya</span>
-                                            <input type="radio" value="1" name="for_gamis" class="radio-primary radio" disabled />
-                                        </label>
-                                    </div>
-                                    <div class="form-control">
-                                        <label class="label cursor-pointer">
-                                            <span class="label-text text-blue-700">Tidak</span>
-                                            <input type="radio" value="0" name="for_gamis" class="radio-primary radio" disabled />
-                                        </label>
-                                    </div>
-                                </div>
-                                @error("for_gamis")
-                                    <div class="label">
-                                        <span class="label-text-alt text-sm text-error">{{ $message }}</span>
-                                    </div>
-                                @enderror
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -799,9 +774,6 @@
                                             Nama Layanan
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Untuk Gamis
-                                        </th>
-                                        <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Created_at
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
@@ -819,13 +791,6 @@
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                     {{ $item->nama }}
                                                 </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                @if ($item->for_gamis)
-                                                    <div class="badge badge-success text-white">Iya</div>
-                                                @else
-                                                    <div class="badge badge-error text-white">Tidak</div>
-                                                @endif
                                             </td>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">

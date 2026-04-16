@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Exports\UserExport;
 use App\Imports\UserImport;
 use App\Models\Cabang;
-use App\Models\DetailGamis;
-use App\Models\Gamis;
 use App\Models\Lurah;
 use App\Models\ManajerLaundry;
 use App\Models\PegawaiLaundry;
@@ -32,35 +30,7 @@ class UserController extends Controller
         $cabang = Cabang::get();
         $role = Role::get();
 
-        if ($userRole == 'lurah' || $userRole == 'pic') {
-            $manajer = ManajerLaundry::query()
-                ->join('users as u', 'manajer_laundry.user_id', '=', 'u.id')
-                ->join('cabang as c', 'c.id', '=', 'u.cabang_id')
-                ->select('manajer_laundry.*', 'u.*', 'c.nama as nama_cabang')
-                ->where('u.deleted_at', null)
-                ->orderBy('manajer_laundry.created_at', 'asc')->get();
-
-            $pegawai = PegawaiLaundry::query()
-                ->join('users as u', 'pegawai_laundry.user_id', '=', 'u.id')
-                ->join('cabang as c', 'c.id', '=', 'u.cabang_id')
-                ->select('pegawai_laundry.*', 'u.*', 'c.nama as nama_cabang')
-                ->where('u.deleted_at', null)
-                ->orderBy('pegawai_laundry.created_at', 'asc')->get();
-
-            $gamis = DetailGamis::query()
-                ->join('users as u', 'detail_gamis.user_id', '=', 'u.id')
-                ->join('cabang as c', 'c.id', '=', 'u.cabang_id')
-                ->select('detail_gamis.*', 'u.*', 'c.nama as nama_cabang')
-                ->where('u.deleted_at', null)
-                ->orderBy('detail_gamis.created_at', 'asc')->get();
-
-            $manajerTrash = User::join('manajer_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
-            $pegawaiTrash = User::join('pegawai_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
-            $gamisTrash = User::join('detail_gamis as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
-
-            return view('dashboard.user.index', compact('title', 'cabang', 'role', 'manajer', 'pegawai', 'gamis', 'manajerTrash', 'pegawaiTrash', 'gamisTrash'));
-
-        } elseif ($userRole == 'manajer_laundry') {
+        if ($userRole == 'manajer_laundry') {
             $cabangId = auth()->user()->cabang_id;
             $pegawai = PegawaiLaundry::query()
                 ->join('users as u', 'pegawai_laundry.user_id', '=', 'u.id')
@@ -70,18 +40,10 @@ class UserController extends Controller
                 ->where('u.deleted_at', null)
                 ->orderBy('pegawai_laundry.created_at', 'asc')->get();
 
-            $gamis = DetailGamis::query()
-                ->join('users as u', 'detail_gamis.user_id', '=', 'u.id')
-                ->join('cabang as c', 'c.id', '=', 'u.cabang_id')
-                ->select('detail_gamis.*', 'u.*', 'c.nama as nama_cabang')
-                ->where('u.cabang_id', $cabangId)
-                ->where('u.deleted_at', null)
-                ->orderBy('detail_gamis.created_at', 'asc')->get();
 
             $pegawaiTrash = User::join('pegawai_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->where('users.cabang_id', $cabangId)->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
-            $gamisTrash = User::join('detail_gamis as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->where('users.cabang_id', $cabangId)->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
 
-            return view('dashboard.user.index', compact('title', 'cabang', 'role', 'pegawai', 'gamis', 'pegawaiTrash', 'gamisTrash'));
+            return view('dashboard.user.index', compact('title', 'cabang', 'role', 'pegawai', 'pegawaiTrash'));
         }
     }
 
@@ -92,22 +54,14 @@ class UserController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         $user = User::where('slug', $request->user)->first();
 
-        if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'lurah' && $userRole != 'pic') {
-            abort(404, 'USER TIDAK DITEMUKAN.');
-        } else if ($user->slug == auth()->user()->slug ) {
+        if ($user->slug == auth()->user()->slug) {
             return to_route('profile', $user->slug);
         }
 
-        if ($user->getRoleNames()[0] == 'lurah') {
-            $profile = Lurah::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'rw') {
-            $profile = RW::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
         } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'gamis') {
-            $profile = DetailGamis::where('user_id', $user->id)->first();
         }
 
         return view('dashboard.user.lihat', compact('title', 'user', 'profile', 'trash'));
@@ -118,47 +72,44 @@ class UserController extends Controller
         $title = "Tambah User";
         $userRole = auth()->user()->roles[0]->name;
 
-        if ($userRole == 'lurah') {
-            abort(403, 'USER DOES NOT HAVE PERMISSION.');
-        }
-
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->withTrashed()->first();
         if ($cabang && $cabang->deleted_at) {
             abort(403, 'USER DOES NOT HAVE PERMISSION.');
         }
 
-        $kkGamis = Gamis::get();
         $isCabang = [false];
 
-        if ($userRole == 'pic') {
-            $role = Role::where('name', '!=', 'lurah')->where('name', '!=', 'rw')->where('name', '!=', 'pic')->get();
-            $cabang = Cabang::where('deleted_at', null)->get();
-        } else if ($userRole == 'manajer_laundry') {
-            $role = Role::where('name', '!=', 'lurah')->where('name', '!=', 'manajer_laundry')->where('name', '!=', 'rw')->where('name', '!=', 'pic')->get();
-            $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
+        if ($userRole != 'manajer_laundry') {
+            abort(403, 'USER DOES NOT HAVE PERMISSION.');
         }
-        return view('dashboard.user.tambah', compact('title', 'cabang', 'role', 'kkGamis', 'isCabang'));
+        $role = Role::where('name', '!=', 'manajer_laundry')->get();
+        $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
+        return view('dashboard.user.tambah', compact('title', 'cabang', 'role', 'isCabang'));
     }
 
     public function store(Request $request)
     {
-        $validatorUser = Validator::make($request->all(), [
-            'username' => 'required|string|max:255',
-            'email' => 'required|email|unique:App\Models\User,email',
-            'password' => 'required|confirmed',
-            'cabang_id' => 'nullable|integer',
-        ],
-        [
-            'required' => ':attribute harus diisi.',
-            'unique' => ':attribute sudah ada, silakan isi yang lain.',
-            'max' => ':attribute tidak boleh lebih dari :max karakter.',
-            'integer' => ':attribute harus berupa angka.',
-            'confirmed' => 'Konfirmasi :attribute tidak sama.',
-        ]);
+        $validatorUser = Validator::make(
+            $request->all(),
+            [
+                'username' => 'required|string|max:255',
+                'email' => 'required|email|unique:App\Models\User,email',
+                'password' => 'required|confirmed',
+                'cabang_id' => 'nullable|integer',
+            ],
+            [
+                'required' => ':attribute harus diisi.',
+                'unique' => ':attribute sudah ada, silakan isi yang lain.',
+                'max' => ':attribute tidak boleh lebih dari :max karakter.',
+                'integer' => ':attribute harus berupa angka.',
+                'confirmed' => 'Konfirmasi :attribute tidak sama.',
+            ]
+        );
         $validatedUser = $validatorUser->validated();
 
-        if ($request->role == 'gamis') {
-            $validatorProfile = Validator::make($request->all(), [
+        $validatorProfile = Validator::make(
+            $request->all(),
+            [
                 'nama' => 'required|string|max:255',
                 'jenis_kelamin' => 'required|string|max:1|in:L,P',
                 'tempat_lahir' => 'required|string|max:255',
@@ -166,32 +117,15 @@ class UserController extends Controller
                 'telepon' => 'required|string|max:20',
                 'alamat' => 'required|string',
                 'mulai_kerja' => 'nullable|date',
-                'gamis_id' => 'required',
             ],
             [
                 'required' => ':attribute harus diisi.',
                 'max' => ':attribute tidak boleh lebih dari :max karakter.',
                 'date' => ':attribute harus berupa tanggal.',
-            ]);
-            $validatedProfile = $validatorProfile->validated();
+            ]
+        );
+        $validatedProfile = $validatorProfile->validated();
 
-        } else {
-            $validatorProfile = Validator::make($request->all(), [
-                'nama' => 'required|string|max:255',
-                'jenis_kelamin' => 'required|string|max:1|in:L,P',
-                'tempat_lahir' => 'required|string|max:255',
-                'tanggal_lahir' => 'required|date',
-                'telepon' => 'required|string|max:20',
-                'alamat' => 'required|string',
-                'mulai_kerja' => 'nullable|date',
-            ],
-            [
-                'required' => ':attribute harus diisi.',
-                'max' => ':attribute tidak boleh lebih dari :max karakter.',
-                'date' => ':attribute harus berupa tanggal.',
-            ]);
-            $validatedProfile = $validatorProfile->validated();
-        }
 
         $user = User::create($validatedUser);
         $user->assignRole($request->role);
@@ -203,9 +137,6 @@ class UserController extends Controller
                 break;
             case 'pegawai_laundry':
                 $profile = PegawaiLaundry::create($validatedProfile);
-                break;
-            case 'gamis':
-                $profile = DetailGamis::create($validatedProfile);
                 break;
         }
 
@@ -220,87 +151,59 @@ class UserController extends Controller
     {
         $title = "Ubah User";
         $userRole = auth()->user()->roles[0]->name;
-        $kkGamis = Gamis::get();
-
-        if ($userRole == 'lurah') {
-            abort(403, 'USER DOES NOT HAVE PERMISSION.');
-        }
 
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->withTrashed()->first();
         if ($cabang && $cabang->deleted_at) {
             abort(403, 'USER DOES NOT HAVE PERMISSION.');
         }
 
-        if ($userRole == 'pic') {
-            $role = Role::where('name', '!=', 'lurah')->where('name', '!=', 'rw')->where('name', '!=', 'pic')->get();
-            $cabang = Cabang::where('deleted_at', null)->get();
-        } else if ($userRole == 'manajer_laundry') {
-            $role = Role::where('name', '!=', 'lurah')->where('name', '!=', 'manajer_laundry')->where('name', '!=', 'rw')->where('name', '!=', 'pic')->get();
-            $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
+        if ($userRole != 'manajer_laundry') {
+            abort(403, 'USER DOES NOT HAVE PERMISSION.');
         }
+
+        $role = Role::where('name', '!=', 'manajer_laundry')->get();
+        $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
 
         $user = User::where('slug', $request->user)->first();
         if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'pic') {
             abort(404, 'USER TIDAK DITEMUKAN.');
-        } else if ($user->slug == auth()->user()->slug ) {
+        } else if ($user->slug == auth()->user()->slug) {
             return to_route('profile', $user->slug);
         }
 
-        if ($user->getRoleNames()[0] == 'lurah') {
-            $profile = Lurah::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'pic') {
-            $profile = PIC::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'rw') {
-            $profile = RW::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
         } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'gamis') {
-            $profile = DetailGamis::where('user_id', $user->id)->first();
         }
 
-        return view('dashboard.user.ubah', compact('title', 'cabang', 'role', 'kkGamis', 'user', 'profile'));
+        return view('dashboard.user.ubah', compact('title', 'cabang', 'role', 'user', 'profile'));
     }
 
     public function update(Request $request)
     {
         $user = User::where('slug', $request->user)->first();
-        $validatorUser = Validator::make($request->all(), [
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user)],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user)],
-            'cabang_id' => 'nullable|integer',
-        ],
-        [
-            'required' => ':attribute harus diisi.',
-            'unique' => ':attribute sudah ada, silakan isi yang lain.',
-            'max' => ':attribute tidak boleh lebih dari :max karakter.',
-            'integer' => ':attribute harus berupa angka.',
-        ]);
+        $validatorUser = Validator::make(
+            $request->all(),
+            [
+                'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user)],
+                'email' => ['required', 'email', Rule::unique('users')->ignore($user)],
+                'cabang_id' => 'nullable|integer',
+            ],
+            [
+                'required' => ':attribute harus diisi.',
+                'unique' => ':attribute sudah ada, silakan isi yang lain.',
+                'max' => ':attribute tidak boleh lebih dari :max karakter.',
+                'integer' => ':attribute harus berupa angka.',
+            ]
+        );
         $validatedUser = $validatorUser->validated();
         $validatedUser['slug'] = str()->slug($validatedUser['username']);
 
-        if ($request->role == 'gamis') {
-            $validatorProfile = Validator::make($request->all(), [
-                'nama' => 'required|string|max:255',
-                'jenis_kelamin' => 'required|string|max:1|in:L,P',
-                'tempat_lahir' => 'required|string|max:255',
-                'tanggal_lahir' => 'required|date',
-                'telepon' => 'required|string|max:20',
-                'alamat' => 'required|string',
-                'mulai_kerja' => 'nullable|date',
-                'selesai_kerja' => 'nullable|date',
-                'gamis_id' => 'required',
-            ],
-            [
-                'required' => ':attribute harus diisi.',
-                'max' => ':attribute tidak boleh lebih dari :max karakter.',
-                'date' => ':attribute harus berupa tanggal.',
-            ]);
-            $validatedProfile = $validatorProfile->validated();
 
-        } else {
-            $validatorProfile = Validator::make($request->all(), [
+        $validatorProfile = Validator::make(
+            $request->all(),
+            [
                 'nama' => 'required|string|max:255',
                 'jenis_kelamin' => 'required|string|max:1|in:L,P',
                 'tempat_lahir' => 'required|string|max:255',
@@ -314,9 +217,10 @@ class UserController extends Controller
                 'required' => ':attribute harus diisi.',
                 'max' => ':attribute tidak boleh lebih dari :max karakter.',
                 'date' => ':attribute harus berupa tanggal.',
-            ]);
-            $validatedProfile = $validatorProfile->validated();
-        }
+            ]
+        );
+        $validatedProfile = $validatorProfile->validated();
+
 
         $userUpdate = User::where('id', $user->id)->update($validatedUser);
         $user->removeRole($user->getRoleNames()[0]);
@@ -325,42 +229,19 @@ class UserController extends Controller
 
         switch ($request->role) {
             case 'manajer_laundry':
-                if (DetailGamis::where('user_id', $user->id)->first()) {
-                    DetailGamis::where('user_id', $user->id)->delete();
-                    $profileUpdate = ManajerLaundry::create($validatedProfile);
-
-                } elseif (PegawaiLaundry::where('user_id', $user->id)->first()) {
+                if (PegawaiLaundry::where('user_id', $user->id)->first()) {
                     PegawaiLaundry::where('user_id', $user->id)->delete();
                     $profileUpdate = ManajerLaundry::create($validatedProfile);
-
                 } else {
                     $profileUpdate = ManajerLaundry::where('user_id', $user->id)->update($validatedProfile);
                 }
                 break;
             case 'pegawai_laundry':
-                if (DetailGamis::where('user_id', $user->id)->first()) {
-                    DetailGamis::where('user_id', $user->id)->delete();
-                    $profileUpdate = PegawaiLaundry::create($validatedProfile);
-
-                } elseif (ManajerLaundry::where('user_id', $user->id)->first()) {
+                if (ManajerLaundry::where('user_id', $user->id)->first()) {
                     ManajerLaundry::where('user_id', $user->id)->delete();
                     $profileUpdate = PegawaiLaundry::create($validatedProfile);
-
                 } else {
                     $profileUpdate = PegawaiLaundry::where('user_id', $user->id)->update($validatedProfile);
-                }
-                break;
-            case 'gamis':
-                if (PegawaiLaundry::where('user_id', $user->id)->first()) {
-                    PegawaiLaundry::where('user_id', $user->id)->delete();
-                    $profileUpdate = DetailGamis::create($validatedProfile);
-
-                } elseif (ManajerLaundry::where('user_id', $user->id)->first()) {
-                    ManajerLaundry::where('user_id', $user->id)->delete();
-                    $profileUpdate = DetailGamis::create($validatedProfile);
-
-                } else {
-                    $profileUpdate = DetailGamis::where('user_id', $user->id)->update($validatedProfile);
                 }
                 break;
         }
@@ -377,10 +258,6 @@ class UserController extends Controller
         $title = "Ubah Password User";
         $userRole = auth()->user()->roles[0]->name;
 
-        if ($userRole == 'lurah') {
-            abort(403, 'USER DOES NOT HAVE PERMISSION.');
-        }
-
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->withTrashed()->first();
         if ($cabang && $cabang->deleted_at) {
             abort(403, 'USER DOES NOT HAVE PERMISSION.');
@@ -389,7 +266,7 @@ class UserController extends Controller
         $user = User::where('slug', $request->user)->first();
         if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'pic') {
             abort(404, 'USER TIDAK DITEMUKAN.');
-        } else if ($user->slug == auth()->user()->slug ) {
+        } else if ($user->slug == auth()->user()->slug) {
             return to_route('profile', $user->slug);
         }
         return view('dashboard.user.ubahPassword', compact('title', 'user'));
@@ -397,16 +274,19 @@ class UserController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $validated = $request->validateWithBag('updatePassword', [
-            // 'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
-        ],
-        [
-            'required' => ':attribute harus diisi.',
-            // 'current_password' => 'Password lama salah.',
-            'confirmed' => 'Konfirmasi :attribute tidak sama.',
-            'min' => 'minimal :min karakter.',
-        ]);
+        $validated = $request->validateWithBag(
+            'updatePassword',
+            [
+                // 'current_password' => ['required', 'current_password'],
+                'password' => ['required', Password::defaults(), 'confirmed'],
+            ],
+            [
+                'required' => ':attribute harus diisi.',
+                // 'current_password' => 'Password lama salah.',
+                'confirmed' => 'Konfirmasi :attribute tidak sama.',
+                'min' => 'minimal :min karakter.',
+            ]
+        );
 
         $updatePassword = User::where('slug', $request->slug)->update([
             'password' => Hash::make($validated['password']),
@@ -441,24 +321,16 @@ class UserController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         $user = User::where('slug', $request->user)->onlyTrashed()->first();
 
-        if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'lurah' && $userRole != 'pic') {
+        if ($user == null || $user->cabang_id != auth()->user()->cabang_id) {
             abort(404, 'USER TIDAK DITEMUKAN.');
-        } else if ($user->slug == auth()->user()->slug ) {
+        } else if ($user->slug == auth()->user()->slug) {
             return to_route('profile', $user->slug);
         }
 
-        if ($user->getRoleNames()[0] == 'lurah') {
-            $profile = Lurah::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'pic') {
-            $profile = PIC::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'rw') {
-            $profile = RW::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
         } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'gamis') {
-            $profile = DetailGamis::where('user_id', $user->id)->first();
         }
 
         return view('dashboard.user.lihat', compact('title', 'user', 'profile', 'trash'));
@@ -489,18 +361,10 @@ class UserController extends Controller
         $user = User::where('slug', $request->slug)->onlyTrashed()->first();
         $userRole = $user->roles[0]->name;
 
-        if ($userRole == 'lurah') {
-            $profile = Lurah::where('user_id', $user->id)->delete();
-        } else if ($userRole == 'pic') {
-            $profile = PIC::where('user_id', $user->id)->delete();
-        } else if ($userRole == 'rw') {
-            $profile = RW::where('user_id', $user->id)->delete();
-        } else if ($userRole == 'manajer_laundry') {
+        if ($userRole == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->delete();
         } else if ($userRole == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->delete();
-        } else if ($userRole == 'gamis') {
-            $profile = DetailGamis::where('user_id', $user->id)->delete();
         }
 
         $user->removeRole($userRole);
@@ -518,9 +382,6 @@ class UserController extends Controller
         $title = "Users Management";
 
         $userRole = auth()->user()->roles[0]->name;
-        if ($userRole != 'lurah' && $userRole != 'pic') {
-            abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
-        }
 
         $cabang = Cabang::where('slug', $request->cabang)->withTrashed()->first();
         if ($cabang == null || $cabang->deleted_at) {
@@ -532,33 +393,27 @@ class UserController extends Controller
 
         $manajer = ManajerLaundry::join('users as u', 'manajer_laundry.user_id', '=', 'u.id')->where('u.deleted_at', null)->where('u.cabang_id', $cabang->id)->orderBy('manajer_laundry.created_at', 'asc')->get();
         $pegawai = PegawaiLaundry::join('users as u', 'pegawai_laundry.user_id', '=', 'u.id')->where('u.deleted_at', null)->where('u.cabang_id', $cabang->id)->orderBy('pegawai_laundry.created_at', 'asc')->get();
-        $gamis = DetailGamis::join('users as u', 'detail_gamis.user_id', '=', 'u.id')->where('u.deleted_at', null)->where('u.cabang_id', $cabang->id)->orderBy('detail_gamis.created_at', 'asc')->get();
 
         $manajerTrash = User::join('manajer_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->where('users.cabang_id', $cabang->id)->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
         $pegawaiTrash = User::join('pegawai_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->where('users.cabang_id', $cabang->id)->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
-        $gamisTrash = User::join('detail_gamis as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->where('users.cabang_id', $cabang->id)->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
 
-        return view('dashboard.user.cabang.index-cabang', compact('title', 'cabang', 'role', 'manajer', 'pegawai', 'gamis', 'manajerTrash', 'pegawaiTrash', 'gamisTrash'));
+        return view('dashboard.user.cabang.index-cabang', compact('title', 'cabang', 'role', 'manajer', 'pegawai', 'manajerTrash', 'pegawaiTrash'));
     }
 
     public function createUserCabang(Request $request)
     {
         $userRole = auth()->user()->roles[0]->name;
-        if ($userRole != 'pic') {
-            abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
-        }
 
         $cabang = Cabang::where('deleted_at', null)->where('slug', $request->cabang)->get();
         if ($cabang->first() == null) {
             abort(404, 'CABANG TIDAK DITEMUKAN ATAU SUDAH DIHAPUS.');
         }
 
-        $kkGamis = Gamis::get();
         $role = Role::where('name', '!=', 'lurah')->where('name', '!=', 'rw')->where('name', '!=', 'pic')->get();
         $title = "Tambah User";
         $isCabang = [true, $cabang[0]->nama, $cabang[0]->id];
 
-        return view('dashboard.user.tambah', compact('title', 'cabang', 'role', 'kkGamis', 'isCabang'));
+        return view('dashboard.user.tambah', compact('title', 'cabang', 'role', 'isCabang'));
     }
 
     public function import(Request $request)
@@ -566,7 +421,7 @@ class UserController extends Controller
         try {
             Excel::import(new UserImport, $request->file('impor'));
             return to_route('user')->with('success', 'User Berhasil Ditambahkan');
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             Log::info($ex);
             return to_route('user')->with('error', 'User Gagal Ditambahkan');
         }
@@ -574,6 +429,6 @@ class UserController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new UserExport($request->cabang), 'Data Pegawai '.Carbon::now()->format('d-m-Y').'.xlsx');
+        return Excel::download(new UserExport($request->cabang), 'Data Pegawai ' . Carbon::now()->format('d-m-Y') . '.xlsx');
     }
 }
