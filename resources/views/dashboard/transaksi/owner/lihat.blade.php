@@ -46,19 +46,19 @@
                     </div>
                     <div>
                         @if ($isJadwal)
-                            <a href="{{ route("transaksi.lurah.cabang.jadwal", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                            <a href="{{ route("transaksi.owner.cabang.jadwal", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-arrow-left-line"></i>
                                 Kembali
                             </a>
                         @else
-                            <a href="{{ route("transaksi.lurah.cabang", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                            <a href="{{ route("transaksi.owner.cabang", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-arrow-left-line"></i>
                                 Kembali
                             </a>
                         @endif
                         @if (!$cabang->deleted_at)
                             @role(["manajer_laundry", "pegawai_laundry"])
-                                <a href="{{ route("transaksi.lurah.cabang.edit", ['cabang' => $cabang->slug, 'transaksi' => $transaksi->id, 'isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-yellow-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-yellow-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                                <a href="{{ route("transaksi.owner.cabang.edit", ['cabang' => $cabang->slug, 'transaksi' => $transaksi->id, 'isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-yellow-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-yellow-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                     <i class="ri-pencil-fill"></i>
                                     Ubah
                                 </a>
@@ -166,12 +166,6 @@
                                 @endif
                             />
                         </label>
-                        <label class="form-control w-full lg:w-1/2">
-                            <div class="label">
-                                <span class="label-text font-semibold dark:text-slate-100">Gamis</span>
-                            </div>
-                            <input type="text" name="gamis_id" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" value="{{ $transaksi->gamis_id ? $transaksi->gamis->nama : '-' }}" readonly />
-                        </label>
                     </div>
                 </div>
             </div>
@@ -256,7 +250,7 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <div>
-                                                <a href="{{ route("transaksi.lurah.view.layanan", ['cabang' => $cabang->slug, 'transaksi' => $item->transaksi_id, 'detailTransaksi' => $item->id]) }}" class="btn btn-outline btn-info btn-sm">
+                                                <a href="{{ route("transaksi.owner.view.layanan", ['cabang' => $cabang->slug, 'transaksi' => $item->transaksi_id, 'detailTransaksi' => $item->id]) }}" class="btn btn-outline btn-info btn-sm">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </a>
                                             </div>

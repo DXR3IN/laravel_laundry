@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\TransaksiSeeder;
 use Database\Seeders\akun\ManajerSeeder;
 use Database\Seeders\akun\PegawaiSeeder;
+use Database\Seeders\akun\OwnerLaundrySeeder;
 use Database\Seeders\layanan\JenisLayananSeeder;
 use Database\Seeders\layanan\JenisCucianSeeder;
 use Database\Seeders\layanan\LayananTambahanSeeder;
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
 
             //? Data Akun
             RoleSeeder::class,
+            OwnerLaundrySeeder::class,
             ManajerSeeder::class,
             PegawaiSeeder::class,
 

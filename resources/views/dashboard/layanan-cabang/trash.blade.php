@@ -1097,13 +1097,6 @@
                             </label>
                             <label class="form-control w-full">
                                 <div class="label">
-                                    <span class="label-text font-semibold">Harga</span>
-                                    <span class="label-text-alt" id="loading_edit4"></span>
-                                </div>
-                                <input type="number" name="harga" class="input input-bordered w-full text-blue-700" readonly />
-                            </label>
-                            <label class="form-control w-full">
-                                <div class="label">
                                     <span class="label-text font-semibold">Nilai Prioritas</span>
                                     <span class="label-text-alt" id="loading_edit5"></span>
                                 </div>
@@ -1128,9 +1121,6 @@
                                             Nama Layanan Prioritas
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Harga
-                                        </th>
-                                        <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Nilai Prioritas
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
@@ -1147,11 +1137,6 @@
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                     {{ $item->nama }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    Rp{{ number_format($item->harga, 2, ',', '.') }}
                                                 </p>
                                             </td>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">

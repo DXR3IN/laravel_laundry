@@ -23,20 +23,6 @@ use App\Http\Controllers\UMRController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/dashboard2', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController2::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController2::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController2::class, 'destroy'])->name('profile.destroy');
-// });
-
 Route::get('/', [LandingPageController::class, 'index'])->name('landing-page');
 Route::get('/nota', [LandingPageController::class, 'cekTransaksi'])->name('landing-page.nota');
 
@@ -64,7 +50,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'cabang',
-        'middleware' => ['role:lurah|pic'],
+        'middleware' => ['role:owner'],
     ], function () {
 
         Route::get('/', [CabangController::class, 'index'])->name('cabang');
@@ -80,7 +66,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'umr',
-        'middleware' => ['role:lurah|pic'],
+        'middleware' => ['role:owner'],
     ], function () {
 
         Route::get('/', [UMRController::class, 'index'])->name('umr');
@@ -92,29 +78,8 @@ Route::group([
     });
 
     Route::group([
-        'prefix' => 'user/rw',
-        'middleware' => ['role:lurah'],
-    ], function () {
-
-        Route::get('/', [RWController::class, 'index'])->name('rw');
-        Route::get('/tambah', [RWController::class, 'create'])->name('rw.create');
-        Route::post('/tambah', [RWController::class, 'store'])->name('rw.store');
-        Route::get('/lihat/{user:slug}', [RWController::class, 'view'])->name('rw.view');
-        Route::get('/ubah/{user:slug}', [RWController::class, 'edit'])->name('rw.edit');
-        Route::post('/ubah/{user:slug}', [RWController::class, 'update'])->name('rw.update');
-        Route::get('/ubah-password/{user:slug}', [RWController::class, 'editPassword'])->name('rw.edit.password');
-        Route::post('/ubah-password/{user:slug}', [RWController::class, 'updatePassword'])->name('rw.update.password');
-        Route::post('/hapus', [RWController::class, 'delete'])->name('rw.delete');
-        Route::get('/trash/{user:slug}', [RWController::class, 'trash'])->name('rw.trash');
-        Route::post('/pulihkan', [RWController::class, 'restore'])->name('rw.restore');
-        Route::post('/hapus-permanen', [RWController::class, 'destroy'])->name('rw.destroy');
-        Route::post('/impor', [RWController::class, 'import'])->name('rw.import');
-        Route::get('/ekspor', [RWController::class, 'export'])->name('rw.export');
-    });
-
-    Route::group([
         'prefix' => 'user',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/', [UserController::class, 'index'])->name('user');
@@ -137,7 +102,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'layanan-cabang',
-        'middleware' => ['role:lurah|pic'],
+        'middleware' => ['role:owner'],
     ], function () {
 
         Route::get('/', [LayananCabangController::class, 'index'])->name('layanan-cabang');
@@ -147,7 +112,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'jenis-layanan',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/', [JenisLayananController::class, 'index'])->name('jenis-layanan');
@@ -165,7 +130,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'jenis-cucian',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/', [JenisCucianController::class, 'index'])->name('jenis-cucian');
@@ -183,7 +148,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'harga-jenis-layanan',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/', [HargaJenisLayananController::class, 'index'])->name('harga-jenis-layanan');
@@ -201,7 +166,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'layanan-prioritas',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/', [LayananPrioritasController::class, 'index'])->name('layanan-prioritas');
@@ -219,7 +184,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'layanan-tambahan',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/', [LayananTambahanController::class, 'index'])->name('layanan-tambahan');
@@ -237,7 +202,7 @@ Route::group([
 
     Route::group([
         'prefix' => 'pelanggan',
-        'middleware' => ['role:lurah|manajer_laundry|pegawai_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|pegawai_laundry|owner'],
     ], function () {
 
         Route::get('/', [PelangganController::class, 'index'])->name('pelanggan');
@@ -252,31 +217,31 @@ Route::group([
 
     Route::group([
         'prefix' => 'transaksi',
-        'middleware' => ['role:lurah|manajer_laundry|pegawai_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|pegawai_laundry|owner'],
     ], function () {
 
         Route::group([
-            'prefix' => 'lurah',
-            'middleware' => ['role:lurah|pic'],
+            'prefix' => 'owner',
+            'middleware' => ['role:owner'],
         ], function () {
 
-            Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.lurah');
-            Route::get('/{cabang:slug}', [TransaksiController::class, 'indexCabang'])->name('transaksi.lurah.cabang');
-            Route::get('/{cabang:slug}/jadwal', [TransaksiController::class, 'indexCabangJadwal'])->name('transaksi.lurah.cabang.jadwal');
-            Route::get('/{cabang:slug}/lihat/{transaksi:id}', [TransaksiController::class, 'viewDetailTransaksi'])->name('transaksi.lurah.view');
-            Route::get('/{cabang:slug}/lihat/{transaksi:id}/layanan', [DetailLayananTransaksiController::class, 'viewDetailLayanan'])->name('transaksi.lurah.view.layanan');
-            Route::get('/{cabang:slug}/tambah', [TransaksiController::class, 'createTransaksiCabang'])->name('transaksi.lurah.cabang.create');
-            Route::post('/{cabang:slug}/tambah', [TransaksiController::class, 'storeTransaksiCabang'])->name('transaksi.lurah.cabang.store');
-            Route::get('/{cabang:slug}/ubah-jenis-pakaian', [TransaksiController::class, 'ubahJenisPakaian'])->name('transaksi.lurah.cabang.create.ubahJenisPakaian');
-            Route::get('/{cabang:slug}/ubah-jenis-layanan', [TransaksiController::class, 'ubahJenisLayanan'])->name('transaksi.lurah.cabang.create.ubahJenisLayanan');
-            Route::get('/{cabang:slug}/ubah-layanan-tambahan', [TransaksiController::class, 'ubahLayananTambahan'])->name('transaksi.lurah.cabang.create.ubahLayananTambahan');
-            Route::get('/{cabang:slug}/hitung-total-bayar', [TransaksiController::class, 'hitungTotalBayar'])->name('transaksi.lurah.cabang.create.hitungTotalBayar');
-            Route::get('/{cabang:slug}/ubah/{transaksi:id}', [TransaksiController::class, 'editTransaksiCabang'])->name('transaksi.lurah.cabang.edit');
-            Route::post('/{cabang:slug}/ubah/{transaksi:id}', [TransaksiController::class, 'updateTransaksiCabang'])->name('transaksi.lurah.cabang.update');
-            Route::get('/{cabang:slug}/ubah-status', [TransaksiController::class, 'editStatusTransaksiCabang'])->name('transaksi.lurah.cabang.edit.status');
-            Route::post('/{cabang:slug}/ubah-status', [TransaksiController::class, 'updateStatusTransaksiCabang'])->name('transaksi.lurah.cabang.update.status');
-            Route::post('/{cabang:slug}/hapus', [TransaksiController::class, 'deleteTransaksiCabang'])->name('transaksi.lurah.cabang.delete');
-            Route::post('/{cabang:slug}/konfirmasi-upah-gamis', [TransaksiController::class, 'konfirmasiUpah'])->name('transaksi.lurah.cabang.konfirmasiUpah');
+            Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.owner');
+            Route::get('/{cabang:slug}', [TransaksiController::class, 'indexCabang'])->name('transaksi.owner.cabang');
+            Route::get('/{cabang:slug}/jadwal', [TransaksiController::class, 'indexCabangJadwal'])->name('transaksi.owner.cabang.jadwal');
+            Route::get('/{cabang:slug}/lihat/{transaksi:id}', [TransaksiController::class, 'viewDetailTransaksi'])->name('transaksi.owner.view');
+            Route::get('/{cabang:slug}/lihat/{transaksi:id}/layanan', [DetailLayananTransaksiController::class, 'viewDetailLayanan'])->name('transaksi.owner.view.layanan');
+            Route::get('/{cabang:slug}/tambah', [TransaksiController::class, 'createTransaksiCabang'])->name('transaksi.owner.cabang.create');
+            Route::post('/{cabang:slug}/tambah', [TransaksiController::class, 'storeTransaksiCabang'])->name('transaksi.owner.cabang.store');
+            Route::get('/{cabang:slug}/ubah-jenis-pakaian', [TransaksiController::class, 'ubahJenisPakaian'])->name('transaksi.owner.cabang.create.ubahJenisPakaian');
+            Route::get('/{cabang:slug}/ubah-jenis-layanan', [TransaksiController::class, 'ubahJenisLayanan'])->name('transaksi.owner.cabang.create.ubahJenisLayanan');
+            Route::get('/{cabang:slug}/ubah-layanan-tambahan', [TransaksiController::class, 'ubahLayananTambahan'])->name('transaksi.owner.cabang.create.ubahLayananTambahan');
+            Route::get('/{cabang:slug}/hitung-total-bayar', [TransaksiController::class, 'hitungTotalBayar'])->name('transaksi.owner.cabang.create.hitungTotalBayar');
+            Route::get('/{cabang:slug}/ubah/{transaksi:id}', [TransaksiController::class, 'editTransaksiCabang'])->name('transaksi.owner.cabang.edit');
+            Route::post('/{cabang:slug}/ubah/{transaksi:id}', [TransaksiController::class, 'updateTransaksiCabang'])->name('transaksi.owner.cabang.update');
+            Route::get('/{cabang:slug}/ubah-status', [TransaksiController::class, 'editStatusTransaksiCabang'])->name('transaksi.owner.cabang.edit.status');
+            Route::post('/{cabang:slug}/ubah-status', [TransaksiController::class, 'updateStatusTransaksiCabang'])->name('transaksi.owner.cabang.update.status');
+            Route::post('/{cabang:slug}/hapus', [TransaksiController::class, 'deleteTransaksiCabang'])->name('transaksi.owner.cabang.delete');
+            Route::post('/{cabang:slug}/konfirmasi-upah-gamis', [TransaksiController::class, 'konfirmasiUpah'])->name('transaksi.owner.cabang.konfirmasiUpah');
         });
 
         Route::get('/', [TransaksiController::class, 'index'])->name('transaksi');
@@ -300,19 +265,8 @@ Route::group([
     });
 
     Route::group([
-        'prefix' => 'transaksi-gamis',
-        'middleware' => ['role:gamis'],
-    ], function () {
-
-        Route::get('/', [TransaksiController::class, 'transaksiGamisHarian'])->name('transaksi-gamis');
-        Route::get('/semua', [TransaksiController::class, 'transaksiGamisSemua'])->name('transaksi-gamis.semua');
-        Route::get('/lihat/{transaksi:id}', [TransaksiController::class, 'viewDetailTransaksiGamis'])->name('transaksi-gamis.view');
-        Route::get('/lihat/{transaksi:id}/layanan', [DetailLayananTransaksiController::class, 'viewDetailLayananGamis'])->name('transaksi-gamis.view.layanan');
-    });
-
-    Route::group([
         'prefix' => 'laporan',
-        'middleware' => ['role:lurah|manajer_laundry|pic'],
+        'middleware' => ['role:manajer_laundry|owner'],
     ], function () {
 
         Route::get('/pendapatan-laundry', [LaporanController::class, 'laporanPendapatanLaundry'])->name('laporan.pendapatan.laundry');

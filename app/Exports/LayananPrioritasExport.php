@@ -34,7 +34,6 @@ class LayananPrioritasExport implements FromCollection, WithHeadings, WithMappin
     {
         return [
             $data->nama,
-            $data->harga,
             $data->prioritas,
             $data->deskripsi,
             $data->slug,
@@ -45,7 +44,6 @@ class LayananPrioritasExport implements FromCollection, WithHeadings, WithMappin
     {
         return [
             'layanan_prioritas',
-            'harga',
             'prioritas',
             'deskripsi',
             'cabang',

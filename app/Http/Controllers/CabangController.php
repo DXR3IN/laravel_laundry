@@ -10,12 +10,12 @@ use Illuminate\Http\Request;
 
 class CabangController extends Controller
 {
-    // public function __construct()
-    // {
-    //     if (!auth()->user()->roles[0]->name == 'lurah' || !auth()->user()->roles[0]->name == 'pic') {
-    //         abort(403);
-    //     }
-    // }
+    public function __construct()
+    {
+        if (!auth()->user()->roles[0]->name == 'owner') {
+            abort(403);
+        }
+    }
 
     public function index()
     {

@@ -63,14 +63,14 @@ class User extends Authenticatable
         return 'slug';
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(OwnerLaundry::class);
+    }
+
     public function cabang()
     {
         return $this->belongsTo(Cabang::class);
-    }
-
-    public function lurah()
-    {
-        return $this->hasMany(Lurah::class);
     }
 
     public function manajer()
@@ -81,10 +81,5 @@ class User extends Authenticatable
     public function pegawai()
     {
         return $this->hasMany(PegawaiLaundry::class);
-    }
-
-    public function rw()
-    {
-        return $this->hasMany(RW::class);
     }
 }

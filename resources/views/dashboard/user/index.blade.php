@@ -490,59 +490,6 @@
                                             </td>
                                         </tr>
                                     @endforeach
-
-                                    @foreach ($gamis as $item)
-                                        <tr>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->nama }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->user->email }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->telepon }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->user->roles->pluck("name")->first() }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->nama_cabang ? $item->nama_cabang : '-' }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <div>
-                                                    <a href="{{ route("user.view", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
-                                                        <i class="ri-eye-line text-base"></i>
-                                                    </a>
-                                                    @role(["pic", "manajer_laundry"])
-                                                        <a href="{{ route("user.edit", $item->slug) }}" class="btn btn-outline btn-warning btn-sm">
-                                                            <i class="ri-pencil-fill text-base"></i>
-                                                        </a>
-                                                        <a href="{{ route("user.edit.password", $item->slug) }}" class="btn btn-outline tooltip btn-primary btn-sm" data-tip="Ganti Password">
-                                                            <i class="ri-lock-password-line text-base"></i>
-                                                        </a>
-                                                        <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->slug }}', '{{ $item->nama }}')">
-                                                            <i class="ri-delete-bin-line text-base"></i>
-                                                        </label>
-                                                    @endrole
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
                                 @endrole
                             </tbody>
                         </table>
@@ -640,56 +587,6 @@
                                         @endrole
 
                                         @foreach ($pegawaiTrash as $item)
-                                            <tr>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                        {{ $item->nama }}
-                                                    </p>
-                                                </td>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                        {{ $item->email }}
-                                                    </p>
-                                                </td>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                        {{ $item->telepon }}
-                                                    </p>
-                                                </td>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                        {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
-                                                    </p>
-                                                </td>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                        {{ Carbon\Carbon::parse($item->deleted_at)->translatedFormat("d F Y H:i:s") }}
-                                                    </p>
-                                                </td>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                        {{ $item->nama_cabang ? $item->nama_cabang : "-" }}
-                                                    </p>
-                                                </td>
-                                                <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                    <div>
-                                                        <a href="{{ route("user.trash", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
-                                                            <i class="ri-eye-line text-base"></i>
-                                                        </a>
-                                                        @role(["pic", "manajer_laundry"])
-                                                            <label for="restore_button" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button('{{ $item->slug }}', '{{ $item->nama }}')">
-                                                                <i class="ri-history-line text-base"></i>
-                                                            </label>
-                                                            <label for="destroy_button" class="btn btn-outline btn-error btn-sm" onclick="return destroy_button('{{ $item->slug }}', '{{ $item->nama }}')">
-                                                                Hapus Permanen
-                                                            </label>
-                                                        @endrole
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-                                        @foreach ($gamisTrash as $item)
                                             <tr>
                                                 <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                     <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">

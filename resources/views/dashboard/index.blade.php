@@ -15,7 +15,7 @@
             });
         });
 
-        @role(['lurah', 'manajer_laundry', 'pegawai_laundry', 'pic'])
+        @role(['manajer_laundry', 'pegawai_laundry', 'owner'])
             // Pendapatan Per Bulan
             if (document.querySelector("#chart-pendapatan-bulanan")) {
                 let bulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -204,7 +204,7 @@
             </div>
         </div>
 
-        @role(['manajer_laundry', 'pegawai_laundry'])
+        @role(['manajer_laundry', 'pegawai_laundry', 'owner'])
             <!-- row 1 -->
             <div class="-mx-3 mb-3 flex flex-wrap">
                 <!-- Jumlah Cabang -->

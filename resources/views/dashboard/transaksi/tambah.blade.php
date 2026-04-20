@@ -157,7 +157,38 @@
                 }
             });
         }
-        function ubahLayananTambahan(layananTambahanId, namaIdjenisLayanan, namaIdHargaJenisLayanan) {
+        
+        $(document).ready(function() {
+            
+            $('#radioTidakAda').on('change', function() {
+                if($(this).is(':checked')) {
+                    $('.cb-layanan-tambahan').prop('checked', false);
+                    
+                    $("input[name='total_biaya_layanan_tambahan']").val(0); 
+                    
+                    ubahLayananTambahan([]);
+                }
+            });
+
+            $('.cb-layanan-tambahan').on('change', function() {
+                
+                let checkedCount = $('.cb-layanan-tambahan:checked').length;
+
+                if (checkedCount > 0) {
+                    $('#radioTidakAda').prop('checked', false);
+                } else {
+                    $('#radioTidakAda').prop('checked', true);
+                }
+                let selectedValues = [];
+                $('.cb-layanan-tambahan:checked').each(function() {
+                    selectedValues.push($(this).val());
+                });
+                ubahLayananTambahan(selectedValues);
+            });
+
+        });
+iubah)
+        function ubahLayananTambahan(layananTambahanId) {
             $.ajax({
                 type: "get",
                 url: "{{ route('transaksi.create.ubahLayananTambahan', $cabang->slug) }}",
@@ -166,7 +197,6 @@
                     "layananTambahanId": layananTambahanId
                 },
                 success: function(data) {
-                    // console.log(data);
                     $("input[name='total_biaya_layanan_tambahan']").val(data);
                 }
             });
@@ -355,17 +385,29 @@
                                 @enderror
                             </label>
                             <div class="w-full flex flex-wrap justify-center gap-2 lg:flex-nowrap">
-                                <label class="form-control w-full">
+                                <div class="form-control w-full">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100">Layanan Tambahan</span>
                                     </div>
-                                    <select id="layananTambahan" name="layanan_tambahan_id[]" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" onchange="return ubahLayananTambahan($(this).val());" multiple>
-                                        <option disabled selected>Pilih Layanan Tambahan!</option>
+                                    
+                                    <div class="flex flex-col gap-2 rounded-lg border border-slate-200 p-4 dark:border-slate-700 dark:bg-slate-900/50">
+                                        
+                                        <label class="cursor-pointer flex items-center gap-3">
+                                            <input type="radio" id="radioTidakAda" name="status_layanan_tambahan" value="0" class="radio radio-primary radio-sm" checked />
+                                            <span class="label-text text-base text-blue-700 dark:text-slate-100">Tidak ada</span>
+                                        </label>
+
+                                        <div class="divider my-0 opacity-50"></div>
+
                                         @foreach ($layananTambahan as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                            <label class="cursor-pointer flex items-center gap-3">
+                                                <input type="checkbox" name="layanan_tambahan_id[]" value="{{ $item->id }}" class="checkbox checkbox-primary checkbox-sm cb-layanan-tambahan" />
+                                                <span class="label-text text-base text-blue-700 dark:text-slate-100">{{ $item->nama }}</span>
+                                            </label>
                                         @endforeach
-                                    </select>
-                                </label>
+
+                                    </div>
+                                </div>
                                 <label class="form-control w-full">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100">Total Biaya Layanan Tambahan</span>

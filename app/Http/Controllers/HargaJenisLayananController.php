@@ -37,14 +37,26 @@ class HargaJenisLayananController extends Controller
         $hargaJenisLayanan = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
             ->join('jenis_cucian as jp', 'harga_jenis_layanan.jenis_cucian_id', '=', 'jp.id')
+            ->join('layanan_prioritas as lp', 'harga_jenis_layanan.prioritas_id', '=', 'lp.id')
             ->where('harga_jenis_layanan.cabang_id', $userCabang)
-            ->select('harga_jenis_layanan.*', 'jl.nama as nama_layanan', 'jp.nama as nama_pakaian')
+            ->select(
+                'harga_jenis_layanan.*',
+                'jl.nama as nama_layanan',
+                'jp.nama as nama_pakaian',
+                'lp.nama as nama_prioritas'
+            )
             ->orderBy('jenis_cucian_id', 'asc')->orderBy('jenis_layanan_id', 'asc')->get();
         $hargaJenisLayananTrash = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
             ->join('jenis_cucian as jp', 'harga_jenis_layanan.jenis_cucian_id', '=', 'jp.id')
+            ->join('layanan_prioritas as lp', 'harga_jenis_layanan.prioritas_id', '=', 'lp.id')
             ->where('harga_jenis_layanan.cabang_id', $userCabang)
-            ->select('harga_jenis_layanan.*', 'jl.nama as nama_layanan', 'jp.nama as nama_pakaian')
+            ->select(
+                'harga_jenis_layanan.*',
+                'jl.nama as nama_layanan',
+                'jp.nama as nama_pakaian',
+                'lp.nama as nama_prioritas'
+            )
             ->onlyTrashed()->orderBy('harga_jenis_layanan.jenis_cucian_id', 'asc')->orderBy('harga_jenis_layanan.jenis_layanan_id', 'asc')->get();
 
         return view('dashboard.harga-jenis-layanan.index', compact('title', 'hargaJenisLayanan', 'hargaJenisLayananTrash', 'jenisLayanan', 'jenisPakaian', 'cabang', 'jenisSatuanLayanan'));
@@ -57,17 +69,13 @@ class HargaJenisLayananController extends Controller
 
         if ($userRole == 'manajer_laundry') {
             $validated['cabang_id'] = auth()->user()->cabang_id;
-        } else if ($userRole == 'pic') {
-            $cabang = Cabang::where('slug', $request->cabang_slug)->first();
-            $validated['cabang_id'] = $cabang->id;
         }
 
         if (HargaJenisLayanan::where('cabang_id', $validated['cabang_id'])->where('jenis_layanan_id', $validated['jenis_layanan_id'])->where('jenis_cucian_id', $validated['jenis_cucian_id'])->first()) {
             if ($userRole == 'manajer_laundry') {
                 return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Sudah Ada');
-            } else if ($userRole == 'pic') {
-                return back()->with('error', 'Harga Jenis Layanan Sudah Ada');
             }
+            return back()->with('error', 'Kamu tidak memiliki hak pada bagian ini');
         }
 
         $tambah = HargaJenisLayanan::create($validated);
@@ -78,13 +86,8 @@ class HargaJenisLayananController extends Controller
             } else {
                 return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
             }
-        } else if ($userRole == 'pic') {
-            if ($tambah) {
-                return back()->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
-            } else {
-                return back()->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
-            }
         }
+        return back()->with('error', 'Kamu tidak memiliki hak pada bagian ini');
     }
 
     public function show(Request $request)
@@ -135,7 +138,6 @@ class HargaJenisLayananController extends Controller
                         return back()->with('error', 'Harga Jenis Layanan Gagal Diperbarui');
                     }
                 }
-
             } else {
                 if ($userRole == 'manajer_laundry') {
                     return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Sudah Ada');
@@ -197,16 +199,12 @@ class HargaJenisLayananController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         try {
             Excel::import(new HargaJenisLayananImport, $request->file('impor'));
-            if ($userRole == 'pic') {
-                return to_route('layanan-cabang.cabang', $request->cabang)->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
-            } else if ($userRole == 'manajer_laundry') {
+            if ($userRole == 'manajer_laundry') {
                 return to_route('harga-jenis-layanan')->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
             }
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             Log::info($ex);
-            if ($userRole == 'pic') {
-                return to_route('layanan-cabang.cabang', $request->cabang)->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
-            } else if ($userRole == 'manajer_laundry') {
+            if ($userRole == 'manajer_laundry') {
                 return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
             }
         }
@@ -214,6 +212,6 @@ class HargaJenisLayananController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new HargaJenisLayananExport($request->cabang), 'Data Harga Jenis Layanan '.Carbon::now()->format('d-m-Y').'.xlsx');
+        return Excel::download(new HargaJenisLayananExport($request->cabang), 'Data Harga Jenis Layanan ' . Carbon::now()->format('d-m-Y') . '.xlsx');
     }
 }

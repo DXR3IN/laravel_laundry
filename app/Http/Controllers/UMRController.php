@@ -11,7 +11,7 @@ class UMRController extends Controller
 {
     public function __construct()
     {
-        if (!auth()->user()->roles[0]->name == 'lurah' || !auth()->user()->roles[0]->name == 'pic') {
+        if (!auth()->user()->roles[0]->name == 'owner') {
             abort(403);
         }
     }

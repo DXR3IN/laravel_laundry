@@ -20,20 +20,56 @@
         } else {
             document.documentElement.classList.remove('dark')
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.querySelector('aside');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (sidebar && overlay) {
+                // Pantau class pada sidebar untuk memicu overlay
+                const observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        if (mutation.attributeName === 'class') {
+                            // Cek apakah sidebar sedang tertutup di mode mobile
+                            const isClosed = sidebar.classList.contains('-translate-x-full');
+                            
+                            if (!isClosed) {
+                                // Munculkan kaca blur
+                                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                                overlay.classList.add('opacity-100', 'pointer-events-auto');
+                            } else {
+                                // Sembunyikan kaca blur
+                                overlay.classList.remove('opacity-100', 'pointer-events-auto');
+                                overlay.classList.add('opacity-0', 'pointer-events-none');
+                            }
+                        }
+                    });
+                });
+
+                // Jalankan pemantauan
+                observer.observe(sidebar, { attributes: true });
+
+                // Fitur ekstra: Tutup sidebar otomatis jika user mengklik area kaca blur
+                overlay.addEventListener('click', function () {
+                    const closeBtn = sidebar.querySelector('[sidenav-close]');
+                    if(closeBtn) closeBtn.click();
+                });
+            }
+        });
     </script>
 </head>
 
-<body class="leading-default m-0 h-full bg-gray-50 font-sans text-base font-normal text-slate-500 antialiased dark:bg-slate-900">
+<body class="leading-default m-0 min-h-screen bg-gray-50 font-sans text-base font-normal text-slate-500 antialiased dark:bg-slate-900">
     <div class="min-h-75 bg-y-50 min-h-75 absolute top-0 w-full bg-blue-500 bg-[url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/profile-layout-header.jpg')]">
         <span class="absolute left-0 top-0 h-full w-full bg-blue-500 opacity-60"></span>
     </div>
 
     @include('dashboard.layouts.sidebar')
 
-    <main class="xl:ml-68 relative h-full max-h-screen rounded-xl transition-all duration-200 ease-in-out">
+    <main class="xl:ml-64 relative min-h-screen rounded-xl transition-all duration-200 ease-in-out">
         @include('dashboard.layouts.navbar')
 
-        <div class="mx-auto w-full bg-gray-50 px-6 py-6 dark:bg-slate-900">
+        <div class="mx-auto w-full h-full bg-gray-50 px-6 py-6 dark:bg-slate-900">
             @yield('container')
             {{-- @include('dashboard.layouts.footer') --}}
         </div>

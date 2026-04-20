@@ -60,7 +60,6 @@ class HargaJenisLayananSeeder extends Seeder
             'jenis_layanan_id' => $jenisLayananCuciSepatu->id,
             'jenis_cucian_id' => $jenisCucian_SepatuH->id,
             'cabang_id' => $cabang->id,
-
         ]);
     }
 }

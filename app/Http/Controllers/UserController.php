@@ -7,6 +7,7 @@ use App\Imports\UserImport;
 use App\Models\Cabang;
 use App\Models\Lurah;
 use App\Models\ManajerLaundry;
+use App\Models\OwnerLaundry;
 use App\Models\PegawaiLaundry;
 use App\Models\PIC;
 use App\Models\RW;
@@ -30,7 +31,26 @@ class UserController extends Controller
         $cabang = Cabang::get();
         $role = Role::get();
 
-        if ($userRole == 'manajer_laundry') {
+        if ($userRole == 'owner') {
+            $manajer = ManajerLaundry::query()
+                ->join('users as u', 'manajer_laundry.user_id', '=', 'u.id')
+                ->join('cabang as c', 'c.id', '=', 'u.cabang_id')
+                ->select('manajer_laundry.*', 'u.*', 'c.nama as nama_cabang')
+                ->where('u.deleted_at', null)
+                ->orderBy('manajer_laundry.created_at', 'asc')->get();
+
+            $pegawai = PegawaiLaundry::query()
+                ->join('users as u', 'pegawai_laundry.user_id', '=', 'u.id')
+                ->join('cabang as c', 'c.id', '=', 'u.cabang_id')
+                ->select('pegawai_laundry.*', 'u.*', 'c.nama as nama_cabang')
+                ->where('u.deleted_at', null)
+                ->orderBy('pegawai_laundry.created_at', 'asc')->get();
+
+            $manajerTrash = User::join('manajer_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
+            $pegawaiTrash = User::join('pegawai_laundry as p', 'p.user_id', '=', 'users.id')->join('cabang as c', 'c.id', '=', 'users.cabang_id')->select('users.*', 'p.*', 'c.nama as nama_cabang')->onlyTrashed()->orderBy('p.created_at', 'asc')->get();
+
+            return view('dashboard.user.index', compact('title', 'cabang', 'role', 'manajer', 'pegawai', 'manajerTrash', 'pegawaiTrash'));
+        } elseif ($userRole == 'manajer_laundry') {
             $cabangId = auth()->user()->cabang_id;
             $pegawai = PegawaiLaundry::query()
                 ->join('users as u', 'pegawai_laundry.user_id', '=', 'u.id')
@@ -58,9 +78,11 @@ class UserController extends Controller
             return to_route('profile', $user->slug);
         }
 
-        if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'owner') {
+            $profile = OwnerLaundry::where('user_id', $user->id)->first();
+        } elseif ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
+        } elseif ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
         }
 
@@ -72,6 +94,10 @@ class UserController extends Controller
         $title = "Tambah User";
         $userRole = auth()->user()->roles[0]->name;
 
+        if ($userRole == 'pegawai_laundry') {
+            abort(403, 'USER DOES NOT HAVE PERMISSION.');
+        }
+
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->withTrashed()->first();
         if ($cabang && $cabang->deleted_at) {
             abort(403, 'USER DOES NOT HAVE PERMISSION.');
@@ -79,11 +105,13 @@ class UserController extends Controller
 
         $isCabang = [false];
 
-        if ($userRole != 'manajer_laundry') {
-            abort(403, 'USER DOES NOT HAVE PERMISSION.');
+        if ($userRole == 'owner') {
+            $role = Role::where('name', '!=', 'owner')->get();
+            $cabang = Cabang::where('deleted_at', null)->get();
+        } elseif ($userRole == 'manajer_laundry') {
+            $role = Role::where('name', '!=', 'manajer_laundry')->get();
+            $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
         }
-        $role = Role::where('name', '!=', 'manajer_laundry')->get();
-        $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
         return view('dashboard.user.tambah', compact('title', 'cabang', 'role', 'isCabang'));
     }
 
@@ -132,6 +160,9 @@ class UserController extends Controller
         $validatedProfile['user_id'] = $user->id;
 
         switch ($request->role) {
+            // case 'owner':
+            //     $profile = OwnerLaundry::create($validatedProfile);
+            //     break;
             case 'manajer_laundry':
                 $profile = ManajerLaundry::create($validatedProfile);
                 break;
@@ -152,17 +183,23 @@ class UserController extends Controller
         $title = "Ubah User";
         $userRole = auth()->user()->roles[0]->name;
 
+
+        if ($userRole == 'pegawai_laundry') {
+            abort(403, 'USER DOES NOT HAVE PERMISSION.');
+        }
+
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->withTrashed()->first();
         if ($cabang && $cabang->deleted_at) {
             abort(403, 'USER DOES NOT HAVE PERMISSION.');
         }
 
-        if ($userRole != 'manajer_laundry') {
-            abort(403, 'USER DOES NOT HAVE PERMISSION.');
+        if ($userRole == 'owner') {
+            $role = Role::where('name', '!=', 'owner')->get();
+            $cabang = Cabang::where('deleted_at', null)->get();
+        } elseif ($userRole == 'manajer_laundry') {
+            $role = Role::where('name', '!=', 'manajer_laundry')->get();
+            $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
         }
-
-        $role = Role::where('name', '!=', 'manajer_laundry')->get();
-        $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
 
         $user = User::where('slug', $request->user)->first();
         if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'pic') {
@@ -171,9 +208,11 @@ class UserController extends Controller
             return to_route('profile', $user->slug);
         }
 
-        if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'owner') {
+            $profile = OwnerLaundry::where('user_id', $user->id)->first();
+        } elseif ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
+        } elseif ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
         }
 
@@ -258,6 +297,10 @@ class UserController extends Controller
         $title = "Ubah Password User";
         $userRole = auth()->user()->roles[0]->name;
 
+        if ($userRole == 'pegawai_laundry') {
+            abort(403, 'USER DOES NOT HAVE PERMISSION.');
+        }
+
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->withTrashed()->first();
         if ($cabang && $cabang->deleted_at) {
             abort(403, 'USER DOES NOT HAVE PERMISSION.');
@@ -327,9 +370,11 @@ class UserController extends Controller
             return to_route('profile', $user->slug);
         }
 
-        if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'owner') {
+            $profile = OwnerLaundry::where('user_id', $user->id)->first();
+        } elseif ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
+        } elseif ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
         }
 
@@ -361,9 +406,11 @@ class UserController extends Controller
         $user = User::where('slug', $request->slug)->onlyTrashed()->first();
         $userRole = $user->roles[0]->name;
 
-        if ($userRole == 'manajer_laundry') {
+        if ($userRole == 'owner') {
+            $profile = OwnerLaundry::where('user_id', $user->id)->delete();
+        } elseif ($userRole == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->delete();
-        } else if ($userRole == 'pegawai_laundry') {
+        } elseif ($userRole == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->delete();
         }
 
@@ -382,6 +429,9 @@ class UserController extends Controller
         $title = "Users Management";
 
         $userRole = auth()->user()->roles[0]->name;
+        if ($userRole != 'owner') {
+            abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
+        }
 
         $cabang = Cabang::where('slug', $request->cabang)->withTrashed()->first();
         if ($cabang == null || $cabang->deleted_at) {
@@ -403,6 +453,9 @@ class UserController extends Controller
     public function createUserCabang(Request $request)
     {
         $userRole = auth()->user()->roles[0]->name;
+        if ($userRole != 'owner') {
+            abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
+        }
 
         $cabang = Cabang::where('deleted_at', null)->where('slug', $request->cabang)->get();
         if ($cabang->first() == null) {

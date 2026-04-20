@@ -11,7 +11,17 @@
                     },
                 },
                 order: [],
-                ordering: false,
+                pagingType: 'full_numbers',
+            });
+
+            $('#myTable1').DataTable({
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: 'tr',
+                    },
+                },
+                order: [],
                 pagingType: 'full_numbers',
             });
         });
@@ -131,12 +141,14 @@
                             <i class="ri-arrow-left-line"></i>
                             Kembali
                         </a>
-                        @role(["manajer_laundry", "pegawai_laundry"])
-                            <a href="{{ route("transaksi.lurah.cabang.create", ['cabang' => $cabang->slug, 'isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
-                                <i class="ri-add-fill"></i>
-                                Tambah
-                            </a>
-                        @endrole
+                        @if (!$cabang->deleted_at)
+                            @role(["manajer_laundry", "pegawai_laundry"])
+                                <a href="{{ route("transaksi.lurah.cabang.create", ['cabang' => $cabang->slug, 'isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                                    <i class="ri-add-fill"></i>
+                                    Tambah
+                                </a>
+                            @endrole
+                        @endif
                     </div>
                 </div>
                 <div class="flex-auto px-0 pb-2 pt-0">
@@ -160,9 +172,6 @@
                                         Pegawai
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Gamis
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Status
                                     </th>
                                     <th class="rounded-tr bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
@@ -171,7 +180,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($transaksi as $item)
+                                @foreach ($transaksi as $value => $item)
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
@@ -195,21 +204,11 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                @php
-                                                    $userRole = $item->pegawai->roles[0]->name;
-                                                @endphp
-                                                @if ($userRole == 'manajer_laundry')
-                                                    {{ $item->pegawai->manajer->first()->nama }}
-                                                @elseif ($userRole == 'pegawai_laundry')
-                                                    {{ $item->pegawai->pegawai->first()->nama }}
-                                                @elseif ($userRole == 'lurah')
-                                                    {{ $item->pegawai->lurah->first()->nama }}
+                                                @if ($item->pegawai->roles[0]->name == 'manajer_laundry')
+                                                    {{ $item->pegawai->manajer[0]->nama }}
+                                                @elseif ($item->pegawai->roles[0]->name == 'pegawai_laundry')
+                                                    {{ $item->pegawai->pegawai[0]->nama }}
                                                 @endif
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->gamis_id ? $item->gamis->nama : "-" }}
                                             </p>
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -222,17 +221,19 @@
                                                 <a href="{{ route("transaksi.lurah.view", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-info btn-sm">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </a>
-                                                @role(["manajer_laundry", "pegawai_laundry"])
-                                                    <a href="{{ route("transaksi.lurah.cabang.edit", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-warning btn-sm">
-                                                        <i class="ri-pencil-fill text-base"></i>
-                                                    </a>
-                                                    <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->id }}')">
-                                                        <i class="ri-delete-bin-line text-base"></i>
-                                                    </label>
-                                                    <label for="edit_status_button" class="btn btn-outline btn-primary tooltip btn-sm" data-tip="Ubah Status" onclick="return edit_status_button('{{ $item->id }}')">
-                                                        <i class="ri-draft-line text-base"></i>
-                                                    </label>
-                                                @endrole
+                                                @if (!$cabang->deleted_at)
+                                                    @role(["manajer_laundry", "pegawai_laundry"])
+                                                        <a href="{{ route("transaksi.lurah.cabang.edit", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-warning btn-sm">
+                                                            <i class="ri-pencil-fill text-base"></i>
+                                                        </a>
+                                                        <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->id }}')">
+                                                            <i class="ri-delete-bin-line text-base"></i>
+                                                        </label>
+                                                        <label for="edit_status_button" class="btn btn-outline btn-primary tooltip btn-sm" data-tip="Ubah Status" onclick="return edit_status_button('{{ $item->id }}')">
+                                                            <i class="ri-draft-line text-base"></i>
+                                                        </label>
+                                                    @endrole
+                                                @endif
                                                 <a href="{{ route("transaksi.cetak-struk", ['transaksi' => $item->id]) }}" target="_blank" class="btn btn-outline btn-ghost dark:border-white dark:text-white dark:bg-transparent dark:hover:bg-white dark:hover:text-slate-700 btn-sm tooltip" data-tip="Cetak Struk">
                                                     <i class="ri-receipt-line text-base"></i>
                                                 </a>

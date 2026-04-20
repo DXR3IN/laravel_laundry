@@ -30,9 +30,9 @@ class TransaksiController extends Controller
         $title = "Transaksi Layanan";
         $userRole = auth()->user()->roles[0]->name;
 
-        if ($userRole == 'lurah' || $userRole == 'pic') {
-            $cabang = Cabang::withTrashed()->orderBy('created_at', 'asc')->get();
-            return view('dashboard.transaksi.lurah.index', compact('title', 'cabang'));
+        if ($userRole == 'owner') {
+            $cabang = Cabang::withTrashed()->orderByy('created_at', 'asc')->get();
+            return view('dashboard.transaksi.owner.index', compact('title', 'cabang'));
         } else {
             $cabang = Cabang::withTrashed()->where('id', auth()->user()->cabang_id)->first();
             $isJadwal = false;
@@ -84,7 +84,6 @@ class TransaksiController extends Controller
 
                 $monitoring = [];
             }
-
             return view('dashboard.transaksi.index', compact('title', 'cabang', 'transaksi', 'monitoring', 'isJadwal', 'status'));
         }
     }

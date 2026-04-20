@@ -5,24 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PIC extends Model
+class OwnerLaundry extends Model
 {
     use HasFactory;
 
-    protected $table = 'pic';
+    protected $table = 'owner_laundry';
     protected $primaryKey = 'id';
-    public $incrementing = "true";
-    public $timestamps = "true";
+    public $timestamps = 'true';
     protected $fillable = [
-        'nama',
-        'foto',
-        'jenis_kelamin',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'telepon',
-        'alamat',
-        'mulai_jabatan',
-        'selesai_jabatan',
+        'name',
         'user_id',
     ];
 

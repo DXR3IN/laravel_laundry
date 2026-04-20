@@ -1,182 +1,175 @@
-<aside class="dark:bg-slate-850 max-w-64 ease-nav-brand z-990 fixed inset-y-0 my-4 block w-full -translate-x-full flex-wrap items-center justify-between overflow-y-auto rounded-2xl border-0 bg-white p-0 antialiased shadow-xl transition-transform duration-200 dark:shadow-none xl:left-0 xl:ml-6 xl:translate-x-0" aria-expanded="false">
-    <div class="h-19">
-        <i class="ri-close-large-fill absolute right-0 top-0 cursor-pointer p-4 text-slate-400 opacity-50 dark:text-white xl:hidden" sidenav-close></i>
-        <a class="m-0 block whitespace-nowrap px-8 py-6 text-sm text-slate-700 dark:text-white" href="{{ route("dashboard") }}">
-            <img src="{{ asset("img/logo-laundry-simokerto-noback.png") }}" class="ease-nav-brand inline h-full max-h-10 max-w-full transition-all duration-200 dark:hidden" alt="main_logo" />
-            <img src="{{ asset("img/logo-laundry-simokerto-noback.png") }}" class="ease-nav-brand hidden h-full max-h-10 max-w-full transition-all duration-200 dark:inline" alt="main_logo" />
-            <span class="ease-nav-brand ml-1 font-semibold transition-all duration-200">Laundry Lurah</span>
+<div id="sidebarOverlay" class="fixed inset-0 z-[980] bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none xl:hidden"></div>
+
+<aside class="dark:bg-slate-900 bg-white border-r border-slate-200 dark:border-slate-800 max-w-64 ease-nav-brand z-990 fixed inset-y-0 left-0 block w-full -translate-x-full flex-wrap items-center justify-between p-0 antialiased transition-transform duration-300 xl:translate-x-0" aria-expanded="false">
+    
+    <div class="h-20 flex items-center justify-between px-6">
+        <a class="m-0 flex items-center whitespace-nowrap text-sm text-slate-700 dark:text-white" href="{{ route("dashboard") }}">
+            <img src="{{ asset("img/logo-laundry-simokerto-noback.png") }}" class="ease-nav-brand h-9 max-w-full transition-all duration-200 dark:hidden" alt="main_logo" />
+            <img src="{{ asset("img/logo-laundry-simokerto-noback.png") }}" class="ease-nav-brand hidden h-9 max-w-full transition-all duration-200 dark:block" alt="main_logo" />
+            <span class="ease-nav-brand ml-3 font-bold tracking-wide transition-all duration-200">Laundry Lurah</span>
         </a>
+        <i class="ri-close-large-fill cursor-pointer text-xl text-slate-400 hover:text-red-500 transition-colors dark:text-slate-300 xl:hidden" sidenav-close></i>
     </div>
 
-    <hr class="mt-0 h-px bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent" />
+    <div class="mx-6 h-px bg-slate-200 dark:bg-slate-700/50 border-0"></div>
 
-    <div class="h-sidenav block max-h-screen w-auto grow basis-full items-center overflow-auto">
-        <ul class="mb-0 flex flex-col pl-0">
-            <li class="mt-0.5 w-full">
-                <a class="py-2.7 ease-nav-brand {{ Request::routeIs("dashboard") ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("dashboard") }}">
-                    <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                        <i class="ri-tv-2-line relative top-0 text-lg leading-normal text-blue-500"></i>
-                    </div>
-                    <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Dashboard</span>
+    <div class="h-sidenav block max-h-[calc(100vh-80px)] w-auto grow basis-full items-center overflow-y-auto overflow-x-hidden pb-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ul class="mb-0 flex flex-col pl-0 mt-4">
+            
+            <li class="w-full">
+                <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs("dashboard") ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("dashboard") }}">
+                    <i class="ri-tv-2-line text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs("dashboard") ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                    <span class="ml-3 pointer-events-none">Dashboard</span>
                 </a>
             </li>
 
-            @role(["manajer_laundry"])
-                {{-- Awal User Management --}}
-                <li class="mt-4 w-full">
-                    <h6 class="ml-2 pl-6 text-xs font-bold uppercase leading-tight opacity-60 dark:text-white">User Management</h6>
+            @role('owner')
+                <li class="mt-6 w-full">
+                    <h6 class="ml-8 text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">Data Master</h6>
                 </li>
 
-                <li class="mt-0.5 w-full">
-                    <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["user", "user.cabang", "user.cabang.create", "user.create", "user.view", "user.edit", "user.edit.password", "user.trash"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("user") }}">
-                        <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="ri-user-3-fill relative top-0 text-lg leading-normal text-blue-500"></i>
-                        </div>
-                        <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Akun</span>
+                <li class="mt-2 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["cabang"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("cabang") }}">
+                        <i class="ri-home-smile-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["cabang"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Cabang</span>
+                    </a>
+                </li>
+
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["umr"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("umr") }}">
+                        <i class="ri-currency-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["umr"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">UMR</span>
+                    </a>
+                </li>
+            @endrole
+
+            @role(["manajer_laundry", "owner"])
+                {{-- Awal User Management --}}
+                <li class="mt-6 w-full">
+                    <h6 class="ml-8 text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">User Management</h6>
+                </li>
+
+                <li class="mt-2 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["user", "user.cabang", "user.cabang.create", "user.create", "user.view", "user.edit", "user.edit.password", "user.trash"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("user") }}">
+                        <i class="ri-user-3-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["user", "user.cabang", "user.cabang.create", "user.create", "user.view", "user.edit", "user.edit.password", "user.trash"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Akun</span>
                     </a>
                 </li>
                 {{-- Akhir User Management --}}
 
                 {{-- Awal Layanan --}}
-                <li class="mt-4 w-full">
-                    <h6 class="ml-2 pl-6 text-xs font-bold uppercase leading-tight opacity-60 dark:text-white">Layanan</h6>
+                <li class="mt-6 w-full">
+                    <h6 class="ml-8 text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">Layanan</h6>
                 </li>
 
-                @role("manajer_laundry")
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["jenis-layanan"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("jenis-layanan") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-hand-heart-line relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Jenis Layanan</span>
-                        </a>
-                    </li>
+                <li class="mt-2 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["jenis-layanan"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("jenis-layanan") }}">
+                        <i class="ri-hand-heart-line text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["jenis-layanan"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Jenis Layanan</span>
+                    </a>
+                </li>
 
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["jenis-cucian"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("jenis-cucian") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-shirt-line relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Jenis Pakaian</span>
-                        </a>
-                    </li>
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["jenis-cucian"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("jenis-cucian") }}">
+                        <i class="ri-shirt-line text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["jenis-cucian"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Jenis Pakaian</span>
+                    </a>
+                </li>
 
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["harga-jenis-layanan"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("harga-jenis-layanan") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-price-tag-3-line relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Harga Jenis Layanan</span>
-                        </a>
-                    </li>
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["harga-jenis-layanan"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("harga-jenis-layanan") }}">
+                        <i class="ri-price-tag-3-line text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["harga-jenis-layanan"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Harga Jenis Layanan</span>
+                    </a>
+                </li>
 
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["layanan-prioritas"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("layanan-prioritas") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-customer-service-fill relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Layanan Prioritas</span>
-                        </a>
-                    </li>
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["layanan-prioritas"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("layanan-prioritas") }}">
+                        <i class="ri-customer-service-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["layanan-prioritas"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Layanan Prioritas</span>
+                    </a>
+                </li>
 
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["layanan-tambahan"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("layanan-tambahan") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-hand-heart-line relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Layanan Tambahan</span>
-                        </a>
-                    </li>
-                @endrole
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["layanan-tambahan"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("layanan-tambahan") }}">
+                        <i class="ri-hand-heart-line text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["layanan-tambahan"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Layanan Tambahan</span>
+                    </a>
+                </li>
                 {{-- Akhir Layanan --}}
             @endrole
 
             @role(["manajer_laundry", "pegawai_laundry"])
                 {{-- Awal Transaksi --}}
-                <li class="mt-4 w-full">
-                    <h6 class="ml-2 pl-6 text-xs font-bold uppercase leading-tight opacity-60 dark:text-white">Transaksi</h6>
+                <li class="mt-6 w-full">
+                    <h6 class="ml-8 text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">Transaksi</h6>
                 </li>
 
-                <li class="mt-0.5 w-full">
-                    <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["pelanggan", "pelanggan.cabang"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("pelanggan") }}">
-                        <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="ri-user-5-line relative top-0 text-lg leading-normal text-blue-500"></i>
-                        </div>
-                        <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Pelanggan</span>
+                <li class="mt-2 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["pelanggan", "pelanggan.cabang"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("pelanggan") }}">
+                        <i class="ri-user-5-line text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["pelanggan", "pelanggan.cabang"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Pelanggan</span>
                     </a>
                 </li>
 
-                @role(["manajer_laundry", "pegawai_laundry"])
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["transaksi", "transaksi", "transaksi.view", "transaksi.view.layanan", "transaksi.create", "transaksi.edit"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("transaksi") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-todo-fill relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Transaksi Layanan</span>
-                        </a>
-                    </li>
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["transaksi", "transaksi.view", "transaksi.view.layanan", "transaksi.create", "transaksi.edit"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("transaksi") }}">
+                        <i class="ri-todo-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["transaksi", "transaksi.view", "transaksi.view.layanan", "transaksi.create", "transaksi.edit"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Transaksi Layanan</span>
+                    </a>
+                </li>
 
-                    <li class="mt-0.5 w-full">
-                        <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["transaksi.jadwal"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("transaksi.jadwal") }}">
-                            <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                                <i class="ri-timeline-view relative top-0 text-lg leading-normal text-blue-500"></i>
-                            </div>
-                            <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Jadwal Layanan</span>
-                        </a>
-                    </li>
-                @endrole
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["transaksi.jadwal"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("transaksi.jadwal") }}">
+                        <i class="ri-timeline-view text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["transaksi.jadwal"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Jadwal Layanan</span>
+                    </a>
+                </li>
                 {{-- Akhir Transaksi --}}
             @endrole
 
-            @role(["manajer_laundry"])
+            @role(["manajer_laundry", "owner"])
                 {{-- Awal Laporan --}}
-                <li class="mt-4 w-full">
-                    <h6 class="ml-2 pl-6 text-xs font-bold uppercase leading-tight opacity-60 dark:text-white">Laporan</h6>
+                <li class="mt-6 w-full">
+                    <h6 class="ml-8 text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">Laporan</h6>
                 </li>
 
-                <li class="mt-0.5 w-full">
-                    <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["laporan.pendapatan.laundry"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("laporan.pendapatan.laundry") }}">
-                        <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="ri-book-fill relative top-0 text-lg leading-normal text-blue-500"></i>
-                        </div>
-                        <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Pendapatan Laundry</span>
+                <li class="mt-2 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["laporan.pendapatan.laundry"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("laporan.pendapatan.laundry") }}">
+                        <i class="ri-book-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["laporan.pendapatan.laundry"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Pendapatan Laundry</span>
                     </a>
                 </li>
-                <li class="mt-0.5 w-full">
-                    <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["laporan.pelanggan"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("laporan.pelanggan") }}">
-                        <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="ri-book-fill relative top-0 text-lg leading-normal text-blue-500"></i>
-                        </div>
-                        <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Pelanggan</span>
+                <li class="mt-1 w-full">
+                    <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["laporan.pelanggan"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("laporan.pelanggan") }}">
+                        <i class="ri-book-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["laporan.pelanggan"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                        <span class="ml-3 pointer-events-none">Pelanggan</span>
                     </a>
                 </li>
                 {{-- Akhir Laporan --}}
             @endrole
 
-            <li class="mt-4 w-full">
-                <h6 class="ml-2 pl-6 text-xs font-bold uppercase leading-tight opacity-60 dark:text-white">Pengaturan</h6>
+            <li class="mt-6 w-full">
+                <h6 class="ml-8 text-[11px] font-bold tracking-wider uppercase text-slate-400 dark:text-slate-500">Pengaturan</h6>
             </li>
 
-            <li class="mt-0.5 w-full">
-                <a class="py-2.7 ease-nav-brand {{ Request::routeIs(["profile", "profile.edit", "profile.edit.password"]) ? "rounded-lg font text-slate-700 bg-blue-500/10" : "" }} mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white" href="{{ route("profile", auth()->user()->slug) }}">
-                    <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                        <i class="ri-profile-fill relative top-0 text-lg leading-normal text-blue-500"></i>
-                    </div>
-                    <span class="ease pointer-events-none ml-1 opacity-100 duration-300">Profile</span>
+            <li class="mt-2 w-full">
+                <a class="group ease-nav-brand mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-300 {{ Request::routeIs(["profile", "profile.edit", "profile.edit.password"]) ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-white" }}" href="{{ route("profile", auth()->user()->slug) }}">
+                    <i class="ri-profile-fill text-lg transition-transform duration-300 group-hover:scale-110 {{ Request::routeIs(["profile", "profile.edit", "profile.edit.password"]) ? "text-blue-600 dark:text-blue-400" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300" }}"></i>
+                    <span class="ml-3 pointer-events-none">Profile</span>
                 </a>
             </li>
 
-            <li class="mt-0.5 w-full">
+            <li class="mt-1 w-full">
                 <form method="POST" action="{{ route("logout") }}" enctype="multipart/form-data">
                     @csrf
-                    <div class="py-2.7 ease-nav-brand mx-2 my-0 flex items-center whitespace-nowrap px-4 text-sm transition-colors hover:rounded-lg hover:bg-blue-500/10 dark:text-white">
-                        <div class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="ri-login-box-line relative top-0 text-lg leading-normal text-cyan-500"></i>
-                        </div>
-                        <button type="submit" class="ease ml-1 opacity-100 duration-300">Logout</button>
-                    </div>
+                    <button type="submit" class="group ease-nav-brand w-full mx-4 flex items-center rounded-xl px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 text-left cursor-pointer">
+                        <i class="ri-login-box-line text-lg text-slate-400 transition-transform duration-300 group-hover:scale-110 group-hover:text-red-600 dark:group-hover:text-red-400"></i>
+                        <span class="ml-3 pointer-events-none">Logout</span>
+                    </button>
                 </form>
             </li>
+            
         </ul>
     </div>
 </aside>

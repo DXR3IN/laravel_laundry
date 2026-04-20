@@ -63,46 +63,61 @@ class LaporanController extends Controller
         $title = "Laporan Pendapatan Laundry";
         $nama_cabang = null;
 
-        $tanggalAwal = $request->tanggalAwal ? $request->tanggalAwal : Carbon::now()->format('Y-') . Carbon::now()->format('m-') . '01';
-        $tanggalAkhir = $request->tanggalAkhir ? $request->tanggalAkhir : Carbon::now()->format('Y-m-d');
+        // Perbaikan format tanggal agar lebih clean
+        $tanggalAwal = $request->tanggalAwal ?: Carbon::now()->startOfMonth()->format('Y-m-d');
+        $tanggalAkhir = $request->tanggalAkhir ?: Carbon::now()->format('Y-m-d');
 
-        $transaksi = Transaksi::query()
-            ->with(['pegawai' => function ($query) {
-                $query->withTrashed();
-            }])
-            ->with(['pelanggan:id,nama', 'layananPrioritas'])
+        $query = Transaksi::query()
+            ->with(['pegawai' => fn($q) => $q->withTrashed(), 'pelanggan:id,nama', 'layananPrioritas'])
             ->join('detail_transaksi as dt', 'transaksi.id', '=', 'dt.transaksi_id')
             ->join('detail_layanan_transaksi as dlt', 'dt.id', '=', 'dlt.detail_transaksi_id')
             ->join('harga_jenis_layanan as hjl', 'hjl.id', '=', 'dlt.harga_jenis_layanan_id')
-            ->join('jenis_layanan as jl', 'jl.id', '=', 'hjl.jenis_layanan_id')
-            ->join('jenis_cucian as jp', 'jp.id', '=', 'hjl.jenis_cucian_id')
             ->join('cabang as c', 'c.id', '=', 'transaksi.cabang_id')
-            ->join('layanan_prioritas as lp', 'lp.id', '=', 'transaksi.layanan_prioritas_id')
-            ->select('transaksi.nota_layanan', DB::raw("DATE(transaksi.waktu) as tanggal"), 'transaksi.layanan_prioritas_id', 'transaksi.total_bayar_akhir', 'transaksi.pelanggan_id', 'transaksi.pegawai_id', DB::raw("SUM((dt.total_pakaian * hjl.harga)) as pendapatan_laundry"), 'c.nama as nama_cabang', 'c.id as cabang_id')
-            ->where(DB::raw("DATE(transaksi.waktu)"), '>=', $tanggalAwal)
-            ->where(DB::raw("DATE(transaksi.waktu)"), '<=', $tanggalAkhir)
-            ->where('transaksi.status', 'Selesai')
-            ->groupBy('transaksi.nota_layanan', DB::raw("DATE(transaksi.waktu)"), 'transaksi.layanan_prioritas_id', 'transaksi.total_bayar_akhir', 'transaksi.pelanggan_id', 'transaksi.pegawai_id', 'c.nama', 'c.id')
+            ->select(
+                'transaksi.nota_layanan',
+                DB::raw("DATE(transaksi.waktu) as tanggal"),
+                'transaksi.layanan_prioritas_id',
+                'transaksi.total_bayar_akhir',
+                'transaksi.pelanggan_id',
+                'transaksi.pegawai_id',
+                'c.nama as nama_cabang',
+                'c.id as cabang_id',
+                DB::raw("SUM(dt.total_pakaian * hjl.harga) as pendapatan_laundry")
+            )
+            ->whereBetween(DB::raw("DATE(transaksi.waktu)"), [$tanggalAwal, $tanggalAkhir])
+            ->where('transaksi.status', 'Selesai');
+
+        // Filter Cabang di level DATABASE (sebelum get)
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        if ($user->hasRole('manajer_laundry') || $user->hasRole('owner')) {
+            $cabangId = auth()->user()->cabang_id;
+            $query->where('transaksi.cabang_id', $cabangId);
+            $nama_cabang = Cabang::withTrashed()->find($cabangId);
+
+            if ($request->cabang_id && $request->cabang_id != $cabangId) {
+                abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
+            }
+        } elseif ($request->cabang_id) {
+            $query->where('transaksi.cabang_id', $request->cabang_id);
+            $nama_cabang = Cabang::withTrashed()->find($request->cabang_id);
+        }
+
+        $transaksi = $query->groupBy(
+            'transaksi.nota_layanan',
+            'transaksi.waktu',
+            'transaksi.layanan_prioritas_id',
+            'transaksi.total_bayar_akhir',
+            'transaksi.pelanggan_id',
+            'transaksi.pegawai_id',
+            'c.nama',
+            'c.id'
+        )
             ->orderBy('transaksi.waktu', 'asc')
             ->get();
 
-        if ($request->cabang_id) {
-            $transaksi = $transaksi->where('cabang_id', $request->cabang_id);
-            $nama_cabang = Cabang::withTrashed()->where('id', $request->cabang_id)->first();
-        }
-
-        if (auth()->user()->roles[0]->name == 'manajer_laundry') {
-            $cabangId = Cabang::withTrashed()->where('id', auth()->user()->cabang_id)->first();
-            $transaksi = $transaksi->where('cabang_id', $cabangId->id);
-            $nama_cabang = $cabangId;
-        }
-
-        if (auth()->user()->roles[0]->name == 'manajer_laundry' && $request->cabang_id) {
-            abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
-        }
-
-        $view = view()->share($title, $transaksi);
-        $pdf = Pdf::loadView('dashboard.laporan.pdf.pendapatan-laundry', [
+        // Render PDF
+        return Pdf::loadView('dashboard.laporan.pdf.pendapatan-laundry', [
             'judul' => $title,
             'judulTabel' => $title,
             'transaksi' => $transaksi,
@@ -110,11 +125,9 @@ class LaporanController extends Controller
             'tanggalAkhir' => $tanggalAkhir,
             'nama_cabang' => $nama_cabang,
             'footer' => $title
-        ])
-            ->setPaper('a4', 'landscape');
-        // return $pdf->download();
-        return $pdf->stream();
+        ])->setPaper('a4', 'landscape')->stream();
     }
+
     public function laporanPelanggan(Request $request)
     {
         $title = "Laporan Pelanggan";

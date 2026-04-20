@@ -136,7 +136,7 @@
         function ubahJenisPakaian(jenisPakaianId, namaIdjenisLayanan, namaIdHargaJenisLayanan) {
             $.ajax({
                 type: "get",
-                url: "{{ route('transaksi.lurah.cabang.create.ubahJenisPakaian', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.create.ubahJenisPakaian', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "jenisPakaianId": jenisPakaianId
@@ -158,7 +158,7 @@
         function ubahJenisLayanan(jenisPakaianId, jenisLayananId, namaIdHargaJenisLayanan) {
             $.ajax({
                 type: "get",
-                url: "{{ route('transaksi.lurah.cabang.create.ubahJenisLayanan', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.create.ubahJenisLayanan', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "jenisPakaianId": jenisPakaianId,
@@ -187,7 +187,7 @@
         function ubahLayananTambahan(layananTambahanId, namaIdjenisLayanan, namaIdHargaJenisLayanan) {
             $.ajax({
                 type: "get",
-                url: "{{ route('transaksi.lurah.cabang.create.ubahLayananTambahan', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.create.ubahLayananTambahan', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "layananTambahanId": layananTambahanId
@@ -202,7 +202,7 @@
         function totalBiaya(hargaLayanan, totalPakaian, layananPrioritas, layananTambahan) {
             $.ajax({
                 type: "get",
-                url: "{{ route('transaksi.lurah.cabang.create.hitungTotalBayar', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.create.hitungTotalBayar', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "hargaLayanan": hargaLayanan,
@@ -253,13 +253,6 @@
                 return $(this).val();
             }).get();
 
-            let gamis_id = "";
-            if ($("select[name='gamis_id']").val() == "null") {
-                gamis_id = null;
-            } else {
-                gamis_id = $("select[name='gamis_id']").val();
-            }
-
             let layananTambahan = [];
             layananTambahan = $('select[name="layanan_tambahan_id[]"]').map(function () {
                 return $(this).val();
@@ -267,11 +260,10 @@
 
             $.ajax({
                 type: "post",
-                url: "{{ route('transaksi.lurah.cabang.store', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.store', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "pelanggan_id": $("select[name='pelanggan_id']").val(),
-                    "gamis_id": gamis_id,
                     "total_biaya_layanan": $("input[name='total_biaya_layanan']").val(),
                     "total_biaya_prioritas": $("input[name='total_biaya_prioritas']").val(),
                     "total_biaya_layanan_tambahan": $("input[name='total_biaya_layanan_tambahan']").val(),
@@ -296,9 +288,9 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             if ({{ $isJadwal }}) {
-                                return window.location.href = "{{ route('transaksi.lurah.cabang.jadwal', $cabang->slug) }}";
+                                return window.location.href = "{{ route('transaksi.owner.cabang.jadwal', $cabang->slug) }}";
                             }
-                            return window.location.href = "{{ route('transaksi.lurah.cabang', $cabang->slug) }}";
+                            return window.location.href = "{{ route('transaksi.owner.cabang', $cabang->slug) }}";
                         }
                     });
                 },
@@ -328,12 +320,12 @@
                     </div>
                     <div>
                         @if ($isJadwal)
-                            <a href="{{ route("transaksi.lurah.cabang.jadwal", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                            <a href="{{ route("transaksi.owner.cabang.jadwal", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-arrow-left-line"></i>
                                 Kembali
                             </a>
                         @else
-                            <a href="{{ route("transaksi.lurah.cabang", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                            <a href="{{ route("transaksi.owner.cabang", $cabang->slug) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-arrow-left-line"></i>
                                 Kembali
                             </a>
@@ -360,23 +352,6 @@
                                     @endforeach
                                 </select>
                                 @error("pelanggan_id")
-                                    <div class="label">
-                                        <span class="label-text-alt text-sm text-error">{{ $message }}</span>
-                                    </div>
-                                @enderror
-                            </label>
-                            <label class="form-control w-full lg:w-1/2">
-                                <div class="label">
-                                    <span class="label-text font-semibold dark:text-slate-100">Gamis</span>
-                                </div>
-                                <select name="gamis_id" class="select select-bordered text-base text-blue-700 dark:bg-slate-100">
-                                    <option disabled selected>Pilih Gamis!</option>
-                                    <option value="null">Tidak Perlu Gamis</option>
-                                    @foreach ($gamis as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
-                                @error("gamis_id")
                                     <div class="label">
                                         <span class="label-text-alt text-sm text-error">{{ $message }}</span>
                                     </div>

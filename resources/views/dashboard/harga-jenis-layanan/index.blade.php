@@ -336,7 +336,7 @@
                                         </span>
                                     </div>
                                     <select name="jenis_cucian_id" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" required>
-                                        <option disabled selected>Pilih Jenis Pakaian!</option>
+                                        <option disabled selected>Pilih Jenis Cucian!</option>
                                         @foreach ($jenisPakaian as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                         @endforeach
@@ -407,7 +407,7 @@
                             </label>
                             <label class="form-control w-full lg:w-1/2">
                                 <div class="label">
-                                    <span class="label-text font-semibold">Jenis Pakaian</span>
+                                    <span class="label-text font-semibold">Jenis Cucian</span>
                                     <span class="label-text-alt" id="loading_edit2"></span>
                                 </div>
                                 <input type="text" name="jenis_cucian_id" class="input input-bordered w-full text-blue-700" readonly />
@@ -576,6 +576,9 @@
                                         Jenis Pakaian
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
+                                        Prioritas
+                                    </th>
+                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Harga
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
@@ -600,6 +603,11 @@
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                 {{ $item->nama_pakaian }}
+                                            </p>
+                                        </td>
+                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
+                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
+                                                {{ $item->nama_prioritas }}
                                             </p>
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
