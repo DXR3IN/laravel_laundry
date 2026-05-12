@@ -10,14 +10,12 @@ use Illuminate\Database\Seeder;
 class JenisCucianSeeder extends Seeder
 {
 
-    private function createSeeder($nama, $deskripsi, $cabang_id, $lokasi, $alamat): JenisCucian
+    private function createSeeder($nama, $deskripsi, $cabang_id): JenisCucian
     {
         return JenisCucian::create([
             'nama' => $nama,
             'deskripsi' => $deskripsi,
             'cabang_id' => $cabang_id,
-            'lokasi' => $lokasi,
-            'alamat' => $alamat
         ]);
     }
     /**
@@ -32,24 +30,18 @@ class JenisCucianSeeder extends Seeder
             'Sepatu Hitam',
             'sepatu berwarna hitam',
             $cabang->id,
-            $cabang->lokasi,
-            $cabang->alamat
         );
 
         $this->createSeeder(
             'Sepatu Berwarna',
             'sepatu berwarna-warna',
             $cabang->id,
-            $cabang->lokasi,
-            $cabang->alamat
         );
 
         $this->createSeeder(
-            'Pakaian Sehari-hari',
+            'Cucian Sehari-hari',
             'ya itu',
             $cabang->id,
-            $cabang->lokasi,
-            $cabang->alamat
         );
     }
 }

@@ -6,10 +6,9 @@ use App\Enums\JenisSatuanLayanan;
 use Carbon\Carbon;
 use App\Models\Cabang;
 use App\Models\JenisLayanan;
-use App\Models\JenisPakaian;
+use App\Models\JenisCucian;
 use Illuminate\Database\Seeder;
 use App\Models\HargaJenisLayanan;
-use App\Models\JenisCucian;
 use App\Models\LayananPrioritas;
 
 class HargaJenisLayananSeeder extends Seeder
@@ -28,7 +27,7 @@ class HargaJenisLayananSeeder extends Seeder
         $jenisLayananCuciSepatu = JenisLayanan::where(['nama' => 'Cuci Sepatu', 'cabang_id' => $cabang->id])->first();
 
         // jenis cucian
-        $jenisCucian_Pakaian = JenisCucian::where(['nama' => 'Pakaian Sehari-hari', 'cabang_id' => $cabang->id])->first();
+        $jenisCucian_Cucian = JenisCucian::where(['nama' => 'Cucian Sehari-hari', 'cabang_id' => $cabang->id])->first();
         $jenisCucian_SepatuH = JenisCucian::where(['nama' => 'Sepatu Hitam', 'cabang_id' => $cabang->id])->first();
 
         // prioritas
@@ -42,7 +41,7 @@ class HargaJenisLayananSeeder extends Seeder
             'jenis_satuan' => JenisSatuanLayanan::KG,
             'prioritas_id' => $reguler->id,
             'jenis_layanan_id' => $jenisLayananCuciLipat->id,
-            'jenis_cucian_id' => $jenisCucian_Pakaian->id,
+            'jenis_cucian_id' => $jenisCucian_Cucian->id,
             'cabang_id' => $cabang->id,
         ]);
         HargaJenisLayanan::create([
@@ -50,7 +49,7 @@ class HargaJenisLayananSeeder extends Seeder
             'jenis_satuan' => JenisSatuanLayanan::KG,
             'prioritas_id' => $kilat->id,
             'jenis_layanan_id' => $jenisLayananCuciSetrika->id,
-            'jenis_cucian_id' => $jenisCucian_Pakaian->id,
+            'jenis_cucian_id' => $jenisCucian_Cucian->id,
             'cabang_id' => $cabang->id,
         ]);
         HargaJenisLayanan::create([

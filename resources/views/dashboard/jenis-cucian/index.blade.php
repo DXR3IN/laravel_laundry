@@ -273,10 +273,10 @@
                             <label class="form-control w-full">
                                 <div class="label">
                                     <span class="label-text font-semibold">
-                                        <x-label-input-required :value="'Nama Pakaian'" />
+                                        <x-label-input-required :value="'Nama Cucian'" />
                                     </span>
                                 </div>
-                                <input type="text" name="nama" placeholder="Nama Pakaian" class="input input-bordered w-full text-blue-700" value="{{ old('nama') }}" required />
+                                <input type="text" name="nama" placeholder="Nama Cucian" class="input input-bordered w-full text-blue-700" value="{{ old('nama') }}" required />
                                 @error('nama')
                                     <div class="label">
                                         <span class="label-text-alt text-error text-sm">{{ $message }}</span>
@@ -314,7 +314,7 @@
                     <div>
                         <label class="form-control w-full">
                             <div class="label">
-                                <span class="label-text font-semibold">Nama Pakaian</span>
+                                <span class="label-text font-semibold">Nama Cucian</span>
                                 <span class="label-text-alt" id="loading_edit1"></span>
                             </div>
                             <input type="text" name="nama" class="input input-bordered w-full text-blue-700" readonly />
@@ -348,11 +348,11 @@
                             <label class="form-control w-full">
                                 <div class="label">
                                     <span class="label-text font-semibold">
-                                        <x-label-input-required :value="'Nama Pakaian'" />
+                                        <x-label-input-required :value="'Nama Cucian'" />
                                     </span>
                                     <span class="label-text-alt" id="loading_edit1"></span>
                                 </div>
-                                <input type="text" name="nama" placeholder="Nama Pakaian" class="input input-bordered w-full text-blue-700" required />
+                                <input type="text" name="nama" placeholder="Nama Cucian" class="input input-bordered w-full text-blue-700" required />
                                 @error('nama')
                                     <div class="label">
                                         <span class="label-text-alt text-error text-sm">{{ $message }}</span>
@@ -406,7 +406,7 @@
                 <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
                     <h6 class="font-bold dark:text-white">{{ $title }}</h6>
                     <div class="w-1/2 max-w-full flex-none px-3 text-right">
-                        @if (!$cabang->deleted_at)
+                        @if (empty($cabang?->deleted_at))
                             <label for="create_modal" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-add-fill"></i>
                                 Tambah
@@ -418,7 +418,7 @@
                             <form action="{{ route('jenis-cucian.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
                                 @csrf
                                 <label class="form-control w-full">
-                                    <input type="text" name="cabang" value="{{ auth()->user()->cabang->slug }}" hidden readonly />
+                                    <input type="text" name="cabang" value="{{ auth()->user()->cabang->slug ?? 'semua' }}" hidden readonly />
                                 </label>
                                 <button type="submit" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-purple-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-purple-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                     <i class="ri-download-2-line"></i>
@@ -434,8 +434,13 @@
                             <thead>
                                 <tr>
                                     <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Nama Pakaian
+                                        Nama Cucian
                                     </th>
+                                    @role('owner')
+                                        <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
+                                            Cabang
+                                        </th>
+                                    @endrole
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Created_at
                                     </th>
@@ -452,6 +457,13 @@
                                                 {{ $item->nama }}
                                             </p>
                                         </td>
+                                        @role('owner')
+                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
+                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
+                                                    {{ $item->cabang ? $item->cabang->nama : 'Tanpa Cabang' }}
+                                                </p>
+                                            </td>
+                                        @endrole
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                 {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
@@ -462,7 +474,7 @@
                                                 <label for="show_button" class="btn btn-outline btn-info btn-sm" onclick="return show_button('{{ $item->id }}')">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </label>
-                                                @if (!$cabang->deleted_at)
+                                                @if (empty($cabang?->deleted_at))
                                                     <label for="edit_button" class="btn btn-outline btn-warning btn-sm" onclick="return edit_button('{{ $item->id }}')">
                                                         <i class="ri-pencil-fill text-base"></i>
                                                     </label>
@@ -479,9 +491,9 @@
                     </div>
                 </div>
             </div>
-            {{-- Akhir Tabel Jenis Pakaian --}}
+            {{-- Akhir Tabel Jenis Cucian --}}
 
-            {{-- Awal Tabel Jenis Pakaian Trash --}}
+            {{-- Awal Tabel Jenis Cucian Trash --}}
             <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
                 <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
                     <h6 class="font-bold dark:text-white">{{ $title }} Trash <span class="text-error">(data yang telah dihapus)</span></h6>
@@ -492,7 +504,10 @@
                             <thead>
                                 <tr>
                                     <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Nama Pakaian
+                                        Nama Cucian
+                                    </th>
+                                    <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
+                                        Cabang
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Created_at
@@ -513,6 +528,13 @@
                                                 {{ $item->nama }}
                                             </p>
                                         </td>
+                                        @role('owner')
+                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
+                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
+                                                    {{ $item->cabang ? $item->cabang->nama : 'Tanpa Cabang' }}
+                                                </p>
+                                            </td>
+                                        @endrole
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                 {{ Carbon\Carbon::parse($item->created_at)->translatedFormat('d F Y') }}
@@ -528,7 +550,7 @@
                                                 <label for="show_button" class="btn btn-outline btn-info btn-sm" onclick="return show_button('{{ $item->id }}')">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </label>
-                                                @if (!$cabang->deleted_at)
+                                                @if (empty($cabang?->deleted_at))
                                                     <label for="restore_button" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button('{{ $item->id }}', '{{ $item->nama }}')">
                                                         <i class="ri-history-line text-base"></i>
                                                     </label>
@@ -545,7 +567,7 @@
                     </div>
                 </div>
             </div>
-            {{-- Akhir Tabel Jenis Pakaian Trash --}}
+            {{-- Akhir Tabel Jenis Cucian Trash --}}
         </div>
     </div>
 @endsection

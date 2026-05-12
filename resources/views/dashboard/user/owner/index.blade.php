@@ -72,7 +72,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('rw.delete') }}",
+                        url: "{{ route('owner.delete') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "slug": slug
@@ -116,7 +116,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('rw.restore') }}",
+                        url: "{{ route('owner.restore') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "slug": slug
@@ -160,7 +160,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('rw.destroy') }}",
+                        url: "{{ route('owner.destroy') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "slug": slug
@@ -204,7 +204,7 @@
                         </label>
                     </div>
                     <div>
-                        <form action="{{ route('rw.import') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('owner.import') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <label class="form-control w-full">
                                 <input type="file" name="impor" placeholder="Impor Data" class="file-input file-input-bordered w-full text-blue-700" required />
@@ -221,7 +221,7 @@
                 <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
                     <h6 class="font-bold dark:text-white">{{ $title }}</h6>
                     <div class="w-1/2 max-w-full flex-none px-3 text-right">
-                        <a href="{{ route("rw.create") }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                        <a href="{{ route("owner.create") }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                             <i class="ri-add-fill"></i>
                             Tambah
                         </a>
@@ -229,7 +229,7 @@
                             <i class="ri-upload-2-line"></i>
                             Impor
                         </label>
-                        <form action="{{ route('rw.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
+                        <form action="{{ route('owner.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
                             @csrf
                             <button type="submit" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-purple-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-purple-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-download-2-line"></i>
@@ -264,7 +264,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($pic as $item)
+                                @foreach ($owner as $item)
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
@@ -293,59 +293,13 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <div>
-                                                <a href="{{ route("rw.view", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
+                                                <a href="{{ route("owner.view", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </a>
-                                                <a href="{{ route("rw.edit", $item->slug) }}" class="btn btn-outline btn-warning btn-sm">
+                                                <a href="{{ route("owner.edit", $item->slug) }}" class="btn btn-outline btn-warning btn-sm">
                                                     <i class="ri-pencil-fill text-base"></i>
                                                 </a>
-                                                <a href="{{ route("rw.edit.password", $item->slug) }}" class="btn btn-outline tooltip btn-primary btn-sm" data-tip="Ganti Password">
-                                                    <i class="ri-lock-password-line text-base"></i>
-                                                </a>
-                                                <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->slug }}', '{{ $item->nama }}')">
-                                                    <i class="ri-delete-bin-line text-base"></i>
-                                                </label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-
-                                @foreach ($rw as $item)
-                                    <tr>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->nama }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->user->email }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->telepon }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->user->roles->pluck("name")->first() }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <div>
-                                                <a href="{{ route("rw.view", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
-                                                    <i class="ri-eye-line text-base"></i>
-                                                </a>
-                                                <a href="{{ route("rw.edit", $item->slug) }}" class="btn btn-outline btn-warning btn-sm">
-                                                    <i class="ri-pencil-fill text-base"></i>
-                                                </a>
-                                                <a href="{{ route("rw.edit.password", $item->slug) }}" class="btn btn-outline tooltip btn-primary btn-sm" data-tip="Ganti Password">
+                                                <a href="{{ route("owner.edit.password", $item->slug) }}" class="btn btn-outline tooltip btn-primary btn-sm" data-tip="Ganti Password">
                                                     <i class="ri-lock-password-line text-base"></i>
                                                 </a>
                                                 <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->slug }}', '{{ $item->nama }}')">
@@ -396,55 +350,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($picTrash as $item)
-                                    <tr>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->nama }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->email }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->telepon }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->roles->pluck("name")->first() }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ Carbon\Carbon::parse($item->deleted_at)->translatedFormat("d F Y H:i:s") }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <div>
-                                                <a href="{{ route("rw.trash", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
-                                                    <i class="ri-eye-line text-base"></i>
-                                                </a>
-                                                <label for="restore_button" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button('{{ $item->slug }}', '{{ $item->nama }}')">
-                                                    <i class="ri-history-line text-base"></i>
-                                                </label>
-                                                <label for="destroy_button" class="btn btn-outline btn-error btn-sm" onclick="return destroy_button('{{ $item->slug }}', '{{ $item->nama }}')">
-                                                    Hapus Permanen
-                                                </label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
 
-                                @foreach ($rwTrash as $item)
+                                @foreach ($ownerTrash as $item)
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
@@ -478,7 +385,7 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <div>
-                                                <a href="{{ route("rw.trash", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
+                                                <a href="{{ route("owner.trash", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </a>
                                                 <label for="restore_button" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button('{{ $item->slug }}', '{{ $item->nama }}')">

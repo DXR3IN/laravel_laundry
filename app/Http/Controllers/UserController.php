@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\UserExport;
 use App\Imports\UserImport;
 use App\Models\Cabang;
-use App\Models\Lurah;
 use App\Models\ManajerLaundry;
 use App\Models\OwnerLaundry;
 use App\Models\PegawaiLaundry;
-use App\Models\PIC;
-use App\Models\RW;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -197,12 +194,12 @@ class UserController extends Controller
             $role = Role::where('name', '!=', 'owner')->get();
             $cabang = Cabang::where('deleted_at', null)->get();
         } elseif ($userRole == 'manajer_laundry') {
-            $role = Role::where('name', '!=', 'manajer_laundry')->get();
+            $role = Role::where('name', '!=', 'manajer_laundry')->where('name', '!=', 'owner')->get();
             $cabang = Cabang::where('deleted_at', null)->where('id', auth()->user()->cabang_id)->get();
         }
 
         $user = User::where('slug', $request->user)->first();
-        if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'pic') {
+        if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'owner') {
             abort(404, 'USER TIDAK DITEMUKAN.');
         } else if ($user->slug == auth()->user()->slug) {
             return to_route('profile', $user->slug);
@@ -307,7 +304,7 @@ class UserController extends Controller
         }
 
         $user = User::where('slug', $request->user)->first();
-        if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'pic') {
+        if ($user == null || $user->cabang_id != auth()->user()->cabang_id && $userRole != 'owner') {
             abort(404, 'USER TIDAK DITEMUKAN.');
         } else if ($user->slug == auth()->user()->slug) {
             return to_route('profile', $user->slug);
@@ -462,7 +459,7 @@ class UserController extends Controller
             abort(404, 'CABANG TIDAK DITEMUKAN ATAU SUDAH DIHAPUS.');
         }
 
-        $role = Role::where('name', '!=', 'lurah')->where('name', '!=', 'rw')->where('name', '!=', 'pic')->get();
+        $role = Role::where('name', '!=', 'owner')->get();
         $title = "Tambah User";
         $isCabang = [true, $cabang[0]->nama, $cabang[0]->id];
 

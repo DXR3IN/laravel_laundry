@@ -10,11 +10,11 @@
                     <div class="w-full flex flex-wrap justify-center items-center gap-2 lg:flex-nowrap">
                         <label class="form-control w-full lg:w-1/4">
                             <div class="label">
-                                <span class="label-text font-semibold dark:text-slate-100">Jenis Pakaian</span>
+                                <span class="label-text font-semibold dark:text-slate-100">Jenis Cucian</span>
                             </div>
-                            <select id="jenisPakaian`+number+`" name="jenis_cucian_id[]" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" onchange="return ubahJenisPakaian(this.value, 'jenisLayanan`+number+`', 'hargaJenisLayanan`+number+`');" required>
-                                <option disabled selected>Pilih Pakaian!</option>
-                                @foreach ($pakaian as $item)
+                            <select id="jenisCucian`+number+`" name="jenis_cucian_id[]" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" onchange="return ubahJenisCucian(this.value, 'jenisLayanan`+number+`', 'hargaJenisLayanan`+number+`');" required>
+                                <option disabled selected>Pilih Cucian!</option>
+                                @foreach ($cucian as $item)
                                     <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                 @endforeach
                             </select>
@@ -23,7 +23,7 @@
                             <div class="label">
                                 <span class="label-text font-semibold dark:text-slate-100">Jenis Layanan</span>
                             </div>
-                            <select id="jenisLayanan`+number+`" name="jenis_layanan_id[]" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" onchange="return ubahJenisLayanan(document.getElementById('jenisPakaian`+number+`').value, $(this).val(), 'harga_jenis_layanan_id`+number+`');" multiple required>
+                            <select id="jenisLayanan`+number+`" name="jenis_layanan_id[]" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" onchange="return ubahJenisLayanan(document.getElementById('jenisCucian`+number+`').value, $(this).val(), 'harga_jenis_layanan_id`+number+`');" multiple required>
                             <option disabled>Pilih Layanan!</option>
                             </select>
                         </label>
@@ -35,10 +35,10 @@
                         </label>
                         <label class="form-control w-full lg:w-1/4">
                             <div class="label">
-                                <span class="label-text font-semibold dark:text-slate-100">Total Pakaian</span>
+                                <span class="label-text font-semibold dark:text-slate-100">Total Cucian</span>
                             </div>
                             <div class="join">
-                                <input type="number" value="1" min="1" id="total_pakaian`+number+`" name="total_pakaian[]" placeholder="Total Pakaian" class="input input-bordered join-item w-full text-blue-700 dark:bg-slate-100" required />
+                                <input type="number" value="1" min="1" id="total_cucian`+number+`" name="total_cucian[]" placeholder="Total Cucian" class="input input-bordered join-item w-full text-blue-700 dark:bg-slate-100" required />
                                 <div class="btn btn-active join-item rounded-r-full">Kg</div>
                             </div>
                         </label>
@@ -50,11 +50,11 @@
             $("#saveLayanan").click(function (e) {
                 e.preventDefault();
 
-                // let pakaian = [];
-                // pakaian = $('select[name="jenis_cucian_id[]"]').map(function () {
+                // let cucian = [];
+                // cucian = $('select[name="jenis_cucian_id[]"]').map(function () {
                 //     return $(this).val();
                 // }).get();
-                // console.log(pakaian);
+                // console.log(cucian);
 
                 // let jmlTransaksi = document.getElementById('layananCart').children.length;
                 // let layanan = [];
@@ -69,11 +69,11 @@
                 }).get();
                 // console.log(hargaLayanan);
 
-                let totalPakaian = [];
-                totalPakaian = $('input[name="total_pakaian[]"]').map(function () {
+                let totalCucian = [];
+                totalCucian = $('input[name="total_cucian[]"]').map(function () {
                     return $(this).val();
                 }).get();
-                // console.log(totalPakaian);
+                // console.log(totalCucian);
 
                 let layananPrioritas = $("select[name='layanan_prioritas_id']").val();
                 // console.log(layananPrioritas);
@@ -81,7 +81,7 @@
                 let layananTambahan = $("input[name='total_biaya_layanan_tambahan']").val();
                 // console.log(layananTambahan);
 
-                totalBiaya(hargaLayanan, totalPakaian, layananPrioritas, layananTambahan);
+                totalBiaya(hargaLayanan, totalCucian, layananPrioritas, layananTambahan);
             });
 
             $("#deleteLayanan").click(function (e) {
@@ -133,13 +133,13 @@
             })
         @endif
 
-        function ubahJenisPakaian(jenisPakaianId, namaIdjenisLayanan, namaIdHargaJenisLayanan) {
+        function ubahJenisCucian(jenisCucianId, namaIdjenisLayanan, namaIdHargaJenisLayanan) {
             $.ajax({
                 type: "get",
-                url: "{{ route('transaksi.owner.cabang.create.ubahJenisPakaian', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.create.ubahJenisCucian', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
-                    "jenisPakaianId": jenisPakaianId
+                    "jenisCucianId": jenisCucianId
                 },
                 success: function(data) {
                     // console.log(data);
@@ -155,13 +155,13 @@
                 }
             });
         }
-        function ubahJenisLayanan(jenisPakaianId, jenisLayananId, namaIdHargaJenisLayanan) {
+        function ubahJenisLayanan(jenisCucianId, jenisLayananId, namaIdHargaJenisLayanan) {
             $.ajax({
                 type: "get",
                 url: "{{ route('transaksi.owner.cabang.create.ubahJenisLayanan', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
-                    "jenisPakaianId": jenisPakaianId,
+                    "jenisCucianId": jenisCucianId,
                     "jenisLayananId": jenisLayananId
                 },
                 success: function(data) {
@@ -199,14 +199,14 @@
             });
         }
 
-        function totalBiaya(hargaLayanan, totalPakaian, layananPrioritas, layananTambahan) {
+        function totalBiaya(hargaLayanan, totalCucian, layananPrioritas, layananTambahan) {
             $.ajax({
                 type: "get",
                 url: "{{ route('transaksi.owner.cabang.create.hitungTotalBayar', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "hargaLayanan": hargaLayanan,
-                    "totalPakaian": totalPakaian,
+                    "totalCucian": totalCucian,
                     "layananPrioritas": layananPrioritas,
                     "layananTambahan": layananTambahan
                 },
@@ -232,8 +232,8 @@
                 });
             }
 
-            let pakaian = [];
-            pakaian = $('select[name="jenis_cucian_id[]"]').map(function () {
+            let cucian = [];
+            cucian = $('select[name="jenis_cucian_id[]"]').map(function () {
                 return $(this).val();
             }).get();
 
@@ -248,8 +248,8 @@
                 return $(this).val();
             }).get();
 
-            let totalPakaian = [];
-            totalPakaian = $('input[name="total_pakaian[]"]').map(function () {
+            let totalCucian = [];
+            totalCucian = $('input[name="total_cucian[]"]').map(function () {
                 return $(this).val();
             }).get();
 
@@ -273,10 +273,10 @@
                     "kembalian": $("input[name='kembalian']").val(),
                     "layanan_prioritas_id": $("select[name='layanan_prioritas_id']").val(),
                     "layanan_tambahan_id": layananTambahan,
-                    "jenis_cucian_id": pakaian,
+                    "jenis_cucian_id": cucian,
                     "jenis_layanan_id": layanan,
                     "harga_jenis_layanan_id": hargaJenisLayanan,
-                    "total_pakaian": totalPakaian
+                    "total_cucian": totalCucian
                 },
                 success: function(data) {
                     Swal.fire({

@@ -36,9 +36,9 @@
                 <div class="flex-auto px-6 pb-6 pt-0">
                     <label class="form-control w-full">
                         <div class="label">
-                            <span class="label-text font-semibold dark:text-slate-100">Total Pakaian</span>
+                            <span class="label-text font-semibold dark:text-slate-100">Total Cucian</span>
                         </div>
-                        <input type="text" name="total_pakaian" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" value="{{ $detailTransaksi->total_pakaian }} {{ $detailTransaksi->jenis_satuan }}" readonly />
+                        <input type="text" name="total_cucian" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" value="{{ $detailTransaksi->total_cucian }} {{ $detailTransaksi->jenis_satuan }}" readonly />
                     </label>
                     <label class="form-control w-full">
                         <div class="label">
@@ -81,7 +81,7 @@
                             <thead class="align-bottom">
                                 <tr>
                                     <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Jenis Pakaian
+                                        Jenis Cucian
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Jenis Layanan
@@ -99,7 +99,7 @@
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->hargaJenisLayanan->jenisPakaian->nama }}
+                                                {{ $item->hargaJenisLayanan->jenisCucian->nama }}
                                             </p>
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">

@@ -199,8 +199,8 @@
                                                     {{ $item->pegawai->manajer->first()->nama }}
                                                 @elseif ($userRole == 'pegawai_laundry')
                                                     {{ $item->pegawai->pegawai->first()->nama }}
-                                                @elseif ($userRole == 'lurah')
-                                                    {{ $item->pegawai->lurah->first()->nama }}
+                                                @elseif ($userRole == 'owner')
+                                                    {{ $item->pegawai->owner->first()->nama }}
                                                 @endif
                                             </p>
                                         </td>

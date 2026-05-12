@@ -50,22 +50,22 @@
         <table cellspacing='0' style='width:550px; font-size:8pt; font-family:calibri;  border-collapse: collapse; margin-top: 7px;' border='1'>
             <thead>
                 <tr align='center' style="font-weight: 800">
-                    <td width='10%'>Jenis Pakaian</td>
+                    <td width='10%'>Jenis Cucian</td>
                     <td width='20%'>Jenis Layanan</td>
-                    <td width='13%'>Total Pakaian</td>
+                    <td width='13%'>Total Cucian</td>
                     <td width='4%'>Total Bayar</td>
                 </tr>
             </thead>
 
             @foreach ($detailTransaksi as $item)
                 <tr>
-                    <td>{{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenisPakaian->nama }}</td>
+                    <td>{{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenisCucian->nama }}</td>
                     <td>
                         @foreach ($item->detailLayananTransaksi as $layanan)
                             {{ $layanan->hargaJenisLayanan->jenisLayanan->nama }};
                         @endforeach
                     </td>
-                    <td>{{ $item->total_pakaian }} {{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenis_satuan }}</td>
+                    <td>{{ $item->total_cucian }} {{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenis_satuan }}</td>
                     <td style='text-align:right'>Rp{{ number_format($item->total_biaya_layanan+$item->total_biaya_prioritas, 2, ',', '.') }}</td>
                 </tr>
             @endforeach

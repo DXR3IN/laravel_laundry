@@ -2,9 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\RW;
+use App\Models\OwnerLaundry;
 use App\Models\User;
-use App\Models\PIC;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -18,12 +17,12 @@ class User2Export implements FromCollection, WithHeadings, WithMapping, WithStyl
 {
     public function collection()
     {
-        $user = User::role(['pic', 'rw'])->orderBy('created_at', 'asc')->get();
+        $user = User::role('owner')->orderBy('created_at', 'asc')->get();
 
         foreach ($user as $key => $item) {
             switch ($item->roles[0]->name) {
-                case 'pic':
-                    $profile = PIC::where('user_id', $item->id)->first();
+                case 'owner':
+                    $profile = OwnerLaundry::where('user_id', $item->id)->first();
 
                     $user[$key]['role'] = $item->roles[0]->name;
                     $user[$key]['nama_lengkap'] = $profile->nama;
@@ -36,20 +35,20 @@ class User2Export implements FromCollection, WithHeadings, WithMapping, WithStyl
                     $user[$key]['selesai_kerja'] = $profile->selesai_kerja;
                     break;
 
-                case 'rw':
-                    $profile = RW::where('user_id', $item->id)->first();
+                    // case 'rw':
+                    //     $profile = RW::where('user_id', $item->id)->first();
 
-                    $user[$key]['role'] = $item->roles[0]->name;
-                    $user[$key]['nama_lengkap'] = $profile->nama;
-                    $user[$key]['jenis_kelamin'] = $profile->jenis_kelamin;
-                    $user[$key]['tempat_lahir'] = $profile->tempat_lahir;
-                    $user[$key]['tanggal_lahir'] = $profile->tanggal_lahir;
-                    $user[$key]['telepon'] = $profile->telepon;
-                    $user[$key]['alamat'] = $profile->alamat;
-                    $user[$key]['mulai_kerja'] = $profile->mulai_kerja;
-                    $user[$key]['selesai_kerja'] = $profile->selesai_kerja;
-                    $user[$key]['nomor_rw'] = $profile->nomor_rw;
-                    break;
+                    //     $user[$key]['role'] = $item->roles[0]->name;
+                    //     $user[$key]['nama_lengkap'] = $profile->nama;
+                    //     $user[$key]['jenis_kelamin'] = $profile->jenis_kelamin;
+                    //     $user[$key]['tempat_lahir'] = $profile->tempat_lahir;
+                    //     $user[$key]['tanggal_lahir'] = $profile->tanggal_lahir;
+                    //     $user[$key]['telepon'] = $profile->telepon;
+                    //     $user[$key]['alamat'] = $profile->alamat;
+                    //     $user[$key]['mulai_kerja'] = $profile->mulai_kerja;
+                    //     $user[$key]['selesai_kerja'] = $profile->selesai_kerja;
+                    //     $user[$key]['nomor_rw'] = $profile->nomor_rw;
+                    //     break;
             }
         }
         return $user;

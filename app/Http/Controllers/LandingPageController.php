@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cabang;
 use App\Models\DetailTransaksi;
 use App\Models\LayananTambahanTransaksi;
+use App\Models\Pelanggan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,14 @@ class LandingPageController extends Controller
     public function index()
     {
         $title = config('app.name');
-        return view('pelanggan.index', compact('title'));
+        $diff = DB::table('transaksi')
+            ->selectRaw('TIMESTAMPDIFF(HOUR, MIN(created_at), MAX(created_at)) as total_jam')
+            ->first();
+
+        $totalJam = $diff->total_jam;
+        $totalPelanggan = Pelanggan::count();
+        $totalCabang = Cabang::count();
+        return view('pelanggan.index', compact('title', 'totalPelanggan', 'totalCabang', 'totalJam'));
     }
 
     public function cekTransaksi(Request $request)
@@ -32,7 +41,8 @@ class LandingPageController extends Controller
                 'transaksi.total_bayar_akhir',
                 'transaksi.bayar',
                 'transaksi.kembalian',
-                'transaksi.status')
+                'transaksi.status'
+            )
             ->first();
         $detailTransaksi = DetailTransaksi::where('transaksi_id', $transaksi->id)->orderBy('id', 'asc')->get();
         $layananTambahan = LayananTambahanTransaksi::where('transaksi_id', $transaksi->id)->orderBy('id', 'asc')->get();
@@ -40,8 +50,8 @@ class LandingPageController extends Controller
         $detailLayanan = [];
         foreach ($detailTransaksi as $value => $item) {
             $detailLayanan[$value] = [
-                'pakaian' => $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenisPakaian->nama,
-                'total' => $item->total_pakaian,
+                'cucian' => $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenisCucian->nama,
+                'total' => $item->total_cucian,
             ];
             foreach ($item->detailLayananTransaksi as $layanan) {
                 $detailLayanan[$value]['layanan'][] = $layanan->hargaJenisLayanan->jenisLayanan->nama;

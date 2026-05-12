@@ -83,7 +83,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
+            'total_cucian' => 24,
             'harga_layanan_akhir' => 3500,
             'total_biaya_layanan' => 84000,
             'total_biaya_prioritas' => 0,
@@ -99,7 +99,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
+            'total_cucian' => 12,
             'harga_layanan_akhir' => 4500,
             'total_biaya_layanan' => 54000,
             'total_biaya_prioritas' => 0,
@@ -137,7 +137,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
+            'total_cucian' => 24,
             'harga_layanan_akhir' => 3500,
             'total_biaya_layanan' => 84000,
             'total_biaya_prioritas' => 36000,
@@ -153,7 +153,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
+            'total_cucian' => 12,
             'harga_layanan_akhir' => 4500,
             'total_biaya_layanan' => 54000,
             'total_biaya_prioritas' => 18000,
@@ -191,7 +191,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
+            'total_cucian' => 24,
             'harga_layanan_akhir' => 3500,
             'total_biaya_layanan' => 84000,
             'total_biaya_prioritas' => 48000,
@@ -207,7 +207,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
+            'total_cucian' => 12,
             'harga_layanan_akhir' => 4500,
             'total_biaya_layanan' => 54000,
             'total_biaya_prioritas' => 24000,
@@ -245,7 +245,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
+            'total_cucian' => 24,
             'harga_layanan_akhir' => 3500,
             'total_biaya_layanan' => 84000,
             'total_biaya_prioritas' => 0,
@@ -261,7 +261,7 @@ class TransaksiSuksesSeeder extends Seeder
         ]);
 
         $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
+            'total_cucian' => 12,
             'harga_layanan_akhir' => 4500,
             'total_biaya_layanan' => 54000,
             'total_biaya_prioritas' => 0,

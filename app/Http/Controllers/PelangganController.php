@@ -71,7 +71,7 @@ class PelangganController extends Controller
         try {
             Excel::import(new PelangganImport, $request->file('impor'));
             return to_route('pelanggan')->with('success', 'Pelanggan Berhasil Ditambahkan');
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             Log::info($ex);
             return to_route('pelanggan')->with('error', 'Pelanggan Gagal Ditambahkan');
         }
@@ -79,6 +79,6 @@ class PelangganController extends Controller
 
     public function export()
     {
-        return Excel::download(new PelangganExport, 'Data Pelanggan '.Carbon::now()->format('d-m-Y').'.xlsx');
+        return Excel::download(new PelangganExport, 'Data Pelanggan ' . Carbon::now()->format('d-m-Y') . '.xlsx');
     }
 }

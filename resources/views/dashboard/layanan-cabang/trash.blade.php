@@ -338,7 +338,7 @@
             })
         }
 
-        // Jenis Pakaian
+        // Jenis Cucian
         function show_button_jenis_cucian(id) {
             // Loading effect start
             let loading = `<span class="loading loading-dots loading-md text-blue-500"></span>`;
@@ -347,7 +347,7 @@
 
             $.ajax({
                 type: "get",
-                url: "{{ route('jenis-pakaian.show') }}",
+                url: "{{ route('jenis-cucian.show') }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "id": id
@@ -386,7 +386,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('jenis-pakaian.restore') }}",
+                        url: "{{ route('jenis-cucian.restore') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "id": id,
@@ -431,7 +431,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('jenis-pakaian.destroy') }}",
+                        url: "{{ route('jenis-cucian.destroy') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "id": id,
@@ -498,13 +498,13 @@
             });
         }
 
-        function restore_button_harga_jenis_layanan(id, layanan, pakaian) {
+        function restore_button_harga_jenis_layanan(id, layanan, cucian) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 html: "<p>Data akan dipulihkan!</p>" +
                     "<div class='divider'></div>" +
                     "<p class='font-bold'>Layanan: " + layanan + "</p>" +
-                    "<p class='font-bold'>Pakaian: " + pakaian + "</p>",
+                    "<p class='font-bold'>Cucian: " + cucian + "</p>",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#6419E6',
@@ -543,13 +543,13 @@
             })
         }
 
-        function destroy_button_harga_jenis_layanan(id, layanan, pakaian) {
+        function destroy_button_harga_jenis_layanan(id, layanan, cucian) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 html: "<p>Data yang dihapus permanen tidak dapat dipulihkan kembali!</p>" +
                     "<div class='divider'></div>" +
                     "<p class='font-bold'>Layanan: " + layanan + "</p>" +
-                    "<p class='font-bold'>Pakaian: " + pakaian + "</p>",
+                    "<p class='font-bold'>Cucian: " + cucian + "</p>",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#6419E6',
@@ -808,7 +808,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="restore_button_jenis_layanan" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button_jenis_layanan('{{ $item->id }}', '{{ $item->cabang_id }}', '{{ $item->nama }}')">
                                                                 <i class="ri-history-line text-base"></i>
                                                             </label>
@@ -829,7 +829,7 @@
                 {{-- Akhir Tabel Jenis Layanan Trash --}}
             {{-- Akhir Jenis Layanan --}}
 
-            {{-- Awal Jenis Pakaian --}}
+            {{-- Awal Jenis Cucian --}}
                 {{-- Awal Modal Show --}}
                 <input type="checkbox" id="show_button_jenis_cucian" class="modal-toggle" />
                 <div class="modal" role="dialog">
@@ -843,7 +843,7 @@
                         <div>
                             <label class="form-control w-full">
                                 <div class="label">
-                                    <span class="label-text font-semibold">Nama Pakaian</span>
+                                    <span class="label-text font-semibold">Nama Cucian</span>
                                     <span class="label-text-alt" id="loading_edit1"></span>
                                 </div>
                                 <input type="text" name="nama" class="input input-bordered w-full text-blue-700" readonly />
@@ -860,10 +860,10 @@
                 </div>
                 {{-- Akhir Modal Show --}}
 
-                {{-- Awal Tabel Jenis Pakaian Trash --}}
+                {{-- Awal Tabel Jenis Cucian Trash --}}
                 <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
                     <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
-                        <h6 class="font-bold dark:text-white">Jenis Pakaian Trash <span class="text-error">(data yang telah dihapus)</span></h6>
+                        <h6 class="font-bold dark:text-white">Jenis Cucian Trash <span class="text-error">(data yang telah dihapus)</span></h6>
                     </div>
                     <div class="flex-auto px-0 pb-2 pt-0">
                         <div class="overflow-x-auto p-0 px-6 pb-6">
@@ -871,7 +871,7 @@
                                 <thead>
                                     <tr>
                                         <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Nama Pakaian
+                                            Nama Cucian
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Created_at
@@ -885,7 +885,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($jenisPakaianTrash as $item)
+                                    @foreach ($jenisCucianTrash as $item)
                                         <tr>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
@@ -908,7 +908,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="restore_button_jenis_cucian" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button_jenis_cucian('{{ $item->id }}', '{{ $item->cabang_id }}', '{{ $item->nama }}')">
                                                                 <i class="ri-history-line text-base"></i>
                                                             </label>
@@ -926,8 +926,8 @@
                         </div>
                     </div>
                 </div>
-                {{-- Akhir Tabel Jenis Pakaian Trash --}}
-            {{-- Akhir Jenis Pakaian --}}
+                {{-- Akhir Tabel Jenis Cucian Trash --}}
+            {{-- Akhir Jenis Cucian --}}
 
             {{-- Awal Harga Jenis Layanan --}}
                 {{-- Awal Modal Show --}}
@@ -951,7 +951,7 @@
                                 </label>
                                 <label class="form-control w-full lg:w-1/2">
                                     <div class="label">
-                                        <span class="label-text font-semibold">Jenis Pakaian</span>
+                                        <span class="label-text font-semibold">Jenis Cucian</span>
                                         <span class="label-text-alt" id="loading_edit2"></span>
                                     </div>
                                     <input type="text" name="jenis_cucian_id" class="input input-bordered w-full text-blue-700" readonly />
@@ -990,7 +990,7 @@
                                             Jenis Layanan
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Jenis Pakaian
+                                            Jenis Cucian
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Harga
@@ -1019,7 +1019,7 @@
                                             </td>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->nama_pakaian }}
+                                                    {{ $item->nama_cucian }}
                                                 </p>
                                             </td>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -1048,11 +1048,11 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
-                                                            <label for="restore_button_harga_jenis_layanan" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button_harga_jenis_layanan('{{ $item->id }}', '{{ $item->nama_layanan }}', '{{ $item->nama_pakaian }}')">
+                                                        @role("owner")
+                                                            <label for="restore_button_harga_jenis_layanan" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button_harga_jenis_layanan('{{ $item->id }}', '{{ $item->nama_layanan }}', '{{ $item->nama_cucian }}')">
                                                                 <i class="ri-history-line text-base"></i>
                                                             </label>
-                                                            <label for="destroy_button_harga_jenis_layanan" class="btn btn-outline btn-error btn-sm" onclick="return destroy_button_harga_jenis_layanan('{{ $item->id }}', '{{ $item->nama_layanan }}', '{{ $item->nama_pakaian }}')">
+                                                            <label for="destroy_button_harga_jenis_layanan" class="btn btn-outline btn-error btn-sm" onclick="return destroy_button_harga_jenis_layanan('{{ $item->id }}', '{{ $item->nama_layanan }}', '{{ $item->nama_cucian }}')">
                                                                 Hapus Permanen
                                                             </label>
                                                         @endrole
@@ -1155,7 +1155,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="restore_button_layanan_prioritas" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button_layanan_prioritas('{{ $item->id }}', '{{ $item->nama }}')">
                                                                 <i class="ri-history-line text-base"></i>
                                                             </label>
@@ -1261,7 +1261,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="restore_button_layanan_tambahan" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button_layanan_tambahan('{{ $item->id }}', '{{ $item->cabang_id }}', '{{ $item->nama }}')">
                                                                 <i class="ri-history-line text-base"></i>
                                                             </label>

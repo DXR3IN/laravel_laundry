@@ -613,7 +613,7 @@
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Pemasukkan
                                     </th>
-                                    @role('lurah')
+                                    @role('owner')
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Cabang
                                         </th>
@@ -641,7 +641,7 @@
                                                 Rp{{ number_format($item->pemasukkan, 2, ',', '.') }}
                                             </p>
                                         </td>
-                                        @role('lurah')
+                                        @role('owner')
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                     @if ($item->cabang_deleted_at)
@@ -677,7 +677,7 @@
                     <div class="overflow-x-auto p-0 px-6 pb-6">
                         <form action="{{ route('monitoring') }}" method="get" enctype="multipart/form-data">
                             <div class="w-full flex flex-wrap justify-center gap-2 lg:flex-nowrap">
-                                @role('lurah')
+                                @role('owner')
                                     <label class="form-control w-full lg:w-1/2">
                                         <div class="label">
                                             <span class="label-text font-semibold dark:text-slate-100 text-lg">Cabang</span>
@@ -690,7 +690,7 @@
                                         </select>
                                     </label>
                                 @endrole
-                                <label class="form-control w-full @if(auth()->user()->hasRole('lurah'))lg:w-1/2 @else lg:w-full @endif">
+                                <label class="form-control w-full @if(auth()->user()->hasRole('owner'))lg:w-1/2 @else lg:w-full @endif">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100 text-lg">Tanggal Awal</span>
                                     </div>
@@ -793,7 +793,7 @@
                                     <th class="rounded-tr bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Tahun
                                     </th>
-                                    @role('lurah')
+                                    @role('owner')
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Cabang
                                         </th>
@@ -832,7 +832,7 @@
                                                 {{ $item->tahun }}
                                             </p>
                                         </td>
-                                        @role('lurah')
+                                        @role('owner')
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
                                                     @if ($item->cabang_deleted_at)

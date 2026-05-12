@@ -8,7 +8,7 @@ use App\Models\Cabang;
 use App\Models\Pelanggan;
 use App\Models\Transaksi;
 use App\Models\JenisLayanan;
-use App\Models\JenisPakaian;
+use App\Models\JenisCucian;
 use Illuminate\Http\Request;
 use App\Enums\JenisPembayaran;
 use App\Enums\StatusTransaksi;
@@ -19,7 +19,6 @@ use App\Models\LayananPrioritas;
 use App\Models\HargaJenisLayanan;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetailLayananTransaksi;
-use App\Models\JenisCucian;
 use App\Models\LayananTambahanTransaksi;
 use Illuminate\Support\Facades\Validator;
 
@@ -31,7 +30,7 @@ class TransaksiController extends Controller
         $userRole = auth()->user()->roles[0]->name;
 
         if ($userRole == 'owner') {
-            $cabang = Cabang::withTrashed()->orderByy('created_at', 'asc')->get();
+            $cabang = Cabang::withTrashed()->orderBy('created_at', 'asc')->get();
             return view('dashboard.transaksi.owner.index', compact('title', 'cabang'));
         } else {
             $cabang = Cabang::withTrashed()->where('id', auth()->user()->cabang_id)->first();
@@ -95,9 +94,13 @@ class TransaksiController extends Controller
         $isJadwal = true;
         $status = StatusTransaksi::cases();
 
+        if ($userRole == 'owner') {
+            abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
+        }
+
         $userCabang = auth()->user()->cabang_id;
         $cabang = Cabang::withTrashed()->where('id', $userCabang)->first();
-        if ($cabang->deleted_at) {
+        if ($cabang?->deleted_at) {
             return to_route('transaksi');
         }
         $isJadwal = false;
@@ -144,7 +147,7 @@ class TransaksiController extends Controller
         $isJadwal = false;
         $status = StatusTransaksi::cases();
 
-        if ($userRole != 'lurah' && $userRole != 'pic') {
+        if ($userRole != 'owner') {
             abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
         }
 
@@ -187,7 +190,7 @@ class TransaksiController extends Controller
             ->orderBy('transaksi.waktu', 'asc')
             ->get();
 
-        return view('dashboard.transaksi.lurah.cabang', compact('title', 'cabang', 'transaksi', 'monitoring', 'isJadwal', 'status'));
+        return view('dashboard.transaksi.owner.cabang', compact('title', 'cabang', 'transaksi', 'monitoring', 'isJadwal', 'status'));
     }
 
     public function indexCabangJadwal(Request $request)
@@ -197,7 +200,7 @@ class TransaksiController extends Controller
         $isJadwal = true;
         $status = StatusTransaksi::cases();
 
-        if ($userRole != 'lurah' && $userRole != 'pic') {
+        if ($userRole != 'owner') {
             abort(403, 'USER DOES NOT HAVE THE RIGHT ROLES.');
         }
 
@@ -220,7 +223,7 @@ class TransaksiController extends Controller
             ->select('transaksi.*')
             ->get();
 
-        return view('dashboard.transaksi.lurah.jadwal', compact('title', 'cabang', 'transaksi', 'isJadwal', 'status'));
+        return view('dashboard.transaksi.owner.jadwal', compact('title', 'cabang', 'transaksi', 'isJadwal', 'status'));
     }
 
     public function viewDetailTransaksi(Request $request)
@@ -229,7 +232,7 @@ class TransaksiController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         $isJadwal = $request->isJadwal;
 
-        if ($userRole == 'lurah' || $userRole == 'pic') {
+        if ($userRole == 'owner') {
             $cabang = Cabang::withTrashed()->where('slug', $request->cabang)->first();
             $transaksi = Transaksi::query()
                 ->with(['pegawai' => function ($query) {
@@ -242,7 +245,7 @@ class TransaksiController extends Controller
 
             $userRole = [User::withTrashed()->where('id', $transaksi->pegawai_id)->first()];
 
-            return view('dashboard.transaksi.lurah.lihat', compact('title', 'cabang', 'transaksi', 'detailTransaksi', 'isJadwal', 'layananTambahanTransaksi'));
+            return view('dashboard.transaksi.owner.lihat', compact('title', 'cabang', 'transaksi', 'detailTransaksi', 'isJadwal', 'layananTambahanTransaksi'));
         } else {
             $cabang = Cabang::withTrashed()->where('id', auth()->user()->cabang_id)->first();
             $transaksi = Transaksi::query()
@@ -317,17 +320,17 @@ class TransaksiController extends Controller
 
         foreach ($request->jenis_cucian_id as $item => $value) {
             $detailTransaksi = DetailTransaksi::create([
-                'total_pakaian' => $request->total_pakaian[$item],
+                'total_cucian' => $request->total_cucian[$item],
                 'harga_layanan_akhir' => $request->harga_jenis_layanan_id[$item],
-                'total_biaya_layanan' => $request->total_pakaian[$item] * $request->harga_jenis_layanan_id[$item],
-                'total_biaya_prioritas' => $request->total_pakaian[$item] * $layananPrioritas->harga,
+                'total_biaya_layanan' => $request->total_cucian[$item] * $request->harga_jenis_layanan_id[$item],
+                'total_biaya_prioritas' => $request->total_cucian[$item] * $layananPrioritas->harga,
                 'transaksi_id' => $transaksi->id,
             ]);
 
             foreach ($request->jenis_layanan_id[$item] as $layanan) {
-                $jenisPakaian = JenisCucian::where('cabang_id', $cabang->id)->where('id', $value)->first();
+                $jenisCucian = JenisCucian::where('cabang_id', $cabang->id)->where('id', $value)->first();
                 $jenisLayanan = JenisLayanan::where('cabang_id', $cabang->id)->where('id', $layanan)->first();
-                $hargaLayanan = HargaJenisLayanan::where('cabang_id', $cabang->id)->where('jenis_cucian_id', $jenisPakaian->id)->where('jenis_layanan_id', $jenisLayanan->id)->first();
+                $hargaLayanan = HargaJenisLayanan::where('cabang_id', $cabang->id)->where('jenis_cucian_id', $jenisCucian->id)->where('jenis_layanan_id', $jenisLayanan->id)->first();
                 DetailLayananTransaksi::create([
                     'harga_jenis_layanan_id' => $hargaLayanan->id,
                     'detail_transaksi_id' => $detailTransaksi->id,
@@ -422,17 +425,17 @@ class TransaksiController extends Controller
 
         foreach ($request->jenis_cucian_id as $item => $value) {
             $detailTransaksi = DetailTransaksi::create([
-                'total_pakaian' => $request->total_pakaian[$item],
+                'total_cucian' => $request->total_cucian[$item],
                 'harga_layanan_akhir' => $request->harga_jenis_layanan_id[$item],
-                'total_biaya_layanan' => $request->total_pakaian[$item] * $request->harga_jenis_layanan_id[$item],
-                'total_biaya_prioritas' => $request->total_pakaian[$item] * $layananPrioritas->harga,
+                'total_biaya_layanan' => $request->total_cucian[$item] * $request->harga_jenis_layanan_id[$item],
+                'total_biaya_prioritas' => $request->total_cucian[$item] * $layananPrioritas->harga,
                 'transaksi_id' => $getTransaksi->id,
             ]);
 
             foreach ($request->jenis_layanan_id[$item] as $layanan) {
-                $jenisPakaian = JenisCucian::where('cabang_id', $cabang->id)->where('id', $value)->first();
+                $jenisCucian = JenisCucian::where('cabang_id', $cabang->id)->where('id', $value)->first();
                 $jenisLayanan = JenisLayanan::where('cabang_id', $cabang->id)->where('id', $layanan)->first();
-                $hargaLayanan = HargaJenisLayanan::where('cabang_id', $cabang->id)->where('jenis_cucian_id', $jenisPakaian->id)->where('jenis_layanan_id', $jenisLayanan->id)->first();
+                $hargaLayanan = HargaJenisLayanan::where('cabang_id', $cabang->id)->where('jenis_cucian_id', $jenisCucian->id)->where('jenis_layanan_id', $jenisLayanan->id)->first();
                 DetailLayananTransaksi::create([
                     'harga_jenis_layanan_id' => $hargaLayanan->id,
                     'detail_transaksi_id' => $detailTransaksi->id,
@@ -510,7 +513,7 @@ class TransaksiController extends Controller
         }
     }
 
-    public function ubahJenisPakaian(Request $request)
+    public function ubahJenisCucian(Request $request)
     {
         $userRole = auth()->user()->roles[0]->name;
 
@@ -518,7 +521,7 @@ class TransaksiController extends Controller
         $layanan = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
             ->where('harga_jenis_layanan.cabang_id', $cabang->id)
-            ->where('harga_jenis_layanan.jenis_cucian_id', $request->jenisPakaianId)
+            ->where('harga_jenis_layanan.jenis_cucian_id', $request->jenisCucianId)
             ->select('jl.id', 'jl.nama')->get();
         return $layanan;
     }
@@ -532,7 +535,7 @@ class TransaksiController extends Controller
         foreach ($request->jenisLayananId as $item) {
             $hargaLayanan = HargaJenisLayanan::query()
                 ->where('cabang_id', $cabang->id)
-                ->where('jenis_cucian_id', $request->jenisPakaianId)
+                ->where('jenis_cucian_id', $request->jenisCucianId)
                 ->where('jenis_layanan_id', $item)
                 ->first();
             $hargaLayananAkhir += $hargaLayanan->harga;
@@ -562,14 +565,14 @@ class TransaksiController extends Controller
 
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->first();
         $hargaLayananId = $request->hargaLayanan;
-        $totalPakaian = $request->totalPakaian;
+        $totalCucian = $request->totalCucian;
         $layananPrioritas = LayananPrioritas::where('cabang_id', $cabang->id)->where('id', $request->layananPrioritas)->first();
 
         $biayaLayanan = 0;
         $biayaPrioritas = 0;
         foreach ($hargaLayananId as $item => $value) {
-            $biayaLayanan += $value * $totalPakaian[$item];
-            $biayaPrioritas += $layananPrioritas->harga * $totalPakaian[$item];
+            $biayaLayanan += $value * $totalCucian[$item];
+            $biayaPrioritas += $layananPrioritas->harga * $totalCucian[$item];
         }
         $totalBayar = $biayaLayanan + $biayaPrioritas + $request->layananTambahan;
         return [$biayaLayanan, $biayaPrioritas, $totalBayar];

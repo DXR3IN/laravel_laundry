@@ -19,13 +19,15 @@ class JenisCucian extends Model
         'nama',
         'deskripsi',
         'cabang_id',
-        'lokasi',
-        'alamat',
-
     ];
 
     public function hargaJenisLayanan()
     {
         return $this->hasMany(HargaJenisLayanan::class);
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
     }
 }

@@ -266,72 +266,77 @@
             {{-- Akhir Modal Impor --}}
 
             {{-- Awal Tabel Cabang --}}
-            @role(["lurah", "pic"])
-                <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
-                    <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
-                        <h6 class="font-bold dark:text-white">Daftar Cabang</h6>
+            @role(["owner"])
+                <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mb-6">
+                    
+                    <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+                        <h6 class="text-lg font-bold text-slate-900 dark:text-white">Daftar Cabang</h6>
                     </div>
-                    <div class="flex-auto px-0 pb-2 pt-0">
-                        <div class="overflow-x-auto p-0 px-6 pb-6">
-                            <table id="myTable1" class="nowrap stripe mb-0" style="width:100%;">
-                                <thead>
-                                    <tr>
-                                        <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Nama
-                                        </th>
-                                        <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Lokasi
-                                        </th>
-                                        <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Created_at
-                                        </th>
-                                        <th class="rounded-tr bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Aksi
-                                        </th>
+
+                    <div class="overflow-x-auto  p-0 px-6 pb-6">
+                        <table id="myTable1" class="w-full text-left border-collapse" style="width:100%;">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                        Nama Cabang
+                                    </th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                        Lokasi
+                                    </th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                        Tanggal Dibuat
+                                    </th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+                                        Aksi
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-700/50">
+                                @foreach ($cabang as $item)
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                                        
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm font-medium text-slate-900 dark:text-slate-100">
+                                                {{ $item->nama }}
+                                            </p>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4">
+                                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
+                                                {{ $item->lokasi }}
+                                            </p>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <p class="text-sm text-slate-600 dark:text-slate-300">
+                                                {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
+                                            </p>
+                                        </td>
+                                        
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <a href="{{ route('user.cabang', $item->slug) }}" class="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 rounded-lg transition-colors">
+                                                <i class="ri-id-card-line text-lg leading-none"></i>
+                                                <span>Daftar User</span>
+                                            </a>
+                                        </td>
+                                        
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($cabang as $item)
-                                        <tr>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->nama }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->lokasi }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ Carbon\Carbon::parse($item->created_at)->translatedFormat("d F Y") }}
-                                                </p>
-                                            </td>
-                                            <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                                <div>
-                                                    <a href="{{ route("user.cabang", $item->slug) }}" class="btn btn-outline btn-info btn-sm mb-1">
-                                                        <i class="ri-id-card-line text-base"></i>
-                                                        Daftar User
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             @endrole
             {{-- Akhir Tabel Cabang --}}
 
             {{-- Awal Tabel User --}}
-            <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mb-6">
                 <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
-                    <h6 class="font-bold dark:text-white">{{ $title }}</h6>
+                    <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+                        <h6 class="text-lg font-bold text-slate-900 dark:text-white">{{ $title }}</h6>
+                    </div>
                     <div class="w-1/2 max-w-full flex-none px-3 text-right">
-                        @role(["pic", "manajer_laundry"])
+                        @role(["owner", "manajer_laundry"])
                             <a href="{{ route("user.create") }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                 <i class="ri-add-fill"></i>
                                 Tambah
@@ -382,8 +387,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @role(["lurah", "manajer_laundry", "pic"])
-                                    @role(["lurah", "pic"])
+                                @role(["manajer_laundry", "owner"])
+                                    @role(["owner"])
                                         @foreach ($manajer as $item)
                                             <tr>
                                                 <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -421,7 +426,7 @@
                                                         <a href="{{ route("user.view", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
                                                             <i class="ri-eye-line text-base"></i>
                                                         </a>
-                                                        @role(["pic", "manajer_laundry"])
+                                                        @role(["owner", "manajer_laundry"])
                                                             <a href="{{ route("user.edit", $item->slug) }}" class="btn btn-outline btn-warning btn-sm">
                                                                 <i class="ri-pencil-fill text-base"></i>
                                                             </a>
@@ -475,7 +480,7 @@
                                                     <a href="{{ route("user.view", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
                                                         <i class="ri-eye-line text-base"></i>
                                                     </a>
-                                                    @role(["pic", "manajer_laundry"])
+                                                    @role(["owner", "manajer_laundry"])
                                                         <a href="{{ route("user.edit", $item->slug) }}" class="btn btn-outline btn-warning btn-sm">
                                                             <i class="ri-pencil-fill text-base"></i>
                                                         </a>
@@ -498,7 +503,7 @@
             </div>
             {{-- Akhir Tabel User --}}
 
-            @role(["lurah", "manajer_laundry", "pic"])
+            @role([ "manajer_laundry", "owner"])
                 {{-- Awal Tabel User Trash --}}
                 <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
                     <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
@@ -533,8 +538,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @role(["lurah", "manajer_laundry", "pic"])
-                                        @role(["lurah", "pic"])
+                                    @role(["manajer_laundry", "owner"])
+                                        @role(["owner"])
                                             @foreach ($manajerTrash as $item)
                                                 <tr>
                                                     <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -572,7 +577,7 @@
                                                             <a href="{{ route("user.trash", [$item->slug]) }}" class="btn btn-outline btn-info btn-sm">
                                                                 <i class="ri-eye-line text-base"></i>
                                                             </a>
-                                                            @role(["pic", "manajer_laundry"])
+                                                            @role(["owner", "manajer_laundry"])
                                                                 <label for="restore_button" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button('{{ $item->slug }}', '{{ $item->nama }}')">
                                                                     <i class="ri-history-line text-base"></i>
                                                                 </label>
@@ -623,7 +628,7 @@
                                                         <a href="{{ route("user.trash", $item->slug) }}" class="btn btn-outline btn-info btn-sm">
                                                             <i class="ri-eye-line text-base"></i>
                                                         </a>
-                                                        @role(["pic", "manajer_laundry"])
+                                                        @role(["owner", "manajer_laundry"])
                                                             <label for="restore_button" class="btn btn-outline btn-primary btn-sm" onclick="return restore_button('{{ $item->slug }}', '{{ $item->nama }}')">
                                                                 <i class="ri-history-line text-base"></i>
                                                             </label>

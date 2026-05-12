@@ -26,6 +26,7 @@ class HargaJenisLayananRequest extends FormRequest
             'jenis_satuan' => 'required|string|max:255',
             'jenis_layanan_id' => 'required|integer',
             'jenis_cucian_id' => 'required|integer',
+            'prioritas_id' => 'required|integer'
         ];
     }
 

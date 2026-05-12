@@ -68,12 +68,12 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <div>
-                                                <a href="{{ route("transaksi.lurah.cabang", $item->slug) }}" class="btn btn-outline btn-accent btn-sm mb-1">
+                                                <a href="{{ route("transaksi.owner.cabang", $item->slug) }}" class="btn btn-outline btn-accent btn-sm mb-1">
                                                     <i class="ri-shopping-bag-4-line text-base"></i>
                                                     Daftar Transaksi
                                                 </a>
                                                 @if (!$item->deleted_at)
-                                                    <a href="{{ route("transaksi.lurah.cabang.jadwal", $item->slug) }}" class="btn btn-outline btn-secondary btn-sm mb-1">
+                                                    <a href="{{ route("transaksi.owner.cabang.jadwal", $item->slug) }}" class="btn btn-outline btn-secondary btn-sm mb-1">
                                                         <i class="ri-todo-line text-base"></i>
                                                         Daftar Jadwal
                                                     </a>

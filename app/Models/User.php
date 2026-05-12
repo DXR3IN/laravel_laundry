@@ -65,7 +65,7 @@ class User extends Authenticatable
 
     public function owner()
     {
-        return $this->belongsTo(OwnerLaundry::class);
+        return $this->hasMany(OwnerLaundry::class);
     }
 
     public function cabang()

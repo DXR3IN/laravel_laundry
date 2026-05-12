@@ -142,7 +142,7 @@ class TransaksiSeeder extends Seeder
     private function createDetails($transaksiId, $prioritas1, $prioritas2)
     {
         $detail1 = DetailTransaksi::create([
-            'total_pakaian' => 24,
+            'total_cucian' => 24,
             'harga_layanan_akhir' => 3500,
             'total_biaya_layanan' => 84000,
             'total_biaya_prioritas' => $prioritas1,
@@ -152,7 +152,7 @@ class TransaksiSeeder extends Seeder
         DetailLayananTransaksi::create(['harga_jenis_layanan_id' => 4, 'detail_transaksi_id' => $detail1->id]);
 
         $detail2 = DetailTransaksi::create([
-            'total_pakaian' => 12,
+            'total_cucian' => 12,
             'harga_layanan_akhir' => 4500,
             'total_biaya_layanan' => 54000,
             'total_biaya_prioritas' => $prioritas2,

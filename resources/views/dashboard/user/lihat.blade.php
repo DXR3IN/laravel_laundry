@@ -3,24 +3,10 @@
 @section("js")
     <script>
         $(document).ready(function() {
-            if ($("input[name='role']").value() == 'lurah' || $("input[name='role']").value() == 'rw') {
+            if ($("input[name='role']").value() == 'owner') {
                 $("input[name='cabang_id']").attr('disabled', true);
             } else {
                 $("input[name='cabang_id']").attr('disabled', false);
-            }
-
-            if ($("input[name='role']").value() == 'gamis') {
-                $("#form_gamis").append(`
-                    <label id="form_kk_gamis" class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text font-semibold dark:text-slate-100">
-                                Kartu Keluarga Gamis |
-                                <a href="#" class="link link-primary">Sudah membuat KK Gamis?</a>
-                            </span>
-                        </div>
-                        <input type="text" name="gamis_id" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" value="{{ $profile->gamis ? 'tes' : 'ada' }}" readonly />
-                    </label>
-                `);
             }
         });
     </script>
@@ -160,7 +146,7 @@
 
                     <div class="mt-5 flex flex-wrap justify-center gap-2">
                         @if (!$trash)
-                            @role(["pic", "manajer_laundry"])
+                            @role(["owner", "manajer_laundry"])
                                 <a href="{{ route("user.edit", $user->slug) }}" class="btn btn-warning w-full max-w-md text-slate-700">Ubah User</a>
                             @endrole
                         @endif

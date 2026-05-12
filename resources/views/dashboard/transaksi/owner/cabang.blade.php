@@ -70,7 +70,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('transaksi.lurah.cabang.delete', $cabang->slug) }}",
+                        url: "{{ route('transaksi.owner.cabang.delete', $cabang->slug) }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "transaksi_id": transaksi_id
@@ -105,7 +105,7 @@
 
             $.ajax({
                 type: "get",
-                url: "{{ route('transaksi.lurah.cabang.edit.status', $cabang->slug) }}",
+                url: "{{ route('transaksi.owner.cabang.edit.status', $cabang->slug) }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "transaksi_id": transaksi_id
@@ -137,13 +137,13 @@
                 <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
                     <h6 class="font-bold dark:text-white">{{ $title }}</h6>
                     <div class="w-1/2 max-w-full flex-none px-3 text-right">
-                        <a href="{{ route('transaksi.lurah') }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                        <a href="{{ route('transaksi.owner') }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-slate-500 dark:border-white bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-slate-500 dark:text-white shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                             <i class="ri-arrow-left-line"></i>
                             Kembali
                         </a>
                         @if (!$cabang->deleted_at)
                             @role(["manajer_laundry", "pegawai_laundry"])
-                                <a href="{{ route("transaksi.lurah.cabang.create", ['cabang' => $cabang->slug, 'isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
+                                <a href="{{ route("transaksi.owner.cabang.create", ['cabang' => $cabang->slug, 'isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                     <i class="ri-add-fill"></i>
                                     Tambah
                                 </a>
@@ -218,12 +218,12 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <div>
-                                                <a href="{{ route("transaksi.lurah.view", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-info btn-sm">
+                                                <a href="{{ route("transaksi.owner.view", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-info btn-sm">
                                                     <i class="ri-eye-line text-base"></i>
                                                 </a>
                                                 @if (!$cabang->deleted_at)
                                                     @role(["manajer_laundry", "pegawai_laundry"])
-                                                        <a href="{{ route("transaksi.lurah.cabang.edit", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-warning btn-sm">
+                                                        <a href="{{ route("transaksi.owner.cabang.edit", ['cabang' => $cabang->slug, 'transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-warning btn-sm">
                                                             <i class="ri-pencil-fill text-base"></i>
                                                         </a>
                                                         <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->id }}')">
@@ -259,7 +259,7 @@
                         </label>
                     </div>
                     <div>
-                        <form action="{{ route('transaksi.lurah.cabang.update.status', ['cabang' => $cabang->slug, 'isJadwal' => $isJadwal]) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('transaksi.owner.cabang.update.status', ['cabang' => $cabang->slug, 'isJadwal' => $isJadwal]) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="text" name="id" hidden>
                             <label class="form-control w-full">

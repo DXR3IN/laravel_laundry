@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ManajerLaundry;
+use App\Models\OwnerLaundry;
 use App\Models\PegawaiLaundry;
-use App\Models\PIC;
-use App\Models\RW;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -26,7 +25,9 @@ class ProfileController extends Controller
             abort(404, 'USER TIDAK DITEMUKAN.');
         }
 
-        if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'owner') {
+            $profile = OwnerLaundry::where('user_id', $user->id)->first();
+        } elseif ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
         } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
@@ -43,9 +44,11 @@ class ProfileController extends Controller
             abort(404, 'USER TIDAK DITEMUKAN.');
         }
 
-        if ($user->getRoleNames()[0] == 'manajer_laundry') {
+        if ($user->getRoleNames()[0] == 'owner') {
+            $profile = OwnerLaundry::where('user_id', $user->id)->first();
+        } elseif ($user->getRoleNames()[0] == 'manajer_laundry') {
             $profile = ManajerLaundry::where('user_id', $user->id)->first();
-        } else if ($user->getRoleNames()[0] == 'pegawai_laundry') {
+        } elseif ($user->getRoleNames()[0] == 'pegawai_laundry') {
             $profile = PegawaiLaundry::where('user_id', $user->id)->first();
         }
 
@@ -99,6 +102,13 @@ class ProfileController extends Controller
         }
 
         switch (auth()->user()->roles[0]->name) {
+            case 'owner':
+                $owner = OwnerLaundry::where('user_id', $user->id)->first();
+                if ($owner->foto) {
+                    Storage::delete($owner->foto);
+                }
+                $profileUpdate = OwnerLaundry::where('user_id', $user->id)->update($validatedProfile);
+                break;
             case 'manajer_laundry':
                 $manajer = ManajerLaundry::where('user_id', $user->id)->first();
                 if ($manajer->foto) {

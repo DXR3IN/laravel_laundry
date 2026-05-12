@@ -321,7 +321,7 @@
             })
         }
 
-        // Jenis Pakaian
+        // Jenis Cucian
         function show_button_jenis_cucian(id) {
             // Loading effect start
             let loading = `<span class="loading loading-dots loading-md text-blue-500"></span>`;
@@ -330,7 +330,7 @@
 
             $.ajax({
                 type: "get",
-                url: "{{ route('jenis-pakaian.show') }}",
+                url: "{{ route('jenis-cucian.show') }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "id": id
@@ -361,7 +361,7 @@
 
             $.ajax({
                 type: "get",
-                url: "{{ route('jenis-pakaian.edit') }}",
+                url: "{{ route('jenis-cucian.edit') }}",
                 data: {
                     "_token": "{{ csrf_token() }}",
                     "id": id
@@ -401,7 +401,7 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         type: "post",
-                        url: "{{ route('jenis-pakaian.delete') }}",
+                        url: "{{ route('jenis-cucian.delete') }}",
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "id": id,
@@ -504,8 +504,8 @@
                     `);
 
                     $("select[id='jenis_cucian_select']").html(`
-                        <option disabled>Pilih Jenis Pakaian!</option>
-                        @foreach ($jenisPakaian as $item)
+                        <option disabled>Pilih Jenis Cucian!</option>
+                        @foreach ($jenisCucian as $item)
                             <option value="{{ $item->id }}" {{ $item->id == `+ items[4] +` ? 'selected' : '' }}>{{ $item->nama }}</option>
                         @endforeach
                     `);
@@ -531,13 +531,13 @@
             });
         }
 
-        function delete_button_harga_jenis_layanan(id, cabang_id, layanan, pakaian) {
+        function delete_button_harga_jenis_layanan(id, cabang_id, layanan, cucian) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 html: "<p>Data akan masuk ke dalam Trash!</p>" +
                     "<div class='divider'></div>" +
                     "<p class='font-bold'>Layanan: " + layanan + "</p>" +
-                    "<p class='font-bold'>Pakaian: " + pakaian + "</p>",
+                    "<p class='font-bold'>Cucian: " + cucian + "</p>",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#6419E6',
@@ -879,7 +879,7 @@
                         <h6 class="font-bold dark:text-white">Jenis Layanan</h6>
                         <div class="w-1/2 max-w-full flex-none px-3 text-right">
                             @if (!$cabang->deleted_at)
-                                @role("pic")
+                                @role("owner")
                                     <label for="create_modal_jenis_layanan" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                         <i class="ri-add-fill"></i>
                                         Tambah
@@ -937,7 +937,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="edit_button_jenis_layanan" class="btn btn-outline btn-warning btn-sm" onclick="return edit_button_jenis_layanan('{{ $item->id }}')">
                                                                 <i class="ri-pencil-fill text-base"></i>
                                                             </label>
@@ -958,7 +958,7 @@
                 {{-- Akhir Tabel Jenis Layanan --}}
             {{-- Akhir Jenis Layanan --}}
 
-            {{-- Awal Jenis Pakaian --}}
+            {{-- Awal Jenis Cucian --}}
                 {{-- Awal Modal Create --}}
                 <input type="checkbox" id="create_modal_jenis_cucian" class="modal-toggle" />
                 <div class="modal" role="dialog">
@@ -970,16 +970,16 @@
                             </label>
                         </div>
                         <div>
-                            <form action="{{ route('jenis-pakaian.store') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('jenis-cucian.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="text" name="cabang_slug" value="{{ $cabang->slug }}" hidden>
                                 <label class="form-control w-full">
                                     <div class="label">
                                         <span class="label-text font-semibold">
-                                            <x-label-input-required :value="'Nama Pakaian'" />
+                                            <x-label-input-required :value="'Nama Cucian'" />
                                         </span>
                                     </div>
-                                    <input type="text" name="nama" placeholder="Nama Pakaian" class="input input-bordered w-full text-blue-700" value="{{ old('nama') }}" required />
+                                    <input type="text" name="nama" placeholder="Nama Cucian" class="input input-bordered w-full text-blue-700" value="{{ old('nama') }}" required />
                                     @error('nama')
                                         <div class="label">
                                             <span class="label-text-alt text-error text-sm">{{ $message }}</span>
@@ -1017,7 +1017,7 @@
                         <div>
                             <label class="form-control w-full">
                                 <div class="label">
-                                    <span class="label-text font-semibold">Nama Pakaian</span>
+                                    <span class="label-text font-semibold">Nama Cucian</span>
                                     <span class="label-text-alt" id="loading_edit1"></span>
                                 </div>
                                 <input type="text" name="nama" class="input input-bordered w-full text-blue-700" readonly />
@@ -1045,17 +1045,17 @@
                             </label>
                         </div>
                         <div>
-                            <form action="{{ route('jenis-pakaian.update') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('jenis-cucian.update') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="text" name="id" hidden>
                                 <label class="form-control w-full">
                                     <div class="label">
                                         <span class="label-text font-semibold">
-                                            <x-label-input-required :value="'Nama Pakaian'" />
+                                            <x-label-input-required :value="'Nama Cucian'" />
                                         </span>
                                         <span class="label-text-alt" id="loading_edit1"></span>
                                     </div>
-                                    <input type="text" name="nama" placeholder="Nama Pakaian" class="input input-bordered w-full text-blue-700" required />
+                                    <input type="text" name="nama" placeholder="Nama Cucian" class="input input-bordered w-full text-blue-700" required />
                                     @error('nama')
                                         <div class="label">
                                             <span class="label-text-alt text-error text-sm">{{ $message }}</span>
@@ -1086,13 +1086,13 @@
                 <div class="modal" role="dialog">
                     <div class="modal-box">
                         <div class="mb-3 flex justify-between">
-                            <h3 class="text-lg font-bold">Impor Jenis Pakaian</h3>
+                            <h3 class="text-lg font-bold">Impor Jenis Cucian</h3>
                             <label for="impor_modal_jenis_cucian" class="cursor-pointer">
                                 <i class="ri-close-large-fill"></i>
                             </label>
                         </div>
                         <div>
-                            <form action="{{ route('jenis-pakaian.import') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('jenis-cucian.import') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <label class="form-control w-full">
                                     <input type="file" name="impor" placeholder="Impor Data" class="file-input file-input-bordered w-full text-blue-700" required />
@@ -1105,13 +1105,13 @@
                 </div>
                 {{-- Akhir Modal Impor --}}
 
-                {{-- Awal Tabel Jenis Pakaian --}}
+                {{-- Awal Tabel Jenis Cucian --}}
                 <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
                     <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
-                        <h6 class="font-bold dark:text-white">Jenis Pakaian</h6>
+                        <h6 class="font-bold dark:text-white">Jenis Cucian</h6>
                         <div class="w-1/2 max-w-full flex-none px-3 text-right">
                             @if (!$cabang->deleted_at)
-                                @role("pic")
+                                @role("owner")
                                     <label for="create_modal_jenis_cucian" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                         <i class="ri-add-fill"></i>
                                         Tambah
@@ -1121,7 +1121,7 @@
                                         Impor
                                     </label>
                                 @endrole
-                                <form action="{{ route('jenis-pakaian.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
+                                <form action="{{ route('jenis-cucian.export') }}" method="GET" enctype="multipart/form-data" class="inline-block">
                                     @csrf
                                     <label class="form-control w-full">
                                         <input type="text" name="cabang" value="{{ $cabang->slug }}" hidden readonly />
@@ -1140,7 +1140,7 @@
                                 <thead>
                                     <tr>
                                         <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Nama Pakaian
+                                            Nama Cucian
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Created_at
@@ -1151,7 +1151,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($jenisPakaian as $item)
+                                    @foreach ($jenisCucian as $item)
                                         <tr>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
@@ -1169,7 +1169,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="edit_button_jenis_cucian" class="btn btn-outline btn-warning btn-sm" onclick="return edit_button_jenis_cucian('{{ $item->id }}')">
                                                                 <i class="ri-pencil-fill text-base"></i>
                                                             </label>
@@ -1187,8 +1187,8 @@
                         </div>
                     </div>
                 </div>
-                {{-- Akhir Tabel Jenis Pakaian --}}
-            {{-- Akhir Jenis Pakaian --}}
+                {{-- Akhir Tabel Jenis Cucian --}}
+            {{-- Akhir Jenis Cucian --}}
 
             {{-- Awal Harga Jenis Layanan --}}
                 {{-- Awal Modal Create --}}
@@ -1227,12 +1227,12 @@
                                     <label class="form-control w-full lg:w-1/2">
                                         <div class="label">
                                             <span class="label-text font-semibold">
-                                                <x-label-input-required :value="'Jenis Pakaian'" />
+                                                <x-label-input-required :value="'Jenis Cucian'" />
                                             </span>
                                         </div>
                                         <select name="jenis_cucian_id" class="select select-bordered text-base text-blue-700 dark:bg-slate-100" required>
-                                            <option disabled selected>Pilih Jenis Pakaian!</option>
-                                            @foreach ($jenisPakaian as $item)
+                                            <option disabled selected>Pilih Jenis Cucian!</option>
+                                            @foreach ($jenisCucian as $item)
                                                 <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                             @endforeach
                                         </select>
@@ -1302,7 +1302,7 @@
                                 </label>
                                 <label class="form-control w-full lg:w-1/2">
                                     <div class="label">
-                                        <span class="label-text font-semibold">Jenis Pakaian</span>
+                                        <span class="label-text font-semibold">Jenis Cucian</span>
                                         <span class="label-text-alt" id="loading_edit2"></span>
                                     </div>
                                     <input type="text" name="jenis_cucian_id" class="input input-bordered w-full text-blue-700" readonly />
@@ -1361,7 +1361,7 @@
                                     <label class="form-control w-full lg:w-1/2">
                                         <div class="label">
                                             <span class="label-text font-semibold">
-                                                <x-label-input-required :value="'Jenis Pakaian'" />
+                                                <x-label-input-required :value="'Jenis Cucian'" />
                                             </span>
                                             <span class="label-text-alt" id="loading_edit2"></span>
                                         </div>
@@ -1440,7 +1440,7 @@
                         <h6 class="font-bold dark:text-white">Harga Jenis Layanan</h6>
                         <div class="w-1/2 max-w-full flex-none px-3 text-right">
                             @if (!$cabang->deleted_at)
-                                @role("pic")
+                                @role("owner")
                                     <label for="create_modal_harga_jenis_layanan" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                         <i class="ri-add-fill"></i>
                                         Tambah
@@ -1472,7 +1472,7 @@
                                             Jenis Layanan
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                            Jenis Pakaian
+                                            Jenis Cucian
                                         </th>
                                         <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                             Harga
@@ -1498,7 +1498,7 @@
                                             </td>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                                 <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                    {{ $item->nama_pakaian }}
+                                                    {{ $item->nama_cucian }}
                                                 </p>
                                             </td>
                                             <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -1522,11 +1522,11 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="edit_button_harga_jenis_layanan" class="btn btn-outline btn-warning btn-sm" onclick="return edit_button_harga_jenis_layanan('{{ $item->id }}')">
                                                                 <i class="ri-pencil-fill text-base"></i>
                                                             </label>
-                                                            <label for="delete_button_harga_jenis_layanan" class="btn btn-outline btn-error btn-sm" onclick="return delete_button_harga_jenis_layanan('{{ $item->id }}', '{{ $item->cabang_id }}', '{{ $item->nama_layanan }}', '{{ $item->nama_pakaian }}')">
+                                                            <label for="delete_button_harga_jenis_layanan" class="btn btn-outline btn-error btn-sm" onclick="return delete_button_harga_jenis_layanan('{{ $item->id }}', '{{ $item->cabang_id }}', '{{ $item->nama_layanan }}', '{{ $item->nama_cucian }}')">
                                                                 <i class="ri-delete-bin-line text-base"></i>
                                                             </label>
                                                         @endrole
@@ -1760,7 +1760,7 @@
                         <h6 class="font-bold dark:text-white">Layanan Prioritas</h6>
                         <div class="w-1/2 max-w-full flex-none px-3 text-right">
                             @if (!$cabang->deleted_at)
-                                @role("pic")
+                                @role("owner")
                                     <label for="create_modal_layanan_prioritas" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                         <i class="ri-add-fill"></i>
                                         Tambah
@@ -1826,7 +1826,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="edit_button_layanan_prioritas" class="btn btn-outline btn-warning btn-sm" onclick="return edit_button_layanan_prioritas('{{ $item->id }}')">
                                                                 <i class="ri-pencil-fill text-base"></i>
                                                             </label>
@@ -2003,7 +2003,7 @@
                         <h6 class="font-bold dark:text-white">Layanan Tambahan</h6>
                         <div class="w-1/2 max-w-full flex-none px-3 text-right">
                             @if (!$cabang->deleted_at)
-                                @role("pic")
+                                @role("owner")
                                     <label for="create_modal_layanan_tambahan" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
                                         <i class="ri-add-fill"></i>
                                         Tambah
@@ -2069,7 +2069,7 @@
                                                         <i class="ri-eye-line text-base"></i>
                                                     </label>
                                                     @if (!$cabang->deleted_at)
-                                                        @role("pic")
+                                                        @role("owner")
                                                             <label for="edit_button_layanan_tambahan" class="btn btn-outline btn-warning btn-sm" onclick="return edit_button_layanan_tambahan('{{ $item->id }}')">
                                                                 <i class="ri-pencil-fill text-base"></i>
                                                             </label>

@@ -20,4 +20,14 @@ class LayananPrioritas extends Model
         'prioritas',
         'cabang_id',
     ];
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
+    }
+
+    public function hargaJenisLayanan()
+    {
+        return $this->hasMany(HargaJenisLayanan::class);
+    }
 }

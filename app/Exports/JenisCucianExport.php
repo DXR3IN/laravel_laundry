@@ -3,7 +3,6 @@
 namespace App\Exports;
 
 use App\Models\JenisCucian;
-use App\Models\JenisPakaian;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -21,8 +20,8 @@ class JenisCucianExport implements FromCollection, WithHeadings, WithMapping, Wi
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         return JenisCucian::query()
@@ -43,7 +42,7 @@ class JenisCucianExport implements FromCollection, WithHeadings, WithMapping, Wi
     public function headings(): array
     {
         return [
-            'nama_pakaian',
+            'nama_cucian',
             'deskripsi',
             'cabang',
         ];

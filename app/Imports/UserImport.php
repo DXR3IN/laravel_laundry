@@ -41,7 +41,7 @@ class UserImport implements ToCollection, WithHeadingRow
 
                 switch ($row['role']) {
                     case 'manajer_laundry':
-                        if ($roleUser == 'lurah' || $roleUser == 'pic') {
+                        if ($roleUser == 'owner') {
                             ManajerLaundry::create($validatedProfile);
                         } elseif ($roleUser == 'manajer_laundry') {
                             break;

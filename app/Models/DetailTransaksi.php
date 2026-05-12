@@ -14,7 +14,7 @@ class DetailTransaksi extends Model
     public $incrementing = "true";
     public $timestamps = "true";
     protected $fillable = [
-        'total_pakaian',
+        'total_cucian',
         'harga_layanan_akhir',
         'total_biaya_layanan',
         'total_biaya_prioritas',

@@ -24,4 +24,9 @@ class JenisLayanan extends Model
     {
         return $this->hasMany(HargaJenisLayanan::class);
     }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
+    }
 }

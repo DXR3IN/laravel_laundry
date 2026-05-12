@@ -24,4 +24,9 @@ class LayananTambahan extends Model
     {
         return $this->belongsTo(Transaksi::class);
     }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
+    }
 }

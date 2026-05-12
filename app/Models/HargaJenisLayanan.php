@@ -28,8 +28,18 @@ class HargaJenisLayanan extends Model
         return $this->belongsTo(JenisLayanan::class);
     }
 
-    public function jenisPakaian()
+    public function prioritas()
+    {
+        return $this->belongsTo(LayananPrioritas::class);
+    }
+
+    public function jenisCucian()
     {
         return $this->belongsTo(JenisCucian::class);
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
     }
 }

@@ -161,8 +161,8 @@
                                     value="{{ $transaksi->pegawai->manajer[0]->nama }}"
                                 @elseif ($transaksi->pegawai->roles[0]->name == 'pegawai_laundry')
                                     value="{{ $transaksi->pegawai->pegawai[0]->nama }}"
-                                @elseif ($transaksi->pegawai->roles[0]->name == 'lurah')
-                                    value="{{ $transaksi->pegawai->lurah[0]->nama }}"
+                                @elseif ($transaksi->pegawai->roles[0]->name == 'owner')
+                                    value="{{ $transaksi->pegawai->owner[0]->nama }}"
                                 @endif
                             />
                         </label>
@@ -183,13 +183,13 @@
                             <thead class="align-bottom">
                                 <tr>
                                     <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Jenis Pakaian
+                                        Jenis Cucian
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Jenis Layanan
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Total Pakaian
+                                        Total Cucian
                                     </th>
                                     <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
                                         Harga Layanan Akhir
@@ -213,7 +213,7 @@
                                     <tr>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenisPakaian->nama }}
+                                                {{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenisCucian->nama }}
                                             </p>
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
@@ -225,7 +225,7 @@
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">
                                             <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->total_pakaian }} {{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenis_satuan }}
+                                                {{ $item->total_cucian }} {{ $item->detailLayananTransaksi[0]->hargaJenisLayanan->jenis_satuan }}
                                             </p>
                                         </td>
                                         <td class="border-b border-slate-600 bg-transparent text-left align-middle">

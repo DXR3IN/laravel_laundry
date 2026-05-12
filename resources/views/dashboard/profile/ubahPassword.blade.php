@@ -2,13 +2,23 @@
 
 @section("js")
     <script>
+        // Konfigurasi SweetAlert agar seragam dan modern
+        const swalConfig = {
+            confirmButtonColor: '#2563EB', // Blue-600
+            confirmButtonText: 'OK',
+            customClass: {
+                popup: 'dark:bg-slate-800 dark:text-white',
+                title: 'dark:text-white',
+                htmlContainer: 'dark:text-slate-300'
+            }
+        };
+
         @if (session()->has("success"))
             Swal.fire({
                 title: 'Berhasil',
                 text: '{{ session("success") }}',
                 icon: 'success',
-                confirmButtonColor: '#6419E6',
-                confirmButtonText: 'OK',
+                ...swalConfig
             });
         @endif
 
@@ -17,66 +27,80 @@
                 title: 'Gagal',
                 text: '{{ session("error") }}',
                 icon: 'error',
-                confirmButtonColor: '#6419E6',
-                confirmButtonText: 'OK',
+                ...swalConfig
             });
         @endif
 
         @if ($errors->any())
             Swal.fire({
                 title: 'Gagal',
-                text: '{{ $title }} Gagal Dibuat',
+                text: 'Gagal memperbarui password. Silakan periksa kembali input Anda.',
                 icon: 'error',
-                confirmButtonColor: '#6419E6',
-                confirmButtonText: 'OK',
+                ...swalConfig
             })
         @endif
     </script>
 @endsection
 
 @section("container")
-    <div class="-mx-3 flex flex-wrap">
-        <div class="w-full max-w-full flex-none px-3">
-            {{-- Awal Form Ganti Password --}}
-            <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
-                <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
-                    <h6 class="font-bold dark:text-white">{{ $title }} | <span class="text-blue-500">{{ $user->email }}</span></h6>
-                </div>
-                <div class="flex-auto px-6 pb-6 pt-0">
-                    <form action="{{ route("profile.update.password", $user->slug) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="text" name="slug" value="{{ $user->slug }}" hidden >
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text font-semibold dark:text-slate-100">Password Lama</span>
-                            </div>
-                            <input type="password" name="current_password" placeholder="Password Lama" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" required />
-                            <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
-                        </label>
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text font-semibold dark:text-slate-100">Password Baru</span>
-                            </div>
-                            <input type="password" name="password" placeholder="Password Baru" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" required />
-                            <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
-                        </label>
-                        <label class="form-control w-full">
-                            <div class="label">
-                                <span class="label-text font-semibold dark:text-slate-100">Konfirmasi Password baru</span>
-                            </div>
-                            <input type="password" name="password_confirmation" placeholder="Konfirmasi Password baru" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" required />
-                        </label>
-
-                        <div id="form_gamis"></div>
-
-                        <div class="mt-5 flex flex-wrap justify-center gap-2">
-                            <button type="submit" class="btn btn-warning w-full max-w-md text-slate-700">Ganti Password</button>
-                            <a href="{{ url()->previous() }}" class="btn btn-ghost w-full max-w-md bg-slate-500 text-white dark:bg-slate-500 dark:hover:opacity-80">Kembali</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            {{-- Akhir Form Ganti Password --}}
+    <div class="max-w-3xl mx-auto py-4">
+        
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $title }}</h2>
+            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                Kelola keamanan akun untuk <span class="font-semibold text-blue-600 dark:text-blue-400">{{ $user->email }}</span>
+            </p>
         </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <form action="{{ route("profile.update.password", $user->slug) }}" method="POST">
+                @csrf
+                <input type="text" name="slug" value="{{ $user->slug }}" hidden>
+
+                <div class="p-6 md:p-8 space-y-6">
+                    
+                    <div class="form-control w-full">
+                        <label class="label pt-0 pb-1">
+                            <span class="label-text font-medium text-slate-700 dark:text-slate-300">Password Lama</span>
+                        </label>
+                        <input type="password" name="current_password" placeholder="Masukkan password saat ini" 
+                            class="input input-bordered w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white transition-shadow" required />
+                        <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2 text-sm text-red-500" />
+                    </div>
+
+                    <div class="divider my-2 opacity-50 dark:border-slate-700"></div>
+
+                    <div class="form-control w-full">
+                        <label class="label pt-0 pb-1">
+                            <span class="label-text font-medium text-slate-700 dark:text-slate-300">Password Baru</span>
+                        </label>
+                        <input type="password" name="password" placeholder="Masukkan password baru" 
+                            class="input input-bordered w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white transition-shadow" required />
+                        <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2 text-sm text-red-500" />
+                    </div>
+
+                    <div class="form-control w-full">
+                        <label class="label pt-0 pb-1">
+                            <span class="label-text font-medium text-slate-700 dark:text-slate-300">Konfirmasi Password Baru</span>
+                        </label>
+                        <input type="password" name="password_confirmation" placeholder="Ketik ulang password baru" 
+                            class="input input-bordered w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white transition-shadow" required />
+                    </div>
+
+                    <div id="form_gamis"></div>
+
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800/50 px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col-reverse sm:flex-row justify-end gap-3 rounded-b-2xl">
+                    <a href="{{ url()->previous() }}" class="btn btn-ghost border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 w-full sm:w-auto">
+                        Batal & Kembali
+                    </a>
+                    <button type="submit" class="btn bg-blue-600 hover:bg-blue-700 text-white border-0 w-full sm:w-auto shadow-sm">
+                        Simpan Password
+                    </button>
+                </div>
+            </form>
+        </div>
+
     </div>
 @endsection

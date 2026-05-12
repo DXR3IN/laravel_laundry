@@ -6,7 +6,6 @@ use App\Enums\JenisSatuanLayanan;
 use Carbon\Carbon;
 use App\Models\Cabang;
 use App\Models\JenisLayanan;
-use App\Models\JenisPakaian;
 use Illuminate\Http\Request;
 use App\Models\HargaJenisLayanan;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +15,7 @@ use App\Exports\HargaJenisLayananExport;
 use App\Imports\HargaJenisLayananImport;
 use App\Http\Requests\Layanan\HargaJenisLayananRequest;
 use App\Models\JenisCucian;
+use App\Models\LayananPrioritas;
 
 class HargaJenisLayananController extends Controller
 {
@@ -31,63 +31,59 @@ class HargaJenisLayananController extends Controller
             return abort(403);
         }
 
+        $prioritas = LayananPrioritas::where('cabang_id', $userCabang)->get();
         $jenisLayanan = JenisLayanan::where('cabang_id', $userCabang)->orderBy('created_at', 'asc')->get();
-        $jenisPakaian = JenisCucian::where('cabang_id', $userCabang)->orderBy('created_at', 'asc')->get();
+        $jenisCucian = JenisCucian::where('cabang_id', $userCabang)->orderBy('created_at', 'asc')->get();
 
         $hargaJenisLayanan = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
             ->join('jenis_cucian as jp', 'harga_jenis_layanan.jenis_cucian_id', '=', 'jp.id')
-            ->join('layanan_prioritas as lp', 'harga_jenis_layanan.prioritas_id', '=', 'lp.id')
             ->where('harga_jenis_layanan.cabang_id', $userCabang)
-            ->select(
-                'harga_jenis_layanan.*',
-                'jl.nama as nama_layanan',
-                'jp.nama as nama_pakaian',
-                'lp.nama as nama_prioritas'
-            )
+            ->select('harga_jenis_layanan.*', 'jl.nama as nama_layanan', 'jp.nama as nama_cucian')
             ->orderBy('jenis_cucian_id', 'asc')->orderBy('jenis_layanan_id', 'asc')->get();
+
         $hargaJenisLayananTrash = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
             ->join('jenis_cucian as jp', 'harga_jenis_layanan.jenis_cucian_id', '=', 'jp.id')
-            ->join('layanan_prioritas as lp', 'harga_jenis_layanan.prioritas_id', '=', 'lp.id')
             ->where('harga_jenis_layanan.cabang_id', $userCabang)
-            ->select(
-                'harga_jenis_layanan.*',
-                'jl.nama as nama_layanan',
-                'jp.nama as nama_pakaian',
-                'lp.nama as nama_prioritas'
-            )
+            ->select('harga_jenis_layanan.*', 'jl.nama as nama_layanan', 'jp.nama as nama_cucian')
             ->onlyTrashed()->orderBy('harga_jenis_layanan.jenis_cucian_id', 'asc')->orderBy('harga_jenis_layanan.jenis_layanan_id', 'asc')->get();
 
-        return view('dashboard.harga-jenis-layanan.index', compact('title', 'hargaJenisLayanan', 'hargaJenisLayananTrash', 'jenisLayanan', 'jenisPakaian', 'cabang', 'jenisSatuanLayanan'));
+        return view('dashboard.harga-jenis-layanan.index', compact('title', 'hargaJenisLayanan', 'hargaJenisLayananTrash', 'jenisLayanan', 'jenisCucian', 'prioritas', 'jenisSatuanLayanan'));
     }
 
     public function store(HargaJenisLayananRequest $request)
     {
         $validated = $request->validated();
-        $userRole = auth()->user()->roles[0]->name;
+        $user = auth()->user();
 
-        if ($userRole == 'manajer_laundry') {
-            $validated['cabang_id'] = auth()->user()->cabang_id;
+        if ($user->hasRole('manajer_laundry')) {
+            $validated['cabang_id'] = $user->cabang_id;
+        } else if ($user->hasRole('owner')) {
+            $cabang = Cabang::where('slug', $request->cabang_slug)->firstOrFail();
+            $validated['cabang_id'] = $cabang->id;
         }
 
-        if (HargaJenisLayanan::where('cabang_id', $validated['cabang_id'])->where('jenis_layanan_id', $validated['jenis_layanan_id'])->where('jenis_cucian_id', $validated['jenis_cucian_id'])->first()) {
-            if ($userRole == 'manajer_laundry') {
-                return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Sudah Ada');
-            }
-            return back()->with('error', 'Kamu tidak memiliki hak pada bagian ini');
+        $isDuplicated = HargaJenisLayanan::where('cabang_id', $validated['cabang_id'])
+            ->where('jenis_layanan_id', $validated['jenis_layanan_id'])
+            ->where('jenis_cucian_id', $validated['jenis_cucian_id'])
+            ->exists();
+
+        $redirect = match (true) {
+            $user->hasRole('manajer_laundry') => to_route('harga-jenis-layanan'),
+            $user->hasRole('owner') => back(),
+            default => abort(403, 'Aksi tidak diizinkan.'),
+        };
+
+        if ($isDuplicated) {
+            return $redirect->with('error', 'Harga Jenis Layanan Sudah Ada');
         }
 
-        $tambah = HargaJenisLayanan::create($validated);
-
-        if ($userRole == 'manajer_laundry') {
-            if ($tambah) {
-                return to_route('harga-jenis-layanan')->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
-            } else {
-                return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
-            }
+        if (HargaJenisLayanan::create($validated)) {
+            return $redirect->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
         }
-        return back()->with('error', 'Kamu tidak memiliki hak pada bagian ini');
+
+        return $redirect->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
     }
 
     public function show(Request $request)
@@ -95,7 +91,8 @@ class HargaJenisLayananController extends Controller
         $hargaJenisLayanan = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
             ->join('jenis_cucian as jp', 'harga_jenis_layanan.jenis_cucian_id', '=', 'jp.id')
-            ->select('harga_jenis_layanan.*', 'jl.nama as nama_layanan', 'jp.nama as nama_pakaian')
+            ->join('layanan_prioritas as lp', 'harga_jenis_layanan.prioritas_id', '=', 'lp.id')
+            ->select('harga_jenis_layanan.*', 'jl.nama as nama_layanan', 'jp.nama as nama_cucian', 'lp.nama as nama_prioritas')
             ->withTrashed()->where('harga_jenis_layanan.id', $request->id)->first();
 
         return $hargaJenisLayanan;
@@ -110,58 +107,39 @@ class HargaJenisLayananController extends Controller
     public function update(HargaJenisLayananRequest $request)
     {
         $validated = $request->validated();
-        $userRole = auth()->user()->roles[0]->name;
+        $user = auth()->user();
 
-        if ($userRole == 'manajer_laundry') {
-            $validated['cabang_id'] = auth()->user()->cabang_id;
-        } else if ($userRole == 'pic') {
-            $cabang = Cabang::where('slug', $request->cabang_slug)->first();
+        if ($user->hasRole('manajer_laundry')) {
+            $validated['cabang_id'] = $user->cabang_id;
+        } elseif ($user->hasRole('owner')) {
+            $cabang = Cabang::where('slug', $request->cabang_slug)->firstOrFail();
             $validated['cabang_id'] = $cabang->id;
         }
 
-        $hargaJenisLayanan = HargaJenisLayanan::where('id', $request->id)->first();
-        $cekHargaJenisLayanan = HargaJenisLayanan::where('cabang_id', $validated['cabang_id'])->where('jenis_layanan_id', $validated['jenis_layanan_id'])->where('jenis_cucian_id', $validated['jenis_cucian_id'])->first();
+        $hargaJenisLayanan = HargaJenisLayanan::findOrFail($request->id);
 
-        if ($cekHargaJenisLayanan) {
-            if ($hargaJenisLayanan->id == $cekHargaJenisLayanan->id) {
-                $perbarui = $hargaJenisLayanan->update($validated);
-                if ($userRole == 'manajer_laundry') {
-                    if ($perbarui) {
-                        return to_route('harga-jenis-layanan')->with('success', 'Harga Jenis Layanan Berhasil Diperbarui');
-                    } else {
-                        return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Gagal Diperbarui');
-                    }
-                } else if ($userRole == 'pic') {
-                    if ($perbarui) {
-                        return back()->with('success', 'Harga Jenis Layanan Berhasil Diperbarui');
-                    } else {
-                        return back()->with('error', 'Harga Jenis Layanan Gagal Diperbarui');
-                    }
-                }
-            } else {
-                if ($userRole == 'manajer_laundry') {
-                    return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Sudah Ada');
-                } else if ($userRole == 'pic') {
-                    return back()->with('error', 'Harga Jenis Layanan Sudah Ada');
-                }
-            }
+        $isDuplicate = HargaJenisLayanan::where('cabang_id', $validated['cabang_id'])
+            ->where('jenis_layanan_id', $validated['jenis_layanan_id'])
+            ->where('jenis_cucian_id', $validated['jenis_cucian_id'])
+            ->where('prioritas_id', $validated['prioritas__id'])
+            ->where('id', '!=', $hargaJenisLayanan->id)
+            ->exists();
+
+        $redirect = match (true) {
+            $user->hasRole('manajer_laundry') => to_route('harga-jenis-layanan'),
+            $user->hasRole('owner') => back(),
+            default => abort(403, 'Aksi tidak diizinkan.'),
+        };
+
+        if ($isDuplicate) {
+            return $redirect->with('error', 'Harga Jenis Layanan Sudah Ada');
         }
 
-        $perbarui = $hargaJenisLayanan->update($validated);
-
-        if ($userRole == 'manajer_laundry') {
-            if ($perbarui) {
-                return to_route('harga-jenis-layanan')->with('success', 'Harga Jenis Layanan Berhasil Diperbarui');
-            } else {
-                return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Gagal Diperbarui');
-            }
-        } else if ($userRole == 'pic') {
-            if ($perbarui) {
-                return back()->with('success', 'Harga Jenis Layanan Berhasil Diperbarui');
-            } else {
-                return back()->with('error', 'Harga Jenis Layanan Gagal Diperbarui');
-            }
+        if ($hargaJenisLayanan->update($validated)) {
+            return $redirect->with('success', 'Harga Jenis Layanan Berhasil Diperbarui');
         }
+
+        return $redirect->with('error', 'Harga Jenis Layanan Gagal Diperbarui');
     }
 
     public function delete(Request $request)
@@ -199,12 +177,16 @@ class HargaJenisLayananController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         try {
             Excel::import(new HargaJenisLayananImport, $request->file('impor'));
-            if ($userRole == 'manajer_laundry') {
+            if ($userRole == 'owner') {
+                return to_route('layanan-cabang.cabang', $request->cabang)->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
+            } elseif ($userRole == 'manajer_laundry') {
                 return to_route('harga-jenis-layanan')->with('success', 'Harga Jenis Layanan Berhasil Ditambahkan');
             }
         } catch (\Exception $ex) {
             Log::info($ex);
-            if ($userRole == 'manajer_laundry') {
+            if ($userRole == 'owner') {
+                return to_route('layanan-cabang.cabang', $request->cabang)->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
+            } elseif ($userRole == 'manajer_laundry') {
                 return to_route('harga-jenis-layanan')->with('error', 'Harga Jenis Layanan Gagal Ditambahkan');
             }
         }

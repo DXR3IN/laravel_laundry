@@ -27,7 +27,12 @@ class OwnerLaundrySeeder extends Seeder
 
         OwnerLaundry::create(
             [
-                'name' => $owner->username,
+                'nama' => $owner->username,
+                'jenis_kelamin' => 'L',
+                'tempat_lahir' => 'Surabaya',
+                'tanggal_lahir' => '1997-01-01',
+                'telepon' => '081234567891',
+                'alamat' => 'Kelurahan Simokerto, Surabaya',
                 'user_id' => $owner->id
             ]
         );

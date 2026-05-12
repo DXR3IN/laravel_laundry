@@ -13,7 +13,7 @@ class OwnerLaundry extends Model
     protected $primaryKey = 'id';
     public $timestamps = 'true';
     protected $fillable = [
-        'name',
+        'nama',
         'user_id',
     ];
 

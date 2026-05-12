@@ -31,7 +31,7 @@
                         <form action="{{ route('laporan.pendapatan.laundry.pdf') }}" method="post" enctype="multipart/form-data" target="_blank">
                             @csrf
                             <div class="w-full flex flex-wrap justify-center gap-2 lg:flex-nowrap">
-                                @role(['lurah', 'pic'])
+                                @role(['owner'])
                                     <label class="form-control w-full lg:w-1/3">
                                         <div class="label">
                                             <span class="label-text font-semibold dark:text-slate-100 text-lg">Cabang</span>
@@ -44,13 +44,13 @@
                                         </select>
                                     </label>
                                 @endrole
-                                <label class="form-control w-full @if(auth()->user()->hasRole(['lurah', 'pic']))lg:w-1/3 @else lg:w-1/2 @endif">
+                                <label class="form-control w-full @if(auth()->user()->hasRole(['owner']))lg:w-1/3 @else lg:w-1/2 @endif">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100 text-lg">Tanggal Awal</span>
                                     </div>
                                     <input type="date" name="tanggalAwal" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" value="{{ \Carbon\Carbon::now()->format('Y-') . \Carbon\Carbon::now()->format('m-') . '01' }}" />
                                 </label>
-                                <label class="form-control w-full @if(auth()->user()->hasRole(['lurah', 'pic']))lg:w-1/3 @else lg:w-1/2 @endif">
+                                <label class="form-control w-full @if(auth()->user()->hasRole(['owner']))lg:w-1/3 @else lg:w-1/2 @endif">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100 text-lg">Tanggal Akhir</span>
                                     </div>
@@ -76,7 +76,7 @@
                     <div class="overflow-x-auto p-0 px-6 pb-6">
                         <form action="{{ route('laporan.pendapatan.laundry') }}" method="get" enctype="multipart/form-data" class="mb-3">
                             <div class="w-full flex flex-wrap justify-center gap-2 lg:flex-nowrap">
-                                @role(['lurah', 'pic'])
+                                @role(['owner'])
                                     <label class="form-control w-full lg:w-1/3">
                                         <div class="label">
                                             <span class="label-text font-semibold dark:text-slate-100 text-lg">Cabang</span>
@@ -89,13 +89,13 @@
                                         </select>
                                     </label>
                                 @endrole
-                                <label class="form-control w-full @if(auth()->user()->hasRole(['lurah', 'pic']))lg:w-1/3 @else lg:w-1/2 @endif">
+                                <label class="form-control w-full @if(auth()->user()->hasRole('owner'))lg:w-1/3 @else lg:w-1/2 @endif">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100 text-lg">Tanggal Awal</span>
                                     </div>
                                     <input type="date" name="tanggalAwal" class="input input-bordered w-full text-blue-700 dark:bg-slate-100" value="{{ \Carbon\Carbon::now()->format('Y-') . \Carbon\Carbon::now()->format('m-') . '01' }}" />
                                 </label>
-                                <label class="form-control w-full @if(auth()->user()->hasRole(['lurah', 'pic']))lg:w-1/3 @else lg:w-1/2 @endif">
+                                <label class="form-control w-full @if(auth()->user()->hasRole('owner'))lg:w-1/3 @else lg:w-1/2 @endif">
                                     <div class="label">
                                         <span class="label-text font-semibold dark:text-slate-100 text-lg">Tanggal Akhir</span>
                                     </div>

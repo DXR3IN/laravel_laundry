@@ -19,10 +19,19 @@ class DetailLayananTransaksiController extends Controller
         if (!DetailTransaksi::where('id', $request->detailTransaksi)->orderBy('id', 'asc')->first()) {
             abort(404);
         }
-        $cabang = Cabang::withTrashed()->where('id', auth()->user()->cabang_id)->first();
-        $transaksi = Transaksi::where('id', $request->transaksi)->first();
-        $detailTransaksi = DetailTransaksi::where('id', $request->detailTransaksi)->orderBy('id', 'asc')->first();
-        $detailLayananTransaksi = DetailLayananTransaksi::where('detail_transaksi_id', $request->detailTransaksi)->orderBy('id', 'asc')->get();
-        return view('dashboard.transaksi.layanan', compact('title', 'cabang', 'transaksi', 'detailTransaksi', 'detailLayananTransaksi'));
+
+        if ($userRole == 'owner') {
+            $cabang = Cabang::withTrashed()->where('slug', $request->cabang)->first();
+            $transaksi = Transaksi::where('id', $request->transaksi)->first();
+            $detailTransaksi = DetailTransaksi::where('id', $request->detailTransaksi)->orderBy('id', 'asc')->first();
+            $detailLayananTransaksi = DetailLayananTransaksi::where('detail_transaksi_id', $request->detailTransaksi)->orderBy('id', 'asc')->get();
+            return view('dashboard.transaksi.owner.layanan', compact('title', 'cabang', 'transaksi', 'detailTransaksi', 'detailLayananTransaksi'));
+        } else {
+            $cabang = Cabang::withTrashed()->where('id', auth()->user()->cabang_id)->first();
+            $transaksi = Transaksi::where('id', $request->transaksi)->first();
+            $detailTransaksi = DetailTransaksi::where('id', $request->detailTransaksi)->orderBy('id', 'asc')->first();
+            $detailLayananTransaksi = DetailLayananTransaksi::where('detail_transaksi_id', $request->detailTransaksi)->orderBy('id', 'asc')->get();
+            return view('dashboard.transaksi.layanan', compact('title', 'cabang', 'transaksi', 'detailTransaksi', 'detailLayananTransaksi'));
+        }
     }
 }

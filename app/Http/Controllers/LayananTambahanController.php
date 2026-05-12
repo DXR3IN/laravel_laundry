@@ -14,20 +14,35 @@ use App\Http\Requests\Layanan\LayananTambahanRequest;
 
 class LayananTambahanController extends Controller
 {
+    public function isValidated($userRole)
+    {
+        if ($userRole == 'manajer_laundry' || $userRole == 'owner') {
+            return true;
+        }
+        return false;
+    }
+
     public function index()
     {
         $title = "Layanan Tambahan";
-        $userCabang = auth()->user()->cabang_id;
-        $userRole = auth()->user()->roles[0]->name;
-        $cabang = Cabang::where('id', $userCabang)->withTrashed()->first();
 
-        if ($userRole != 'manajer_laundry') {
+        $userRole = auth()->user()->roles[0]->name;
+
+
+        if (!$this->isValidated($userRole)) {
             return abort(403);
         }
 
-        $layananTambahan = LayananTambahan::where('cabang_id', $userCabang)->orderBy('created_at', 'asc')->get();
-        $layananTambahanTrash = LayananTambahan::where('cabang_id', $userCabang)->onlyTrashed()->orderBy('created_at', 'asc')->get();
-
+        if ($userRole == 'manajer_laundry') {
+            $userCabang = auth()->user()->cabang_id;
+            $cabang = Cabang::where('id', $userCabang)->withTrashed()->first();
+            $layananTambahan = LayananTambahan::where('cabang_id', $userCabang)->orderBy('created_at', 'asc')->get();
+            $layananTambahanTrash = LayananTambahan::where('cabang_id', $userCabang)->onlyTrashed()->orderBy('created_at', 'asc')->get();
+        } elseif ($userRole == 'owner') {
+            $cabang = null;
+            $layananTambahan = LayananTambahan::orderBy('created_at', 'asc')->get();
+            $layananTambahanTrash = LayananTambahan::onlyTrashed()->orderBy('created_at', 'asc')->get();
+        }
         return view('dashboard.layanan-tambahan.index', compact('title', 'layananTambahan', 'layananTambahanTrash', 'cabang'));
     }
 
@@ -38,7 +53,7 @@ class LayananTambahanController extends Controller
 
         if ($userRole == 'manajer_laundry') {
             $validated['cabang_id'] = auth()->user()->cabang_id;
-        } else if ($userRole == 'pic') {
+        } else if ($userRole == 'owner') {
             $cabang = Cabang::where('slug', $request->cabang_slug)->first();
             $validated['cabang_id'] = $cabang->id;
         }
@@ -51,7 +66,7 @@ class LayananTambahanController extends Controller
             } else {
                 return to_route('layanan-tambahan')->with('error', 'Layanan Tambahan Gagal Ditambahkan');
             }
-        } else if ($userRole == 'pic') {
+        } else if ($userRole == 'owner') {
             if ($tambah) {
                 return back()->with('success', 'Layanan Tambahan Berhasil Ditambahkan');
             } else {
@@ -84,7 +99,7 @@ class LayananTambahanController extends Controller
             } else {
                 return to_route('layanan-tambahan')->with('error', 'Layanan Tambahan Gagal Diperbarui');
             }
-        } else if ($userRole == 'pic') {
+        } else if ($userRole == 'owner') {
             if ($perbarui) {
                 return back()->with('success', 'Layanan Tambahan Berhasil Diperbarui');
             } else {
@@ -109,14 +124,14 @@ class LayananTambahanController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         try {
             Excel::import(new LayananTambahanImport, $request->file('impor'));
-            if ($userRole == 'pic') {
+            if ($userRole == 'owner') {
                 return to_route('layanan-cabang.cabang', $request->cabang)->with('success', 'Layanan Tambahan Berhasil Ditambahkan');
             } else if ($userRole == 'manajer_laundry') {
                 return to_route('layanan-tambahan')->with('success', 'Layanan Tambahan Berhasil Ditambahkan');
             }
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             Log::info($ex);
-            if ($userRole == 'pic') {
+            if ($userRole == 'owner') {
                 return to_route('layanan-cabang.cabang', $request->cabang)->with('error', 'Layanan Tambahan Gagal Ditambahkan');
             } else if ($userRole == 'manajer_laundry') {
                 return to_route('layanan-tambahan')->with('error', 'Layanan Tambahan Gagal Ditambahkan');
@@ -126,6 +141,6 @@ class LayananTambahanController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new LayananTambahanExport($request->cabang), 'Data Layanan Tambahan '.Carbon::now()->format('d-m-Y').'.xlsx');
+        return Excel::download(new LayananTambahanExport($request->cabang), 'Data Layanan Tambahan ' . Carbon::now()->format('d-m-Y') . '.xlsx');
     }
 }

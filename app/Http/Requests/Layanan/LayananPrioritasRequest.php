@@ -24,7 +24,6 @@ class LayananPrioritasRequest extends FormRequest
         return [
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable',
-            'harga' => 'required|decimal:0,2',
             'prioritas' => 'required|integer',
         ];
     }

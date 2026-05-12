@@ -14,7 +14,15 @@ return new class extends Migration
         Schema::create('owner_laundry', function (Blueprint $table) {
             $table->id();
             // $table->string('email')->unique();
-            $table->string('name')->unique();
+            $table->string('nama')->unique();
+            $table->string('foto')->nullable();
+            $table->string('jenis_kelamin', 1);
+            $table->string('tempat_lahir');
+            $table->date('tanggal_lahir');
+            $table->string('telepon');
+            $table->text('alamat');
+            $table->date('mulai_kerja')->nullable();
+            $table->date('selesai_kerja')->nullable();
             $table->foreignId('user_id')->constrained('users', 'id');
             $table->timestamps();
             $table->rememberToken();

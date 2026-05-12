@@ -16,6 +16,7 @@ use App\Http\Requests\Layanan\JenisLayananRequest;
 
 class JenisLayananController extends Controller
 {
+
     public function index()
     {
         $title = "Jenis Layanan";
@@ -40,7 +41,7 @@ class JenisLayananController extends Controller
 
         if ($userRole == 'manajer_laundry') {
             $validated['cabang_id'] = auth()->user()->cabang_id;
-        } else if ($userRole == 'pic') {
+        } else if ($userRole == 'owner') {
             $cabang = Cabang::where('slug', $request->cabang_slug)->first();
             $validated['cabang_id'] = $cabang->id;
         }
@@ -53,7 +54,7 @@ class JenisLayananController extends Controller
             } else {
                 return to_route('jenis-layanan')->with('error', 'Jenis Layanan Gagal Ditambahkan');
             }
-        } else if ($userRole == 'pic') {
+        } else if ($userRole == 'owner') {
             if ($tambah) {
                 return back()->with('success', 'Jenis Layanan Berhasil Ditambahkan');
             } else {
@@ -86,7 +87,7 @@ class JenisLayananController extends Controller
             } else {
                 return to_route('jenis-layanan')->with('error', 'Jenis Layanan Gagal Diperbarui');
             }
-        } else if ($userRole == 'pic') {
+        } else if ($userRole == 'owner') {
             if ($perbarui) {
                 return back()->with('success', 'Jenis Layanan Berhasil Diperbarui');
             } else {
@@ -109,16 +110,16 @@ class JenisLayananController extends Controller
     public function restore(Request $request)
     {
         $pulih = JenisLayanan::where('id', $request->id)->restore();
-        $cekJenisPakaian = HargaJenisLayanan::query()
+        $cekJenisCucian = HargaJenisLayanan::query()
             ->join('jenis_cucian as jp', 'harga_jenis_layanan.jenis_cucian_id', '=', 'jp.id')
             ->where('harga_jenis_layanan.cabang_id', $request->cabang_id)
             ->where('harga_jenis_layanan.jenis_layanan_id', $request->id)
             ->where('jp.deleted_at', null)
-            ->select('harga_jenis_layanan.*', 'jp.id as id_pakaian')
+            ->select('harga_jenis_layanan.*', 'jp.id as id_cucian')
             ->onlyTrashed()->get();
 
-        foreach ($cekJenisPakaian as $item) {
-            HargaJenisLayanan::where('cabang_id', $request->cabang_id)->where('jenis_layanan_id', $request->id)->where('jenis_cucian_id', $item->id_pakaian)->restore();
+        foreach ($cekJenisCucian as $item) {
+            HargaJenisLayanan::where('cabang_id', $request->cabang_id)->where('jenis_layanan_id', $request->id)->where('jenis_cucian_id', $item->id_cucian)->restore();
         }
 
         if ($pulih) {
@@ -144,14 +145,14 @@ class JenisLayananController extends Controller
         $userRole = auth()->user()->roles[0]->name;
         try {
             Excel::import(new JenisLayananImport, $request->file('impor'));
-            if ($userRole == 'pic') {
+            if ($userRole == 'owner') {
                 return to_route('layanan-cabang.cabang', $request->cabang)->with('success', 'Jenis Layanan Berhasil Ditambahkan');
             } else if ($userRole == 'manajer_laundry') {
                 return to_route('jenis-layanan')->with('success', 'Jenis Layanan Berhasil Ditambahkan');
             }
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             Log::info($ex);
-            if ($userRole == 'pic') {
+            if ($userRole == 'owner') {
                 return to_route('layanan-cabang.cabang', $request->cabang)->with('error', 'Jenis Layanan Gagal Ditambahkan');
             } else if ($userRole == 'manajer_laundry') {
                 return to_route('jenis-layanan')->with('error', 'Jenis Layanan Gagal Ditambahkan');
@@ -161,6 +162,6 @@ class JenisLayananController extends Controller
 
     public function export(Request $request)
     {
-        return Excel::download(new JenisLayananExport($request->cabang), 'Data Jenis Layanan '.Carbon::now()->format('d-m-Y').'.xlsx');
+        return Excel::download(new JenisLayananExport($request->cabang), 'Data Jenis Layanan ' . Carbon::now()->format('d-m-Y') . '.xlsx');
     }
 }
