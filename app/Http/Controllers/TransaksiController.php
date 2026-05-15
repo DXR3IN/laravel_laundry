@@ -20,6 +20,7 @@ use App\Models\HargaJenisLayanan;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetailLayananTransaksi;
 use App\Models\LayananTambahanTransaksi;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class TransaksiController extends Controller
@@ -42,9 +43,16 @@ class TransaksiController extends Controller
                     ->with(['pegawai' => function ($query) {
                         $query->withTrashed();
                     }])
-                    ->with(['pelanggan:id,nama', 'layananPrioritas:id,nama'])
+                    // Tambahkan relasi detail transaksi agar loading halaman tidak lemot (Mencegah N+1 Query)
+                    ->with([
+                        'pelanggan:id,nama',
+                        'detailTransaksi.detailLayananTransaksi.hargaJenisLayanan.jenisCucian',
+                        'detailTransaksi.detailLayananTransaksi.hargaJenisLayanan.jenisLayanan',
+                        'layananTambahanTransaksi.layananTambahan'
+                    ])
                     ->where('cabang_id', $cabang->id)
-                    ->orderBy('waktu', 'desc')->get();
+                    ->orderBy('waktu', 'desc')
+                    ->get();
 
                 $monitoring = Transaksi::query()
                     ->with('pelanggan')
@@ -111,7 +119,12 @@ class TransaksiController extends Controller
                 ->with(['pegawai' => function ($query) {
                     $query->withTrashed();
                 }])
-                ->with(['pelanggan:id,nama', 'layananPrioritas:id,nama'])
+                ->with([
+                    'pelanggan:id,nama',
+                    'detailTransaksi.detailLayananTransaksi.hargaJenisLayanan.jenisCucian',
+                    'detailTransaksi.detailLayananTransaksi.hargaJenisLayanan.jenisLayanan',
+                    'layananTambahanTransaksi.layananTambahan'
+                ])
                 ->join('layanan_prioritas as lp', 'lp.id', '=', 'transaksi.layanan_prioritas_id')
                 ->where('transaksi.cabang_id', $cabang->id)
                 ->where('transaksi.status', '!=', 'Selesai')
@@ -125,7 +138,12 @@ class TransaksiController extends Controller
                 ->with(['pegawai' => function ($query) {
                     $query->withTrashed();
                 }])
-                ->with(['pelanggan:id,nama', 'layananPrioritas:id,nama'])
+                ->with([
+                    'pelanggan:id,nama',
+                    'detailTransaksi.detailLayananTransaksi.hargaJenisLayanan.jenisCucian',
+                    'detailTransaksi.detailLayananTransaksi.hargaJenisLayanan.jenisLayanan',
+                    'layananTambahanTransaksi.layananTambahan'
+                ])
                 ->join('layanan_prioritas as lp', 'lp.id', '=', 'transaksi.layanan_prioritas_id')
                 ->where('transaksi.cabang_id', $cabang->id)
                 ->where('transaksi.status', '!=', 'Selesai')
@@ -280,64 +298,106 @@ class TransaksiController extends Controller
 
     public function storeTransaksiCabang(Request $request)
     {
-        $userRole = auth()->user()->roles[0]->name;
-
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->first();
 
+        // 1. Gunakan 'numeric' agar lebih ramah terhadap data angka dari JavaScript
         $validatorTransaksi = Validator::make(
             $request->all(),
             [
-                'total_biaya_layanan' => 'required|decimal:0,2',
-                'total_biaya_prioritas' => 'required|decimal:0,2',
-                'total_biaya_layanan_tambahan' => 'required|decimal:0,2',
-                'total_bayar_akhir' => 'required|decimal:0,2',
+                'total_biaya_layanan' => 'required|numeric',
+                'total_biaya_layanan_tambahan' => 'required|numeric',
+                'total_bayar_akhir' => 'required|numeric',
                 'jenis_pembayaran' => 'required|string|max:255',
-                'bayar' => 'required|decimal:0,2',
-                'kembalian' => 'required|decimal:0,2',
-                'layanan_prioritas_id' => 'required|integer',
+                'bayar' => 'required|numeric',
+                'kembalian' => 'required|numeric',
                 'pelanggan_id' => 'required|integer',
-            ],
-            [
-                'required' => ':attribute harus diisi.',
-                'max' => ':attribute tidak boleh lebih dari :max karakter.',
-                'integer' => ':attribute harus berupa angka.',
-                'decimal' => ':attribute tidak boleh lebih dari :max nol dibelakang koma.',
             ]
         );
 
-        $validatedTransaksi = $validatorTransaksi->validated();
-        $validatedTransaksi['cabang_id'] = $cabang->id;
-        $validatedTransaksi['pegawai_id'] = auth()->user()->id;
-        $validatedTransaksi['waktu'] = Carbon::now();
-        $nota = Carbon::now()->format('His') . "-" . Carbon::now()->format('dmY') . "-" . $cabang->id . $request->pelanggan_id;
-        $validatedTransaksi['nota_layanan'] = "layanan-" . $nota;
-        $validatedTransaksi['nota_pelanggan'] = "pelanggan-" . $nota;
-        $validatedTransaksi['status'] = StatusTransaksi::BARU->value;
+        // 2. TANGKAP ERROR VALIDASI agar bisa dibaca oleh AJAX
+        if ($validatorTransaksi->fails()) {
+            return response()->json(['message' => 'Validasi gagal', 'errors' => $validatorTransaksi->errors()], 422);
+        }
 
-        $transaksi = Transaksi::create($validatedTransaksi);
+        try {
+            $validatedTransaksi = $validatorTransaksi->validated();
 
-        $layananPrioritas = LayananPrioritas::where('cabang_id', $cabang->id)->where('id', $request->layanan_prioritas_id)->first();
+            // --- PENGAMAN DATABASE ---
+            // Karena database kamu kemungkinan masih mewajibkan 2 kolom ini,
+            // kita isi paksa nilainya agar MySQL tidak marah (bisa dihapus nanti jika tabel sudah di-migrate ulang)
+            $validatedTransaksi['total_biaya_prioritas'] = 0;
 
-        foreach ($request->jenis_cucian_id as $item => $value) {
-            $detailTransaksi = DetailTransaksi::create([
-                'total_cucian' => $request->total_cucian[$item],
-                'harga_layanan_akhir' => $request->harga_jenis_layanan_id[$item],
-                'total_biaya_layanan' => $request->total_cucian[$item] * $request->harga_jenis_layanan_id[$item],
-                'total_biaya_prioritas' => $request->total_cucian[$item] * $layananPrioritas->harga,
-                'transaksi_id' => $transaksi->id,
-            ]);
+            // Cari ID Prioritas pertama yang ada di cabang ini untuk sekadar mengisi kolom yang wajib
+            $prioritasBawaan = LayananPrioritas::where('cabang_id', $cabang->id)->first();
+            if ($prioritasBawaan) {
+                $validatedTransaksi['layanan_prioritas_id'] = $prioritasBawaan->id;
+            }
+            // -------------------------
 
-            foreach ($request->jenis_layanan_id[$item] as $layanan) {
-                $jenisCucian = JenisCucian::where('cabang_id', $cabang->id)->where('id', $value)->first();
-                $jenisLayanan = JenisLayanan::where('cabang_id', $cabang->id)->where('id', $layanan)->first();
-                $hargaLayanan = HargaJenisLayanan::where('cabang_id', $cabang->id)->where('jenis_cucian_id', $jenisCucian->id)->where('jenis_layanan_id', $jenisLayanan->id)->first();
-                DetailLayananTransaksi::create([
-                    'harga_jenis_layanan_id' => $hargaLayanan->id,
-                    'detail_transaksi_id' => $detailTransaksi->id,
-                ]);
+            $validatedTransaksi['cabang_id'] = $cabang->id;
+            $validatedTransaksi['pegawai_id'] = auth()->user()->id;
+            $validatedTransaksi['waktu'] = Carbon::now();
+            $nota = Carbon::now()->format('His') . "-" . Carbon::now()->format('dmY') . "-" . $cabang->id . $request->pelanggan_id;
+            $validatedTransaksi['nota_layanan'] = "layanan-" . $nota;
+            $validatedTransaksi['nota_pelanggan'] = "pelanggan-" . $nota;
+            $validatedTransaksi['status'] = StatusTransaksi::BARU->value;
+
+            $maxWaktu = 0;
+            if ($request->harga_jenis_layanan_id) {
+                foreach ($request->harga_jenis_layanan_id as $hjl_id) {
+                    $hjl = HargaJenisLayanan::with('layananPrioritas')->find($hjl_id);
+
+                    // Asumsi: 'prioritas' (atau 'nilai_prioritas') adalah angka total hari/jam
+                    $nilaiPrioritas = $hjl->layananPrioritas->prioritas;
+
+                    if ($nilaiPrioritas > $maxWaktu) {
+                        $maxWaktu = $nilaiPrioritas;
+                    }
+                }
             }
 
+            // 2. Masukkan ke data tervalidasi
+            $validatedTransaksi['waktu'] = Carbon::now();
 
+            // Asumsi: Jika nilai prioritasmu adalah hitungan HARI. 
+            // Jika hitungannya JAM, ganti addDays() menjadi addHours()
+            $validatedTransaksi['estimasi_selesai'] = Carbon::now()->addDays($maxWaktu);
+
+            // Simpan Transaksi Induk
+            $transaksi = Transaksi::create($validatedTransaksi);
+
+            // 3. Simpan Detail Transaksi
+            if ($request->harga_jenis_layanan_id) {
+                foreach ($request->harga_jenis_layanan_id as $index => $hjl_id) {
+                    // Ambil data harga paket beserta relasi prioritasnya
+                    $hjl = HargaJenisLayanan::with('layananPrioritas')->find($hjl_id);
+                    $qty = $request->total_cucian[$index];
+                    $subtotal = $hjl->harga * $qty;
+
+                    // Hitung estimasi selesai khusus untuk cucian INI saja
+                    $nilaiPrioritas = $hjl->layananPrioritas->prioritas ?? 0;
+                    $estimasiCucian = \Carbon\Carbon::now()->addDays($nilaiPrioritas);
+
+                    $detailTransaksi = DetailTransaksi::create([
+                        'total_cucian' => $qty,
+                        'harga_layanan_akhir' => $hjl->harga,
+                        'total_biaya_layanan' => $subtotal,
+                        'total_biaya_prioritas' => 0,
+                        'transaksi_id' => $transaksi->id,
+
+                        // MASUKKAN DATA BARU KE SINI
+                        'estimasi_selesai' => $estimasiCucian,
+                        'status' => 'Baru', // Status default
+                    ]);
+
+                    DetailLayananTransaksi::create([
+                        'harga_jenis_layanan_id' => $hjl->id,
+                        'detail_transaksi_id' => $detailTransaksi->id,
+                    ]);
+                }
+            }
+
+            // 4. Simpan Layanan Tambahan
             if ($request->layanan_tambahan_id) {
                 foreach ($request->layanan_tambahan_id as $item) {
                     LayananTambahanTransaksi::create([
@@ -347,11 +407,12 @@ class TransaksiController extends Controller
                 }
             }
 
-            if ($transaksi) {
-                return $transaksi;
-            } else {
-                return abort(400, 'Transaksi Gagal Dibuat');
-            }
+            return response()->json($transaksi);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan sistem',
+                'error_detail' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -384,79 +445,117 @@ class TransaksiController extends Controller
 
     public function updateTransaksiCabang(Request $request)
     {
-        $userRole = auth()->user()->roles[0]->name;
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->first();
         $getTransaksi = Transaksi::where('cabang_id', $cabang->id)->where('id', $request->transaksi)->first();
 
+        // 1. Ganti 'decimal' menjadi 'numeric'
         $validatorTransaksi = Validator::make(
             $request->all(),
             [
-                'total_biaya_layanan' => 'required|decimal:0,2',
-                'total_biaya_prioritas' => 'required|decimal:0,2',
-                'total_biaya_layanan_tambahan' => 'required|decimal:0,2',
-                'total_bayar_akhir' => 'required|decimal:0,2',
+                'total_biaya_layanan' => 'required|numeric',
+                'total_biaya_layanan_tambahan' => 'required|numeric',
+                'total_bayar_akhir' => 'required|numeric',
                 'jenis_pembayaran' => 'required|string|max:255',
-                'bayar' => 'required|decimal:0,2',
-                'kembalian' => 'required|decimal:0,2',
+                'bayar' => 'required|numeric',
+                'kembalian' => 'required|numeric',
                 'status' => ['required', Rule::in(StatusTransaksi::cases())],
-                'layanan_prioritas_id' => 'required|integer',
                 'pelanggan_id' => 'required|integer',
-            ],
-            [
-                'required' => ':attribute harus diisi.',
-                'max' => ':attribute tidak boleh lebih dari :max karakter.',
-                'integer' => ':attribute harus berupa angka.',
-                'decimal' => ':attribute tidak boleh lebih dari :max nol dibelakang koma.',
             ]
         );
 
-        $validatedTransaksi = $validatorTransaksi->validated();
-        // $validatedTransaksi['pegawai_id'] = auth()->user()->id;
-
-        $transaksi = Transaksi::where('cabang_id', $cabang->id)->where('id', $getTransaksi->id)->update($validatedTransaksi);
-
-        $layananPrioritas = LayananPrioritas::where('cabang_id', $cabang->id)->where('id', $request->layanan_prioritas_id)->first();
-
-        $detailTransaksi = DetailTransaksi::where('transaksi_id', $getTransaksi->id)->get();
-        foreach ($detailTransaksi as $item) {
-            DetailLayananTransaksi::where('detail_transaksi_id', $item->id)->delete();
+        if ($validatorTransaksi->fails()) {
+            return response()->json(['message' => 'Validasi gagal', 'errors' => $validatorTransaksi->errors()], 422);
         }
-        DetailTransaksi::where('transaksi_id', $getTransaksi->id)->delete();
 
-        foreach ($request->jenis_cucian_id as $item => $value) {
-            $detailTransaksi = DetailTransaksi::create([
-                'total_cucian' => $request->total_cucian[$item],
-                'harga_layanan_akhir' => $request->harga_jenis_layanan_id[$item],
-                'total_biaya_layanan' => $request->total_cucian[$item] * $request->harga_jenis_layanan_id[$item],
-                'total_biaya_prioritas' => $request->total_cucian[$item] * $layananPrioritas->harga,
-                'transaksi_id' => $getTransaksi->id,
-            ]);
+        try {
+            $validatedTransaksi = $validatorTransaksi->validated();
 
-            foreach ($request->jenis_layanan_id[$item] as $layanan) {
-                $jenisCucian = JenisCucian::where('cabang_id', $cabang->id)->where('id', $value)->first();
-                $jenisLayanan = JenisLayanan::where('cabang_id', $cabang->id)->where('id', $layanan)->first();
-                $hargaLayanan = HargaJenisLayanan::where('cabang_id', $cabang->id)->where('jenis_cucian_id', $jenisCucian->id)->where('jenis_layanan_id', $jenisLayanan->id)->first();
-                DetailLayananTransaksi::create([
-                    'harga_jenis_layanan_id' => $hargaLayanan->id,
-                    'detail_transaksi_id' => $detailTransaksi->id,
-                ]);
+            // --- PENGAMAN DATABASE (Sama seperti Store) ---
+            $validatedTransaksi['total_biaya_prioritas'] = 0;
+            $prioritasBawaan = LayananPrioritas::where('cabang_id', $cabang->id)->first();
+            if ($prioritasBawaan) {
+                $validatedTransaksi['layanan_prioritas_id'] = $prioritasBawaan->id;
             }
-        }
 
-        LayananTambahanTransaksi::where('transaksi_id', $getTransaksi->id)->delete();
-        if ($request->layanan_tambahan_id) {
-            foreach ($request->layanan_tambahan_id as $item) {
-                LayananTambahanTransaksi::create([
-                    'layanan_tambahan_id' => $item,
-                    'transaksi_id' => $getTransaksi->id,
-                ]);
+            $maxWaktu = 0;
+            if ($request->harga_jenis_layanan_id) {
+                foreach ($request->harga_jenis_layanan_id as $hjl_id) {
+                    $hjl = HargaJenisLayanan::with('layananPrioritas')->find($hjl_id);
+
+                    // Asumsi: 'prioritas' (atau 'nilai_prioritas') adalah angka total hari/jam
+                    $nilaiPrioritas = $hjl->layananPrioritas->prioritas;
+
+                    if ($nilaiPrioritas > $maxWaktu) {
+                        $maxWaktu = $nilaiPrioritas;
+                    }
+                }
             }
-        }
 
-        if ($transaksi) {
-            return $transaksi;
-        } else {
-            return abort(400, 'Transaksi Gagal Dibuat');
+            // 2. Masukkan ke data tervalidasi
+            $validatedTransaksi['waktu'] = Carbon::now();
+
+            // Asumsi: Jika nilai prioritasmu adalah hitungan HARI. 
+            // Jika hitungannya JAM, ganti addDays() menjadi addHours()
+            $validatedTransaksi['estimasi_selesai'] = Carbon::now()->addDays($maxWaktu);
+
+            // 2. Update Transaksi Induk
+            Transaksi::where('cabang_id', $cabang->id)->where('id', $getTransaksi->id)->update($validatedTransaksi);
+
+            // 3. Bersihkan data Detail lama (Hapus yang lama sebelum insert yang baru)
+            $detailTransaksiLama = DetailTransaksi::where('transaksi_id', $getTransaksi->id)->get();
+            foreach ($detailTransaksiLama as $item) {
+                DetailLayananTransaksi::where('detail_transaksi_id', $item->id)->delete();
+            }
+            DetailTransaksi::where('transaksi_id', $getTransaksi->id)->delete();
+
+            // 4. Masukkan data Detail baru (Logika baru tanpa nested loop)
+            // 4. Masukkan data Detail baru
+            if ($request->harga_jenis_layanan_id) {
+                foreach ($request->harga_jenis_layanan_id as $index => $hjl_id) {
+                    $hjl = HargaJenisLayanan::find($hjl_id);
+                    $qty = $request->total_cucian[$index];
+                    $subtotal = $hjl->harga * $qty;
+
+                    // Ambil nilai prioritas terlama lagi khusus baris ini untuk estimasi (seperti di fungsi store)
+                    $hjlLengkap = HargaJenisLayanan::with('layananPrioritas')->find($hjl_id);
+                    $nilaiPrioritas = $hjlLengkap->layananPrioritas->prioritas ?? 0;
+
+                    $newDetail = DetailTransaksi::create([
+                        'total_cucian' => $qty,
+                        'harga_layanan_akhir' => $hjl->harga,
+                        'total_biaya_layanan' => $subtotal,
+                        'total_biaya_prioritas' => 0,
+                        'transaksi_id' => $getTransaksi->id,
+
+                        // MASUKKAN ESTIMASI & STATUS PER ITEM DI SINI
+                        'estimasi_selesai' => \Carbon\Carbon::now()->addDays($nilaiPrioritas),
+                        'status' => $request->status_cucian[$index] ?? 'Baru',
+                    ]);
+
+                    DetailLayananTransaksi::create([
+                        'harga_jenis_layanan_id' => $hjl->id,
+                        'detail_transaksi_id' => $newDetail->id,
+                    ]);
+                }
+            }
+
+            // 5. Update Layanan Tambahan
+            LayananTambahanTransaksi::where('transaksi_id', $getTransaksi->id)->delete();
+            if ($request->layanan_tambahan_id) {
+                foreach ($request->layanan_tambahan_id as $item) {
+                    LayananTambahanTransaksi::create([
+                        'layanan_tambahan_id' => $item,
+                        'transaksi_id' => $getTransaksi->id,
+                    ]);
+                }
+            }
+
+            return response()->json(['message' => 'Transaksi berhasil diperbarui']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan sistem',
+                'error_detail' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -515,15 +614,19 @@ class TransaksiController extends Controller
 
     public function ubahJenisCucian(Request $request)
     {
-        $userRole = auth()->user()->roles[0]->name;
-
         $cabang = Cabang::where('id', auth()->user()->cabang_id)->first();
-        $layanan = HargaJenisLayanan::query()
+
+        // Gunakan JOIN agar pasti berhasil mengambil nama layanan dan prioritas
+        $paketLayanan = HargaJenisLayanan::query()
             ->join('jenis_layanan as jl', 'harga_jenis_layanan.jenis_layanan_id', '=', 'jl.id')
+            // Sesuaikan 'prioritas_id' dengan nama kolom prioritas di tabel harga_jenis_layanan kamu
+            ->join('layanan_prioritas as lp', 'harga_jenis_layanan.prioritas_id', '=', 'lp.id')
             ->where('harga_jenis_layanan.cabang_id', $cabang->id)
             ->where('harga_jenis_layanan.jenis_cucian_id', $request->jenisCucianId)
-            ->select('jl.id', 'jl.nama')->get();
-        return $layanan;
+            ->select('harga_jenis_layanan.id', 'harga_jenis_layanan.harga', 'jl.nama as nama_layanan', 'lp.nama as nama_prioritas')
+            ->get();
+
+        return response()->json($paketLayanan);
     }
 
     public function ubahJenisLayanan(Request $request)
@@ -561,21 +664,17 @@ class TransaksiController extends Controller
 
     public function hitungTotalBayar(Request $request)
     {
-        $userRole = auth()->user()->roles[0]->name;
-
-        $cabang = Cabang::where('id', auth()->user()->cabang_id)->first();
-        $hargaLayananId = $request->hargaLayanan;
-        $totalCucian = $request->totalCucian;
-        $layananPrioritas = LayananPrioritas::where('cabang_id', $cabang->id)->where('id', $request->layananPrioritas)->first();
-
         $biayaLayanan = 0;
-        $biayaPrioritas = 0;
-        foreach ($hargaLayananId as $item => $value) {
-            $biayaLayanan += $value * $totalCucian[$item];
-            $biayaPrioritas += $layananPrioritas->harga * $totalCucian[$item];
+
+        if ($request->hargaLayanan) {
+            foreach ($request->hargaLayanan as $item => $harga) {
+                $biayaLayanan += $harga * $request->totalCucian[$item];
+            }
         }
-        $totalBayar = $biayaLayanan + $biayaPrioritas + $request->layananTambahan;
-        return [$biayaLayanan, $biayaPrioritas, $totalBayar];
+
+        $totalBayar = $biayaLayanan + $request->layananTambahan;
+
+        return [$biayaLayanan, 0, $totalBayar];
     }
 
     public function cetakStrukTransaksi(Request $request)

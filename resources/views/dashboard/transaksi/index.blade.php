@@ -133,112 +133,117 @@
     <div class="-mx-3 flex flex-wrap">
         <div class="w-full max-w-full flex-none px-3">
             {{-- Awal Tabel Transaksi --}}
-            <div class="dark:bg-slate-850 dark:shadow-dark-xl relative mb-6 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid border-transparent bg-white bg-clip-border shadow-xl">
-                <div class="border-b-solid mb-0 flex items-center justify-between rounded-t-2xl border-b-0 border-b-transparent p-6 pb-3">
-                    <h6 class="font-bold dark:text-white">{{ $title }}</h6>
-                    <div class="w-1/2 max-w-full flex-none px-3 text-right">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden mb-6">
+    
+                <!-- Card Header & Top Actions -->
+                <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900">
+                    <h6 class="text-lg font-bold text-slate-900 dark:text-white">{{ $title }}</h6>
+                    
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         @if (!$cabang->deleted_at)
-                            <a href="{{ route("transaksi.create", ['isJadwal' => $isJadwal]) }}" class="bg-150 active:opacity-85 tracking-tight-rem bg-x-25 mb-0 inline-block cursor-pointer rounded-lg border border-solid border-emerald-500 bg-transparent px-4 py-1 text-center align-middle text-sm font-bold leading-normal text-emerald-500 shadow-none transition-all ease-in hover:-translate-y-px hover:opacity-75 md:px-8 md:py-2">
-                                <i class="ri-add-fill"></i>
-                                Tambah
+                            <a href="{{ route("transaksi.create", ['isJadwal' => $isJadwal]) }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                                <i class="ri-add-line text-lg leading-none"></i> Tambah Transaksi
                             </a>
                         @endif
                     </div>
                 </div>
-                <div class="flex-auto px-0 pb-2 pt-0">
-                    <div class="overflow-x-auto p-0 px-6 pb-6">
-                        <table id="myTable" class="nowrap stripe mb-3 w-full max-w-full border-collapse items-center align-top text-slate-500 dark:border-white/40" style="width: 100%;">
-                            <thead class="align-bottom">
-                                <tr>
-                                    <th class="rounded-tl bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Waktu
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Layanan Prioritas
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Total Bayar
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Pelanggan
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Pegawai
-                                    </th>
-                                    <th class="bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Status
-                                    </th>
-                                    <th class="rounded-tr bg-blue-500 text-xs font-bold uppercase text-white dark:text-white">
-                                        Aksi
-                                    </th>
+
+                <!-- Table Content -->
+                <div class="overflow-x-auto">
+                    <table id="myTable" class="w-full text-left border-collapse" style="width: 100%;">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Waktu Masuk</th>
+                                <th class="px-6 py-4 text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Estimasi Selesai</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Layanan Prioritas</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Bayar</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pelanggan</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pegawai</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-slate-700/50">
+                            @foreach ($transaksi as $item)
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                        {{ \Carbon\Carbon::parse($item->waktu)->format('d M Y, H:i') }}
+                                    </td>
+                                    
+                                    {{-- KOLOM BARU: ESTIMASI SELESAI --}}
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-slate-100">
+                                        @if ($item->estimasi_selesai)
+                                            <span class="font-bold text-emerald-600 dark:text-emerald-400">
+                                                {{ \Carbon\Carbon::parse($item->estimasi_selesai)->format('d M Y, H:i') }}
+                                            </span>
+                                        @else
+                                            <span class="text-slate-400 italic">Belum diatur</span>
+                                        @endif
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
+                                        <span class="badge badge-primary">
+                                            {{ $item->daftar_prioritas }}
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-white">
+                                        Rp{{ number_format($item->total_bayar_akhir, 0, ',', '.') }}
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                        {{ $item->pelanggan->nama }}
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                        @if ($item->pegawai->roles[0]->name == 'manajer_laundry')
+                                            {{ $item->pegawai->manajer[0]->nama }}
+                                        @elseif ($item->pegawai->roles[0]->name == 'pegawai_laundry')
+                                            {{ $item->pegawai->pegawai[0]->nama }}
+                                        @endif
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <x-kolom-status-transaksi :value="$item->status" />
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                        <div class="flex items-center justify-end gap-2">
+                                            
+                                            <a href="{{ route("transaksi.view", ['transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="inline-flex items-center justify-center p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 rounded-lg transition-colors tooltip" data-tip="Lihat Detail">
+                                                <i class="ri-eye-line text-lg leading-none"></i>
+                                            </a>
+                                            
+                                            @if (!$cabang->deleted_at)
+                                                @if ($item->status == 'Selesai' && auth()->user()->roles[0]->name == 'pegawai_laundry')
+                                                    {{-- Sembunyikan aksi jika sudah selesai dan user adalah pegawai --}}
+                                                @else
+                                                    <a href="{{ route("transaksi.edit", ['transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="inline-flex items-center justify-center p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 dark:text-amber-400 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 rounded-lg transition-colors tooltip" data-tip="Ubah Data">
+                                                        <i class="ri-pencil-fill text-lg leading-none"></i>
+                                                    </a>
+                                                    
+                                                    <label for="delete_button" class="cursor-pointer inline-flex items-center justify-center p-2 text-red-600 bg-red-50 hover:bg-red-100 dark:text-red-400 dark:bg-red-500/10 dark:hover:bg-red-500/20 rounded-lg transition-colors tooltip" data-tip="Hapus Data" onclick="return delete_button('{{ $item->id }}')">
+                                                        <i class="ri-delete-bin-line text-lg leading-none"></i>
+                                                    </label>
+                                                    
+                                                    <label for="edit_status_button" class="cursor-pointer inline-flex items-center justify-center p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 rounded-lg transition-colors tooltip" data-tip="Ubah Status" onclick="return edit_status_button('{{ $item->id }}')">
+                                                        <i class="ri-draft-line text-lg leading-none"></i>
+                                                    </label>
+                                                @endif
+                                            @endif
+                                            
+                                            <a href="{{ route("transaksi.cetak-struk", ['transaksi' => $item->id]) }}" target="_blank" class="inline-flex items-center justify-center p-2 text-slate-600 bg-slate-100 hover:bg-slate-200 dark:text-slate-300 dark:bg-slate-700/50 dark:hover:bg-slate-700 rounded-lg transition-colors tooltip" data-tip="Cetak Struk">
+                                                <i class="ri-receipt-line text-lg leading-none"></i>
+                                            </a>
+                                            
+                                        </div>
+                                    </td>
+                                    
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($transaksi as $item)
-                                    <tr>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ \Carbon\Carbon::parse($item->waktu)->format('d F Y H:i:s') }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->layananPrioritas->nama }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                Rp{{ number_format($item->total_bayar_akhir, 2, ',', '.') }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                {{ $item->pelanggan->nama }}
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                @if ($item->pegawai->roles[0]->name == 'manajer_laundry')
-                                                    {{ $item->pegawai->manajer[0]->nama }}
-                                                @elseif ($item->pegawai->roles[0]->name == 'pegawai_laundry')
-                                                    {{ $item->pegawai->pegawai[0]->nama }}
-                                                @endif
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <p class="text-base font-semibold leading-tight text-slate-500 dark:text-slate-200">
-                                                <x-kolom-status-transaksi :value="$item->status" />
-                                            </p>
-                                        </td>
-                                        <td class="border-b border-slate-600 bg-transparent text-left align-middle">
-                                            <div>
-                                                <a href="{{ route("transaksi.view", ['transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-info btn-sm">
-                                                    <i class="ri-eye-line text-base"></i>
-                                                </a>
-                                                @if (!$cabang->deleted_at)
-                                                    @if ($item->status == 'Selesai' && auth()->user()->roles[0]->name == 'pegawai_laundry')
-                                                    @else
-                                                        <a href="{{ route("transaksi.edit", ['transaksi' => $item->id, 'isJadwal' => $isJadwal]) }}" class="btn btn-outline btn-warning btn-sm">
-                                                            <i class="ri-pencil-fill text-base"></i>
-                                                        </a>
-                                                        <label for="delete_button" class="btn btn-outline btn-error btn-sm" onclick="return delete_button('{{ $item->id }}')">
-                                                            <i class="ri-delete-bin-line text-base"></i>
-                                                        </label>
-                                                        <label for="edit_status_button" class="btn btn-outline btn-primary tooltip btn-sm" data-tip="Ubah Status" onclick="return edit_status_button('{{ $item->id }}')">
-                                                            <i class="ri-draft-line text-base"></i>
-                                                        </label>
-                                                    @endif
-                                                @endif
-                                                <a href="{{ route("transaksi.cetak-struk", ['transaksi' => $item->id]) }}" target="_blank" class="btn btn-outline btn-ghost dark:border-white dark:text-white dark:bg-transparent dark:hover:bg-white dark:hover:text-slate-700 btn-sm tooltip" data-tip="Cetak Struk">
-                                                    <i class="ri-receipt-line text-base"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
             {{-- Akhir Tabel Transaksi --}}

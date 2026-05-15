@@ -271,6 +271,7 @@ Route::group([
         Route::get('/ubah-jenis-cucian', [TransaksiController::class, 'ubahJenisCucian'])->name('transaksi.create.ubahJenisCucian');
         Route::get('/ubah-jenis-layanan', [TransaksiController::class, 'ubahJenisLayanan'])->name('transaksi.create.ubahJenisLayanan');
         Route::get('/ubah-layanan-tambahan', [TransaksiController::class, 'ubahLayananTambahan'])->name('transaksi.create.ubahLayananTambahan');
+        Route::post('/transaksi/detail/update-status', [TransaksiController::class, 'updateStatusDetail'])->name('transaksi.update-status-detail');
         Route::get('/hitung-total-bayar', [TransaksiController::class, 'hitungTotalBayar'])->name('transaksi.create.hitungTotalBayar');
         Route::get('/ubah/{transaksi:id}', [TransaksiController::class, 'editTransaksiCabang'])->name('transaksi.edit');
         Route::post('/ubah/{transaksi:id}', [TransaksiController::class, 'updateTransaksiCabang'])->name('transaksi.update');

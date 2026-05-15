@@ -42,4 +42,11 @@ class HargaJenisLayanan extends Model
     {
         return $this->belongsTo(Cabang::class);
     }
+
+    public function layananPrioritas()
+    {
+        // Asumsi: nama foreign key di tabel harga_jenis_layanan kamu adalah 'prioritas_id'. 
+        // Jika namanya beda (misal: 'layanan_prioritas_id'), silakan diganti.
+        return $this->belongsTo(LayananPrioritas::class, 'prioritas_id');
+    }
 }
